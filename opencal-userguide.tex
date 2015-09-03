@@ -1,6 +1,8 @@
 \documentclass{memoir}
 \usepackage{stmaryrd}
 \usepackage{lscape}
+\usepackage{hyperref}
+\usepackage{nameref}
 \usepackage[pdftex]{graphicx}
 \usepackage{hyperref}
 \hypersetup{
@@ -21,8 +23,15 @@
     urlcolor=blue           % color of external links
 }
 
+\usepackage{xcolor}
 \usepackage{listings}
 \lstset{language=C++}
+
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
 
 \oddsidemargin80pt      %commentare se si stampa solo fronte
 \evensidemargin40pt     %commentare se si stampa solo fronte

@@ -1,38 +1,30 @@
-\chapter{Installation}
+\chapter{Installation} 
+\label{ch:installation}
 
 \section{Introduction}
 
-This guide presents \verb"libautoti", an open source C++ library
+This guide presents \verb"OpenCAL", an open source C/C++ library
 for implementing models based on the Cellular Automata (CA)
-approach, a computational science branch for the modelling and
-simulation of complex systems. Specifically, the library was
-developed with the aim to permit a straightforward and simple
-implementation of Macroscopic Cellular Automata models, which are
-particularly suitable for the simulation of spatial extended
-dynamical systems. Key features of \verb"libautoti" are the
+paradighm. Specifically, the library was developed with the aim to permit a
+straightforward and simple implementation of Cellular Automata models, which are
+particularly suitable for the simulation of spatial extended dynamical systems.
+Key features of \verb"OpenCAL" are the
 following:
 
 \begin{itemize}
-    \item Ability to be linked from C++ programs.
+    \item Parallel and Multiplatform. 
     
-    \item Ability to define and manage 1D, 2D and 3D Cellular Automata models (3D models are sequential in this release of the library).
-
-    \item Executable on uniprocessors, multiprocessors, multicomputers, and
-    workstation networks thanks to the Message Passing paradigm.
-
-    \item Possibility to integrate with other libraries, e.g. OpenGL or VTK (for simulation visualization) and PGAPack (for models' calibration through Parallel Genetic Algorithms).
-
-    \item Distributed under the Lesser GPL license.
+    \item Support for GPU execution, using OpenCL and CUDA.
+    
+    \item Support for Complex Cellular Automata 
+    
+    \item Other Key features here 
 \end{itemize}
 
 
-\section{Obtaining libautoti}
+\section{Obtaining OpenCAL}
 
-\verb"libautoti" is available as source code, both for Linux/Unix
-and Windows systems, at the URL
-\url{http://autoti.mat.unical.it/libautoti/download.html}. The
-distribution also contains installation instructions, this guide,
-and some examples in C++.
+
 
 \section{Structure of the Distribution Directory}
 
@@ -42,40 +34,11 @@ The distribution contains the following files and subdirectories:
 
     \item \textbf{AUTHORS}: Authors of \verb"libautoti".
 
-    \item \textbf{ChangeLog}: Changes new to this release of \verb"libautoti".
-
-    \item \textbf{COPYRIGHT}: Copyright and disclaimer information.
-
-    \item \textbf{NEWS}: News to this release of \verb"libautoti".
-
-    \item \textbf{README}: A file that should be read!
-
-    \item \textbf{configure.ac}: The ``source code'' for the configure script.
-
-    \item \textbf{configure}: Unix shell script to configure Makefile.in for a specific architecture.
-
-    \item \textbf{Makefile.in}: Prototype that is configured into ``Makefile'' by configure.
-
-    \item \textbf{docs}: Directory containing documentation.
-
-    \item \textbf{example}: A directory containing the OpenGLUT versions of Life, both sequential and parallel.
-
-    \item \textbf{sciddica/sciddicaT}: A directory containing the SCIDDICA (T version) Macroscopic Cellular Automata model for debris flows simulation.
-
-    \item \textbf{include}: The \verb"libautoti" include directory.
-
-    \item \textbf{lib}: The directory where the library will be installed in.
-
-    \item \textbf{source}: The source code for the \verb"libautoti" system.
-
-    \item \textbf{test}: A directory containing the Conway's  Game of Life Cellular Automaton (used to verify the
-    installation); the subdirectory \verb"sequential" contains the sequential version of the CA, the \verb"parallel"
-    sub-directory the parallel one.
 
 \end{itemize}
 
 
-\section{Requirements}
+\section{Requirements and dependencies}
 
 To compile \verb"libautoti", you must have an ANSI C++ compiler
 that includes a full implementation of the Standard Library and
@@ -90,133 +53,14 @@ MPICH2 implementation of MPI, which is freely available.
 Additional information about MPICH2 is available on the World Wide
 Web at \url{http://www.mcs.anl.gov/research/projects/mpich2/}.
 
+\subsection{Installing prerequisites}
 
 
-\section{Installation Instructions}
+\section{Build and installing}
 
-The \verb"libautoti" library can be installed into your system as
-super user in a common shared directory, e.g.
-\verb"/usr/local/libautoti-1.1", or locally as normal user, e.g.
-in \verb"$HOME/libautoti-1.1" (where \verb"$HOME" represents the
-user's home directory). The installation process is the same for
-both cases, except for the fact that the installation directory
-changes. In the following we show the installation steps for the
-root user, by supposing that the \verb"libautoti-1.1.tar.gz"
-archive was saved in the \verb"/root" directory and that the
-library will be installed in \verb"/usr/local/libautoti-1.1". Both
-sequential and parallel installations are described in the next
-two sections.
-
-\subsection{Sequential Installation}
-
-In order to obtain a sequential version of \verb"libautoti",
-please follow the steps below:
-
-\begin{enumerate}
-
-    \item mkdir /usr/local/libautoti-1.1
-
-    \item cd /usr/local/libautoti-1.1
-
-    \item tar xovfz /root/libautoti-1.1.tar.gz
-
-    \item ./configure version=sequential
-
-    \item make install
-
-\end{enumerate}
-
-Note that the \verb"configure" script can accept an option,
-\verb"CXX", that can be used to specify a different C++ compiler
-with respect to that automatically found by the configure script.
-So, if you prefer to use the Intel C++ compiler \verb"icc" instead
-of the g++ one (which is generally the default C++ compiler in GNU
-systems), you can modify the above point 4 as follows:
-\begin{itemize}
-    \item ./configure CXX=icc version=sequential
-\end{itemize}
-Obviously, you must have the Intel compiler installed on your
-system! In order to test the installation, enter into the
-\verb"test/sequential" directory and type the command ./life. You
-should obtain the following output:
-
-\begin{verbatim}
-   # ./life
-   0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 1 1 0 0
-   0 0 0 0 0 0 1 0 1 0
-   0 0 0 0 0 0 1 0 0 0
-   0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0
-\end{verbatim}
-
-\subsection{Parallel Installation}\label{sec:parallel_installation}
-
-In order to obtain a parallel version of \verb"libautoti", please
-follow the steps below, which refer to the MPICH2 implementation
-of MPI:
-
-\begin{enumerate}
-
-    \item mkdir /usr/local/libautoti-1.1
-
-    \item cd /usr/local/libautoti-1.1
-
-    \item tar xovfz /root/libautoti-1.1.tar.gz
-
-    %\item ./configure mpiinc=\emph{your-mpi-include-directory} mpilib=\emph{your-mpi-library}
-
-    \item ./configure CXX=mpicxx
-
-    \item make install
-
-\end{enumerate}
-
-If you use the MPICH1 implementation of MPI, replace the point 4
-with the following:
-
-\begin{itemize}
-    \item ./configure mpiinc=\emph{your-mpi-include-directory} mpilib=\emph{your-mpi-library}
-\end{itemize}
-
-Note that, the configure script accepts some options. In
-particular, \verb"mpiinc" allows to specify the directory in which
-the include files of MPI are located, while \verb"mpilib" is the
-MPI library. In a typical Linux system having the version 1.2.5 of
-the MPICH implementation of MPI installed in the
-/usr/local/mpich-1.2.5 directory, the previous point could be the
-following:
-
-\begin{itemize}
-    \item ./configure mpiinc=/usr/local/mpich-1.2.5/include/ $\backslash
-    $ \\ mpilib=/usr/local/mpich-1.2.5/lib/libmpich.a
-\end{itemize}
-
-Moreover, the option \verb"CXX" is useful to specify a different
-C++ compiler, as before. So, if you prefer to use the Intel C++
-compiler \verb icc instead of the g++ ones (which is generally the
-default C++ compiler in GNU systems), you can modify the above
-point as follows:
-
-\begin{itemize}
-    \item ./configure mpiinc=/usr/local/mpich-1.2.5/include/ $\backslash$ \\ mpilib=/usr/local/mpich-1.2.5/lib/libmpich.a $\backslash$ \\CXX=icc
-\end{itemize}
+\subsection{cmake options}
 
 
-In order to test the installation, go to the \verb"test/parallel"
-directory and type the command \verb"mpiexec" \verb"-n 2 ./life"
-(or \verb"mpirun -np 2 ./life", if you are using MPICH1). You
-should obtain the same output of the sequential test (cf. section
-above). Note that the command to execute a parallel program
-generally depends on the particular MPI implementation and
-parallel computer used. In our case, we refer to the MPICH2
-(MPICH1) implementation in which a parallel program is executed by
-means of the mpiexec (mpirun) script, where the -n (-np) option
-allows to specify the number of processes to be executed.
 
 
 \section{Web Page and Bug Reporting}
