@@ -1,0 +1,113 @@
+\chapter{Quick Start}
+
+If you wish to get started by just typing a few lines and running
+an example, this section is for you. In any case, more details on
+the installation process are given in the next chapter.
+
+We assume you have downloaded the \verb"libautoti-1.1.tar.gz"
+compressed archive into your home directory from the
+\verb"libautoti" official website
+\url{http://autoti.mat.unical.it}.
+
+To build \verb"libautoti" in \verb"/usr/local/libautoti-1.1" and
+run a test example, follow the instructions below as root user.
+
+
+\section{Sequential version}
+
+\begin{itemize}
+
+    \item mkdir /usr/local/libautoti-1.1
+
+    \item cd /usr/local/libautoti-1.1
+
+    \item tar xovfz \$HOME/libautoti-1.1.tar.gz (\$HOME
+represents the user's home directory)
+
+    \item ./configure version=sequential
+
+    \item make install
+
+\end{itemize}
+
+
+To verify the correctness of the installation, go to the
+\verb"test/sequential" directory and execute the \verb"life"
+program by typing \verb"./life" at the shell prompt. As a result,
+in case of a correct installation, you should obtain the following
+output:
+
+\begin{verbatim}
+   # ./life
+   0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 1 1 0 0
+   0 0 0 0 0 0 1 0 1 0
+   0 0 0 0 0 0 1 0 0 0
+   0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0
+\end{verbatim}
+
+\section{Parallel version}
+
+To build the parallel version of \verb"libautoti", a
+message-passing library is required. The following steps refer
+to MPICH2
+(\url{http://www.mcs.anl.gov/research/projects/mpich2/}), a freely
+available, portable implementation of MPI.
+
+\begin{itemize}
+
+    \item mkdir /usr/local/libautoti-1.1
+
+    \item cd /usr/local/libautoti-1.1
+
+    \item tar xovfz \$HOME/libautoti-1.1.tar.gz (\$HOME
+represents the user's home directory)
+
+    \item ./configure CXX=mpicxx
+
+    \item make install
+
+\end{itemize}
+
+
+To verify the installation, go to the \verb"test/parallel"
+directory and execute the \verb"life" program by typing
+\verb"./mpiexec -n 2 ./life" at the shell prompt. As a result, in
+case of a correct installation, you should obtain the same output
+as of the sequential test.
+
+The following building steps refer to the standard MPICH1
+(\url{http://www-unix.mcs.anl.gov/mpi/mpich1/}) implementation of
+MPI.
+
+\begin{itemize}
+
+    \item mkdir /usr/local/libautoti-1.1
+
+    \item cd /usr/local/libautoti-1.1
+
+    \item tar xovfz \$HOME/libautoti-1.1.tar.gz (\$HOME
+represents the user's home directory)
+
+    \item ./configure mpiinc=\emph{your-mpi-include-directory} mpilib=\emph{your-mpi-library} (where \emph{your-mpi-include-directory} could
+    be /usr/local/mpich-1.2.5/include/, as \emph{your-mpi-library} be /usr/local/mpich-1.2.5/lib/libmpich.a)
+
+    \item make install
+
+\end{itemize}
+
+To verify the installation go to the \verb"test/parallel"
+directory and execute the \verb"life" program by typing
+\verb"./mpirun -np 2 ./life" at the shell prompt. Even in this
+case, you should obtain the same output of the sequential test.
+
+Note that the execution step is completely dependent on the MPI
+implementation. These examples use the mpiexec and mpirun scripts
+that are distributed with the MPICH2 and MPICH1, respectively.
+Other MPI implementations may have other ways to specify the
+number of processes to use.
