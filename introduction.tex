@@ -1,3 +1,38 @@
 \chapter{Introduction}
 
+Macroscopic Cellular Automata (MCA) represent a parallel computing
+methodology based on the Cellular Automata paradigm for modelling
+complex systems at a macroscopic level of description. Well known
+examples of applications include the simulation of natural phenomena
+such as lava and debris flows, forest fires, agent based social
+processes such as pedestrian evacuation and highway traffic problems,
+besides many others.
 
+Many Cellular Automata software environments and libraries exist.
+However, when non-trivial modelling is needed, only not open source
+software are generally available. This is particularly true for
+Macroscopic Cellular Automata, for which only a significant example of
+non free software exists, namely the CAMELot Cellular Automata
+Simulation Environment.
+
+In order to fill this deficiency in the world of free software, the
+\verb'OpenCAL' C Library has been developed. Similarly to CAMELot, it
+allows for a simple and concise definition of both the transition
+function and the other characteristics of the cellular automaton
+definition. Moreover, it allows for both sequential and parallel
+execution, both on CPUs and GPUs (thanks to the adoption of the OpenMP
+and OpenCL, respectively), hiding most parallel implementation issues
+to the user.
+
+The library has been tested on both CPUs anf GPUs by considering
+different Cellular Automata, including the well known Conway's Game of
+Life and the Macroscopic Cellular Automata model SciddicaT for the
+simulation of debris flows. Results have demonstrated the goodness the
+new library both in terms of usability and performance.
+
+In the present release 1.0 of the library, 2D and 3D cellular automata
+can be defined. The library also offers diverse facilities (e.g. it
+provides many pre-defined cell's neighborhoods), allows to explicitate
+the simulation main cycle and provides a dynamic load balancing
+algorithm. Moreover, an interactive 2D/3D visualization system was
+developed, based on OpenGL compatibility profile.
