@@ -1,4 +1,5 @@
 \documentclass{memoir}
+\usepackage{courier}
 \usepackage{stmaryrd}
 \usepackage{lscape}
 \usepackage{hyperref}
@@ -24,13 +25,40 @@
 }
 
 \usepackage{xcolor}
+\usepackage{pxfonts}
 \usepackage{listings}
-\lstset{language=C++}
-
-\lstset{basicstyle=\ttfamily,
+\lstset{language=C}
+\lstset{
+%  basicstyle=\tiny,
+%  basicstyle=\ttfamily,
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
   showstringspaces=false,
-  commentstyle=\color{red},
-  keywordstyle=\color{blue}
+  numbers=left,
+  commentstyle=\color{darkgray},
+  keywordstyle=\color{blue},
+  keywordstyle=[2]\color{teal},   % cyan or teal can also be a good choice, use \bfseries for bold
+  frame=single,                   % adds a frame around the code
+  tabsize=2,                      % sets default tabsize to 2 spaces
+  captionpos=b,                   % sets the caption-position to bottom
+  morekeywords=[2]{               % if you want to add more keywords to the set
+    calAddElementaryProcess2D,
+    calAddSubstate2Di,
+    calCADef2D,
+    calFinalize2D,
+    calGet2Di,
+    calGetX2Di,
+    calInit2Di,
+    calInitSubstate2Di,
+    CALModel2D,
+    CALRun2D,
+    calRun2D,
+    calRunDef2D,
+    calRunFinalize2D,
+    calSaveSubstate2Di,
+    calSet2Di,
+    CALSubstate2Di,
+    }                
 }
 
 \oddsidemargin80pt      %commentare se si stampa solo fronte
@@ -41,8 +69,8 @@
 
 \frontmatter
 
-%\input{frontespizio.tex}
-%\input{ack.tex}
+\input{frontespizio.tex}
+\input{ack.tex}
 
 \newpage
 
@@ -52,16 +80,13 @@
 
 \pagenumbering{arabic}
 
-%\input{introduction.tex}
-%\input{quickstart.tex}
-%\input{installation.tex}
+\input{introduction.tex}
+\input{quickstart.tex}
+\input{installation.tex}
 \input{OpenCAL.tex}
-%\input{OpenCAL-OMP.tex}
-%\input{life.tex}
-%\input{life3D.tex}
-%\input{sciddica.tex}
-%\input{appendix.tex}
-
+\input{OpenCAL-OMP.tex}
+\input{OpenCAL-CL.tex}
+\input{OpenCAL-GL.tex}
 \backmatter
 
 \end{document}
