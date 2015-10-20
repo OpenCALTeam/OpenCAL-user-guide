@@ -23,5 +23,4 @@
 *.synctex.gz
 
 # other stuff to be ignored
-*.pdf
 build/
