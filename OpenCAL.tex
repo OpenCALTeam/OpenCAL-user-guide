@@ -291,7 +291,7 @@ $$= \{(i, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j)\}$$
 The Cartesian product of the substates defines the overall set of
 state $Q$:
 
-$$Q = Q_z \times Q_h \times Q_o^5$$
+$$Q = Q_z \times Q_h \times Q_o^4$$
 
 \item   $P$ is set of global parameters ruling the CA dynamics:
 
@@ -304,7 +304,7 @@ $$Q = Q_z \times Q_h \times Q_o^5$$
   transition function. It is composed by two elementary processes:
 \begin{itemize}
 \item $\sigma_1 : (Q_z \times Q_h)^5 \times p_\epsilon \times
-  p_r\shortrightarrow Q_o^5$ determines the outflows from the central
+  p_r\shortrightarrow Q_o^4$ determines the outflows from the central
   cell to the neighboring ones by applying the \emph{minimization
     algorithm of the differences}. In brief, a preliminary control
   avoids outflows computation for those cells in which the amount of
@@ -426,7 +426,7 @@ which the stop condition can be defined.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=8cm]{./images/OpenCAL/opencal_main_loop.pdf}
+  \includegraphics[width=9.5cm]{./images/OpenCAL/opencal_main_loop.pdf}
   \caption{OpenCAL main loop chart.}
   \label{fig:opencal_main_loop}
 \end{figure}
