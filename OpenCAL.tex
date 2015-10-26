@@ -411,13 +411,14 @@ its neighbours, respectively. Moreover, the \verb'calSet2Dr()'
 function, updates the central cell's state.
 
 Figure \ref{fig:opencal_main_loop} shows the OpenCAL main loop. Before
-entering the loop, the init function is executed. Afterwards, while
-the current step is lower or equal to the final step of computatio (or
-this latter was set to \verb'CAL_RUN_LOOP'), elementary processes are
-executed cocurrently (remember that Cellular Automata are intrinsic
-parallel computational model). In this cycle, substates are updated at
-the end of the application of each elementary process, while just
-before the end of the computational step, the steering function is
+entering the loop, if defined, the init function is
+executed. Afterwards, while the current step is lower or equal to the
+final step of computation (or this latter is set to
+\verb'CAL_RUN_LOOP'), elementary processes are executed cocurrently
+(remember that Cellular Automata are intrinsic parallel computational
+model). In this cycle, substates are updated at the end of the
+application of each elementary process, while just before the end of
+the computational step, if defined, the steering function is
 executed. At the end of the computational step, a stop condition is
 checked, which can stop the simulation before the last step is
 reached. In order to define such a stop condition, the user can use
