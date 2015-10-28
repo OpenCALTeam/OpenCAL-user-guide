@@ -647,4 +647,173 @@ single core. The simulation lasted a total of 22 seconds, versus 172
 seconds obtained for the basic (non-optimized) version, whihc is about
 8 times faster.
 
-\subsection{SciddicaT unsafe}
+\subsection{SciddicaT further optimized}
+OpenCAL allows for further optimization of the SciddicaT debris flows
+simulation model by means of the so called \emph{unsafe
+  operations}. In fact, in some cases, it is possible to consider an
+extended definition of the computational model, allowing for
+operations that are not strictly allowed by the formal definition of
+Cellular Automata. in particular, we will allow the transition
+function to update the state of the neighbouring cells, while the CA
+only allows for state change for the central cell. In this case, we
+will talk about \emph{XCA eXtended Cellular Automata}. Obviously, the
+extended CA must be equivalent to the original one in terms of
+computational results.
+
+In the specific case of SciddicaT, when an outflow is computed from
+the central cell towards a neighbour, the flow can be immediatly
+subtracted from the central cell and added to the neighbour. Note
+that, this does not compromise the state of the system at the current
+step of computation as updated values are written to the \emph{next}
+computational plane. Thus, the \emph{current} computational plane is
+not corrupted by the extended operation. By introducing such feature,
+ouflows don't need to be saved into otflows substates anymore, as they
+are used to account mass exchange directly during ouflows
+computation. As you can figure out, this can give rise to a further
+performace improvement of the application. The SciddicaT further
+otimized XCA model is formally defined as:
+
+
+$$SciddicaT = < R, A, X, Q , P, \sigma  >$$
+
+where:
+
+\begin{itemize}
+
+\item $R$ is the set of points, with integer coordinates, which
+  defines the 2-dimensional cellular space over which the phenomenon
+  evolves. The generic cell in $R$ is individuated by means of a
+  couple of integer coordinates $(i, j)$, where $0 \leq i < i_{max}$
+  and $0 \leq j < j_{max}$.
+
+\item $A \subseteq R$ is the set of active cells, i.e. those cells
+  actually involved in computation.
+
+\item $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0)\}$ is the von
+  Neumann neighborhood relation, a geometrical pattern which
+  identifies the cells influencing the state transition of the central
+  cell. The neighborhood of the generic cell of coordinate $(i, j)$ is
+  given by
+$$V(X, (i, j)) =$$
+$$= \{(i, j)+(0,0), (i, j)+(-1, 0), (i, j)+(0, -1),
+(i, j)+(0, 1), (i, j)+(1, 0)\} =$$
+$$= \{(i, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j)\}$$
+
+\item $Q$ is the set of cell states; it is subdivided in the following
+  substates:
+
+\begin{itemize}
+    \item   $Q_z$ is the set of values representing the topographic altitude (i.e. elevation);
+    \item   $Q_h$ is the set of values representing the debris thickness;
+\end{itemize}
+
+The Cartesian product of the substates defines the overall set of
+state $Q$:
+
+$$Q = Q_z \times Q_h$$
+
+\item   $P$ is set of global parameters ruling the CA dynamics:
+
+\begin{itemize}
+    \item   $p_\epsilon$ is the parameter which specifies the thickness of the debris that cannot leave the cell due to the effect of adherence;
+    \item   $p_r$ is the relaxation rate parameter, which affects the size of outflows (cf. section above).
+\end{itemize}
+
+\item $\sigma : A \times Q^5 \shortrightarrow Q$ is the deterministic cell
+  transition function. It is composed by two elementary processes:
+\begin{itemize}
+\item $\sigma_1 : A \times (Q_z \times Q_h)^5 \times p_\epsilon \times
+  p_r\shortrightarrow (A \times Q_h)^5$ determines the outflows from
+  the central cell to the neighboring ones by applying the
+  \emph{minimization algorithm of the differences} and updates debris
+  thickness inside the central cell and its neighbour accordingly. It
+  also adds the neighbouring cells receining a flow to the set A of the
+  active cells.
+
+\item $\sigma_2: A \times Q_h \times p_\epsilon \shortrightarrow A$ removes the
+  cell from the set A of the active cells if the debris thickness
+  inside the cell is lower than or equal to the $p_\epsilon$
+  threshold.
+
+
+\end{itemize}
+\end{itemize}
+
+Note tha, only the topographic altitude and the debris thicness are
+now considered as model's substates, as the four outflows substates
+are no longer needed. Moreover, the number of elementary process now
+considered is two, instead of three for the previous versions of
+SciddicaT. The OpenCAL implementation of the further optimized
+SciddicaT debris flows model is shown in Listing
+\ref{lst:cal_sciddicaT-unsafe}.
+
+\lstinputlisting[label=lst:cal_sciddicaT-unsafe, caption=An OpenCAL implementation of the SciddicaT further optimized debris flows simulation model.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe/source/sciddicaT.c}
+
+As you can see, the definitions of CA and simulation objects don't
+change from the previous implementation (lines 131-132), while only
+two elementary processes are considered (lines 135-136). In
+particular, the firt call to \verb'calAddElementaryProcess2D()'
+registers the callbak function implementing the $\sigma_1$ elementary
+process. It computes outflows from the (active) central cell to its
+neighbours (line 83) and updates the debris tickness in both the
+central cells and neighbour receiving a flow (lines 84-85). Moreover,
+neighbouring cells receiving a flow are added to the set A of active
+cells (line 88) and therefore will be considered in computation in the
+subsuequent elementary process ($\sigma_2$) in the current step of
+computation\footnote{This is due to the fact that a substates' update
+  is performed after the first elementary process has been applied to
+  all the (active) cells of the cellular space. This behaviour is set
+  by menas of the \texttt{CAL\_UPDATE\_IMPLICIT} parameter used in the
+  definition of the simulation object at line 132 of Listing
+  \ref{lst:cal_sciddicaT-unsafe}.} and also in the subsequent
+computational steps. In particular, the \verb'calSetX2Dr()'
+\emph{unsafe} function is used to update the derbis thickess of the
+neighbouring cells receiving a flow, while the
+\verb'calAddActiveCellX2D()' one is used to add a neighbouring cells
+receiving a flow to the set $A$ of active cells.  The $\sigma_2$
+elementary process, simply remove inactive cells from $A$ (lines
+95-86), as in the previous example.
+
+
+Substates are added to the CA at lines 139-140. Here, note that the
+firt substate, $Q_z$, is added by menas of the
+\verb'calAddSingleLayerSubstate2Dr()' function. It is here considered
+to allocate memory only for the \emph{current} computing plane. In
+fact, as you can see, the topographic altitude never changes during
+computation inside the cells and, therefore, it is never updated. This
+allows for memory space allocation optimization. In effect, this is
+not entirely true, as the value of $Q_z$ is changed by the
+\verb'sciddicaT_simulation_init()' initialization function at line
+117. Here, we are forced to use the \verb'calSetCurrent2Dr()'
+function, instead of the usual \verb'calSet2Dr()' since this latter
+would update the \emph{next} computational plane of the $Q_z$
+substate, which is not present here as the substated is of single-lyer
+type.
+
+Regarding the computational preformace, the same simulation shown in
+Figure \ref{fig:sciddicaT} was executed on the same Intel Core
+i7-4702HQ CPU @ 2.20GHz processor by exploiting only a single core, as
+we already done with the previous implementations of SciddicaT. The
+simulation lasted a total of 11 seconds, versus 22 seconds obtained
+for the optimized version and 172 seconds for the basic
+(non-optimized) version, resulting in 2 time faster than the optimized
+version and about 16 times faster with respect to the optimized
+one. Table \ref{tab:speedup} resumes the computational performace of
+the above illustraed versions of SciddicaT.
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|c|c}
+    \hline
+    CA model & Elapsed time [s] & Speedup \\
+    \hline
+    \hline
+    SciddicaT           & 172 & 1\\
+    SciddicaT optimized & 22  & 8\\
+    SciddicaT unsafe    & 11  & 16\\
+    \hline
+  \end{tabular}
+  \caption{Computational performace of the three different
+    implementations of the SciddicaT debris flows model.}
+  \label{tab:speedup}
+\end{table} 
