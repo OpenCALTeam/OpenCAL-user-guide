@@ -237,11 +237,12 @@ Figures \ref{fig:life_0000} and \ref{fig:life_LAST} show the initial and final c
 
 \section{A more complex example}
 
-In the previous chapter, the OpenCAL implementation of a simple
-cellular automaton, namely the Conway’s Game of Life, was
-presented. In this chapter you will deal with a more complex example
-concerning the implementations of the SciddicaT Complex Cellular
-Automata (CCA) model for landslide simulation.
+In the previous section we illustrated an OpenCAL implementation of a
+simple cellular automaton, namely the Conway’s Game of Life. Here, we
+will deal with a more complex example concerning the implementations
+of the SciddicaT Cellular Automata model for landslide
+simulation. Different versions will be presented, ranging from a naiv
+to a fully optimized implementation.
 
 \subsection{SciddicaT}
 Sciddica is a family of bi-dimensional CCA debris flow models,
@@ -267,19 +268,29 @@ where:
   defines the 2-dimensional cellular space over which the phenomenon
   evolves. The generic cell in $R$ is individuated by means of a
   couple of integer coordinates $(i, j)$, where $0 \leq i < i_{max}$
-  and $0 \leq j < j_{max}$.
+  and $0 \leq j < j_{max}$. The firt coordinate, $i$, represents the
+  row, while the second, $j$, the column. The cell at coodinates
+  $(0,0)$ is located at the top-left corner of the computational grid.
 
 \item $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0)\}$ is the von
   Neumann neighborhood relation, a geometrical pattern which
   identifies the cells influencing the state transition of the central
   cell. The neighborhood of the generic cell of coordinate $(i, j)$ is
   given by
-$$V(X, (i, j)) =$$
+$$N(X, (i, j)) =$$
 $$= \{(i, j)+(0,0), (i, j)+(-1, 0), (i, j)+(0, -1),
 (i, j)+(0, 1), (i, j)+(1, 0)\} =$$
 $$= \{(i, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j)\}$$
 
-\item $Q$ is the set of cell states; it is subdivided in the following
+Here, a subscript operator can be used to index cells belonging to the
+neighbourhood. Let $|X|$ be the number of elements in X, and $n \in
+\mathbb{N}$, $0 \leq n < |X|$; the notation
+
+$$N(X, (i, j), n)$$
+
+represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby, $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1) = (i-1, j)$, i.e. the first neighbour, and so on. 
+  
+\item $Q$ is the set of cell states. It is subdivided in the following
   substates:
 
 \begin{itemize}
@@ -292,8 +303,12 @@ The Cartesian product of the substates defines the overall set of
 state $Q$:
 
 $$Q = Q_z \times Q_h \times Q_o^4$$
+so that the cell state is specified by the following sixtuple:
 
-\item   $P$ is set of global parameters ruling the CA dynamics:
+$$ q = (q_z, q_h, q_{o_0}, q_{o_1}, q_{o_2}, q_{o_3})$$
+In particular, $q_{o_0}$ represents the outflows from the central cell towards the neighbour 1, $q_{o_1}$ the outflow towards the neighbour 2, and so on.
+
+\item   $P$ is set of parameters ruling the CA dynamics:
 
 \begin{itemize}
     \item   $p_\epsilon$ is the parameter which specifies the thickness of the debris that cannot leave the cell due to the effect of adherence;
@@ -301,7 +316,8 @@ $$Q = Q_z \times Q_h \times Q_o^4$$
 \end{itemize}
 
 \item $\sigma : Q^5 \shortrightarrow Q$ is the deterministic cell
-  transition function. It is composed by two elementary processes:
+  transition function. It is composed by two elementary processes,
+  listed below in the same order they are applied:
 \begin{itemize}
 \item $\sigma_1 : (Q_z \times Q_h)^5 \times p_\epsilon \times
   p_r\shortrightarrow Q_o^4$ determines the outflows from the central
@@ -309,19 +325,23 @@ $$Q = Q_z \times Q_h \times Q_o^4$$
     algorithm of the differences}. In brief, a preliminary control
   avoids outflows computation for those cells in which the amount of
   debris is smaller or equal to $p_\epsilon$, acting as a
-  simplification of the viscosity effect. Thus, by means of the
-  minimization algorithm, outflows $q_o(0,i) \; (i=0,\ldots,3)$ are
-  evaluated and the substates $Q_o^4$ accordingly updated.
-  Eventually, a relaxation rate factor, $p_r \in \; ]0,1]$, is
-      considered in order to obtain the local equilibrium condition in
-      more than one CA step. This can significantly improve the
-      realism of model as, in general, more than one step may be
-      needed to displace the proper amount of debris from a cell
-      towards the adjacent ones. In this case, if $f(0,i) \; (i=0,
-      \ldots, 3)$ represent the outgoing flows towards the 4 adjacent
-      cells, as computed by the minimization algorithm, the resulting
-      outflows are given by $q_o(0,i)=f(0,i) \cdot p_r \; (i=0,
-      \ldots, 3)$.
+  simplification of the adherence effect. Thus, by means of the
+  minimization algorithm, outflows $q_o(0,m) \; (m=0,\ldots,3)$ from
+  the central cell towards its four adjecent cells are evaluated, and
+  the $Q_o^4$ substates accordingly updated. Note that, $q_o(0,0)$
+  represents the aoutflow from the central cell towards the neighbour
+  1, $q_o(0,1)$ the aoutflow towards the neighbour 2, and so on. In
+  general, $q_o(0,m)$ represnets the outflows from the central cell
+  towards the $n=(m+1)^{th}$ neighbouring cell. Eventually, a
+  relaxation rate factor, $p_r \in \; ]0,1]$, is considered in order
+      to obtain the local equilibrium condition in more than one CA
+      step. This can significantly improve the realism of model as, in
+      general, more than one step may be needed to displace the proper
+      amount of debris from a cell towards the adjacent ones. In this
+      case, if $f(0,m) \; (i=0, \ldots, 3)$ represent the outgoing
+      flows towards the 4 adjacent cells, as computed by the
+      minimization algorithm, the resulting outflows are given by
+      $q_o(0,m)=f(0,m) \cdot p_r \; (i=0, \ldots, 3)$.
 
       %% , while the amount of debris remaining in the central cell is
       %% obtained as: $$h_r(0) = q_0(0,0) = h(0) - \sum_{i=1}^4
@@ -329,43 +349,42 @@ $$Q = Q_z \times Q_h \times Q_o^4$$
 
 \item $\sigma_2: Q_h \times (Q_o^4)^4 \shortrightarrow Q_h$ determines
   the value of debris thickness inside the cell by considering mass
-  exchange in the cell neighborhood: $h'(0) = h(0) + \sum_{i=0}^3
-  (q_o(0,i) - q_o(i,0))$. Here, $h'(0)$ is the new debris
-  thickness inside the cell, while $q_o(i,0)$ represents the inflow from
-  the $i^{th}$ adjacent cell. Note that no parameters are involved in
+  exchange in the cell neighborhood: $h'(0) = h(0) + \sum_{m=0}^3
+  (q_o(0,m) - q_o(m,0))$. Here, $h'(0)$ is the new debris
+  thickness inside the cell, while $q_o(m,0)$ represents the inflow from
+  the $n=(m+1)^{th}$ neighbouring cell. No parameters are involved in
   this elementary process.
 
 \end{itemize}
 \end{itemize}
 
-\subsection{An OpenCAL implementation of SciddicaT}
-In the following, an OpenCAL implementation of SciddicaT is
-presented. In particular, the CA definition and the transition
-function are reported.
+In the following Listing \ref{lst:cal_sciddicaT}, an OpenCAL
+implementation of SciddicaT is shown.
 
 \lstinputlisting[label=lst:cal_sciddicaT, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model.]{../opencal/OpenCAL/examples/cal_sciddicaT/source/sciddicaT.c}
 
-As for the case of Game of Life, the CCA model and the simulation
+As for the case of Game of Life, the CA model and the simulation
 objects are declared as global variables (lines 22 and 35,
 respectively), and defined later into the main function (lines 147 and
 148, respevctively). As you can see, the 2D cellular space is a grid
-of \verb'ROWS' rows times \verb'COLS' columns cells (cf. definitions
-at lines 10-11), while the von Neumann neighbourhood is
-adopted. Cellular space is still toroidal, as in Life, and no
-optimization is considered. Regarding the simulation object, a total
-of \verb'STEPS' steps (i.e. 4000 steps - cf. definition at line 14)
-are set, and implicit substates updating considered.
+of \verb'ROWS' rows times \verb'COLS' columns cells, corresponding to
+$i_{max}$ and $j_{max}$ of the formal definition, respectively
+(cf. lines 10-11), while the von Neumann neighbourhood is adopted. The
+cellular space is still toroidal, as in Life, and no optimization is
+considered. Regarding the simulation object, a total of \verb'STEPS'
+steps (i.e. 4000 steps - cf. line 14) are set, and implicit substates
+updating considered.
 
 Substates and parameters are grouped into two different C structures
 (lines 24-28 and 30-33, respectively). Substates are therefore bound to
-the CCA context by means of the \verb'calAddSubstate2Dr' function
+the CA context by means of the \verb'calAddSubstate2Dr()' function
 (lines 155-160), as well as elementary processes are defined as
-collback functions by means of the \verb'calAddElementaryProcess2D'
+collback functions by means of the \verb'calAddElementaryProcess2D()'
 function (lines 151-152).
 
 The topographic altitude and debris thickness substates are
 initialized from files through the \verb'calLoadSubstate2Dr()'
-function (lines 163-164), while the remaining initial state of the CCA
+function (lines 163-164), while the remaining initial state of the CA
 is set by means of the \verb'calRunAddInitFunc2D()' function. It
 registers the \verb'sciddicaT_simulation_init()' callback, whic is
 executed once before the execution of the simulation loop, in which
@@ -384,20 +403,21 @@ initializes the debris flow source by simply subtracting the source's
 debris thickness to the topographic altitude. For this purpose, a
 nested double for is executed to check the debris thickness in each
 cell of the cellular space. Here, the \verb'sciddicaT->rows' and
-\verb'sciddicaT->cols' members of the CCA object are used, which give
-the cellular spece's number of rows and columns. Still, the
-\verb'calGet2Dr()' and \verb'calSet2Dr()' functions are here employed
-to read/update substates values inside the cells.
+\verb'sciddicaT->cols' members of the CA object are used, which
+represent the cellular spece's numbers of rows and columns,
+respectively. Still, the \verb'calGet2Dr()' and \verb'calSet2Dr()'
+functions are here employed to read/update substates' values inside
+the cells.
 
-Statement at line 168 defines a \emph{steering} callback function by
-means of the \verb'calRunAddSteeringFunc2D()' function. Steering is
-executed at the end of each computational step (i.e. after all the
-elementary processe have been applied to each cell of the cellular
-space), and can perform global operations over the cellular space. In
-this case, the \verb'sciddicaT_simulation_init()' callback function is
-registered; it must return void and takes a pointer to a simulation
-object as function parameter. It simply reset (to zero) the outflows
-everywere through the \verb'calInitSubstate2Dr()' function.
+Line 168 defines a \emph{steering} callback by
+the \verb'calRunAddSteeringFunc2D()' function. Steering is executed at
+the end of each computational step (i.e. after all the elementary
+processe have been applied to each cell of the cellular space), and
+can perform global operations over the cellular space. In this case,
+the \verb'sciddicaT_simulation_init()' callback is registered; it must
+return void and takes a pointer to a simulation object as function
+parameter. It simply reset (to zero) the outflows everywere through
+the \verb'calInitSubstate2Dr()' function.
 
 The function \verb'calRun2D()' (line 171) eneters the OpenCAL
 simulation loop, which exectues a totoal of 4000 steps (cf. lines 14
@@ -408,12 +428,13 @@ previously allocated memery is released (lines 179-180).
 As regards the elementary processes, the first one, $\sigma_1$, is
 defined at lines 38-88, while the second, $\sigma_2$, al lines
 91-101. In both cases, the \verb'calGet2Dr()' \verb'calGetX2Dr()'
-functions are employed to get subste values for the central cell and
+functions are employed to get substes' values for the central cell and
 its neighbours, respectively. Moreover, the \verb'calSet2Dr()'
-function, updates the central cell's state. Figure \ref{fig:sciddicaT}
-shows the SciddicaT simulation of the 1992 Tessina (Italy)
-landslide. Both the initial landslide source and the final flow path
-configruation are shown.
+function, updates the central cell's state.
+
+Figure \ref{fig:sciddicaT} shows the SciddicaT simulation of the 1992
+Tessina (Italy) landslide. Both the initial landslide source and the
+final flow path configruation are shown.
 
 \begin{figure}[htbp]
   \centering
@@ -432,9 +453,9 @@ configruation are shown.
   \label{fig:sciddicaT}
 \end{figure}
 
-As regards the computational preformace, the simulation shown in
-Figure \ref{fig:sciddicaT} was executed on a Intel Core i7-4702HQ CPU
-@ 2.20GHz by exploiting only a single core. The simulation lasted a
+As regards computational preformace, the simulation shown in Figure
+\ref{fig:sciddicaT} was executed on a Intel Core i7-4702HQ CPU @
+2.20GHz by exploiting only a single core. The simulation lasted a
 total of 172 seconds for executing a total of 4000 compuational steps.
 
 Figure \ref{fig:opencal_main_loop} shows the OpenCAL main loop. Before
@@ -442,26 +463,29 @@ entering the loop, if defined, the init function is
 executed. Afterwards, while the current step is lower or equal to the
 final step of computation (or this latter is set to
 \verb'CAL_RUN_LOOP'), elementary processes are executed
-cocurrently \footnote{On the serial version of OpenCAL, parallelism is
-  simulated by considering two different computing planes. The first
-  one, that we will call \emph{current}, is used to read states for
-  the central cell and its neighbours, while the second, that we will
-  call \emph{next}, is used to update the new state for the central
-  cell. When all the cells have been processed, the \emph{next} plane
-  is assumed as \emph{current} and the old \emph{current} as
-  \emph{next} and the process is reiterated. In this manner, each cell
-  change its states on the basis of the states of it neighbourhood at
-  the current step of computation. Even in the case more processing
-  units are used to compute the next state, which is the case of
-  OpenCAL-OMP and OpenCAL-CL, the two computing planes are manteined,
-  but more cells are updated simltaneously}. In this cycle, substates
-are updated at the end of the application of each elementary process,
-while just before the end of the computational step, if defined, the
-steering function is executed. At the end of the computational step, a
-stop condition is checked, which can stop the simulation before the
-last step is reached. In order to define such a stop condition, the
-user can use the \verb'stopCondition()' function, which registers a
-callback in which the stop condition can be defined.
+cocurrently \footnote{On the serial version of OpenCAL, implicit
+  parallelism is obtained by exploiting the two different computing
+  planes built into OpenCAL's substates. The first one, that we will
+  call \emph{current}, is used to read substates's values for the
+  central cell and its neighbours, while the second, that we will call
+  \emph{next}, is used to update the new state for the central
+  cell. When all the cells have been processed and the new state
+  values updated, computing planes are switched, i.e. the \emph{next}
+  plane is assumed as \emph{current} and the \emph{current} as
+  \emph{next}, and the process is reiterated. In this manner, the
+  \emph{current} computing plane is not \emph{corrupted} during a
+  computational step, being new values written to the \emph{next}
+  plane. Note that, even in the case more processing units are used to
+  compute the next CA state and more cells are updated simltaneously,
+  which is the case of OpenCAL-OMP and OpenCAL-CL, the two computing
+  planes are manteined}. In this cycle, substates are updated after
+each elementary process has been applyed, while just before the end of
+the computational step, if defined, the steering function is
+executed. At the end of the computational step, a stop condition is
+checked, which can stop the simulation before the last step is
+reached. In order to define such a stop condition, the user can use
+the \verb'stopCondition()' function, which registers a callback in
+which the stop condition can be defined.
 
 \begin{figure}[htbp]
   \centering
@@ -471,13 +495,13 @@ callback in which the stop condition can be defined.
 \end{figure}
 
 
-\subsection{SciddicaT optimized}
-Here we present an improved version of SciddicaT, which takes
-advantage of the built-in OpenCAL active cells optimization. As stated
-above, this optimization is able to restrict computation to a subset
-of cells which are actually involved in the computation, by neglecting
-those cells for which is sure they will not change state to the next
-step (stationary cells).
+\subsection{SciddicaT with active cells optimization}
+Here we present a computationally improved version of SciddicaT, which
+takes advantage of the built-in OpenCAL active cells optimization. As
+stated above, this optimization is able to restrict computation to a
+subset of cells which are actually involved in computation, by
+neglecting those cells for which is sure they will not change state to
+the next step (stationary cells).
 
 In the case of SciddicaT, only cells containing debris and their
 neighbours can change state to the next step, as they can be
@@ -485,25 +509,33 @@ interestefd in mass variation due to otflows and inflows. At the
 beginning of the simulation, we can simply initialize the set of
 active cells to those cells containing debris (i.e. those cells
 forming the initial landslide source). Moreover, we can add to this
-set new cells or remove some ones from it. In the specific case of
-SciddicaT, if an outflow is computed from an active cell towards a
-stationary cell (which, necessarily belongs to its neighbourhood),
-this latter can be added to the set of active cells and considered for
-state change to the next step (in fact, belonging to the set of active
-cells, it will processed). Similarly, if a given active cell looses a
-sufficient amount of debris, it can be eliminated from the set of
-active cells. In the case of SciddicaT, this appens when its thickness
-becomes lower than or euqal to a given threshold (i.e. $p_\epsilon$).
+set new cells or remove some ones from it. Specifically, if an outflow
+is computed from an active cell towards a neighbouring stationary
+cell, this latter can be added to the set of active cells and
+considered for state change by the remaining elementary processes in
+the current step of cmputation (if any), or by the next computational
+step. Similarly, if a given active cell looses a sufficient amount of
+debris, it can be eliminated from the set of active cells. In the case
+of SciddicaT, this appens when its thickness becomes lower than or
+euqal to a given threshold (i.e. $p_\epsilon$).
 
 In order to account for these processes, we have to slightly revise
 the SciddicaT definition. In particular we have to add the set of
 active cells, A. The optimized SciddicaT model is now defined as
-$$SciddicaT = < R, A, X, Q , P, \sigma >$$ where $A \subseteq R$ is
-the set of active cells, while the other components are defned as
-before. Moreover, we have to modify the $\sigma_1$ elementary process
-and also add a new elementary process, $\sigma_3$. Here, we provide
-the new list of elementary processes of SciddicaT, which are now
-applied only to the cells belonging to $A$.
+
+$$SciddicaT = < R, A, X, Q , P, \sigma >$$
+where $A \subseteq R$ is the set of active cells, while the other
+components are defned as before. The transition function is now defined as:
+
+$$\sigma : A \times Q^5 \shortrightarrow Q \times A$$ denoting that it
+is applied to only the cells in $A$ and that it can add/remove active
+cells. More in detail, the $\sigma_1$ elementary process have to
+be modified, as it can activate new cell. Moreover, a new elementary
+process, $\sigma_3$, have to be added in order to remove cells that
+cannot produce outflows during the next computational step due to the
+fact that their debris thickness is negligible. The new sequence of
+elementary processes is listed below, in the same order they are
+applied.
 
 \begin{itemize}
 \item $\sigma_1 : A \times (Q_z \times Q_h)^5 \times p_\epsilon \times p_r
@@ -517,161 +549,178 @@ applied only to the cells belonging to $A$.
   exchange in the cell neighborhood. This elementary process does not
   change with respect to the original version of SciddicaT.
 
-\item $\sigma_3: A \times Q_h \times p_\epsilon \shortrightarrow A$ removes the
-  cell from the set A of the active cells if the debris thickness
-  inside the cell is lower than or equal to the $p_\epsilon$
-  threshold.
+\item $\sigma_3: A \times Q_h \times p_\epsilon \shortrightarrow A$
+  removes a cell from $A$ if its debris thickness is lower than or
+  equal to the $p_\epsilon$ threshold.
 \end{itemize}
 
-In order to implement the SciddicaT optimezed landslide model in
-OpenCAL, we have to chage the definition of the CCA objet and add the
-third elementary process to it. Moreover, also the $\sigma_2$
-elementary process have to be changed. All of this is done in the
-\verb'sciddicaTCADef()' function, that you can see in Listing
-\ref{lst:sciddicaTCADef()}, and on the $\sigma_1$ and $\sigma_3$
-elementary processes, that you can find in Listing
-\ref{lst:sciddica_sigma13}.
+In order to implement the SciddicaT debris flows model in OpenCAL by
+exploiting the active cells optimization, we have to chage the
+definition of the CA objet, by also adding the third $\sigma_3$
+elementary process to it. Moreover, the $\sigma_1$ elementary process
+have to also be changed. A complete implementation of the sactive
+cells optimized version of SciddicaT is shown in Listing
+\ref{lst:cal_Sciddicat-activecells} for the sake of completeness, even
+if only the differences with respect to the original impleme ntation
+are commented.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:sciddicaTCADef(), caption=The sciddicaTCADef() definition function.]
-  // define CCA and simulation objects
-  sciddicaT = calCADef2D (ROWS, COLS, CAL_VON_NEUMANN_NEIGHBORHOOD_2D, CAL_SPACE_TOROIDAL, CAL_OPT_ACTIVE_CELLS);
-  sciddicaTsimulation = calRunDef2D(sciddicaT, 1, CAL_RUN_LOOP, CAL_UPDATE_IMPLICIT);
+\lstinputlisting[label=lst:cal_Sciddicat-activecells, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal/OpenCAL/examples/cal_sciddicaT-activecells/source/sciddicaT.c}
 
-  // add sigma_1, sigma_2 and sigma_3 elementary processes
-  calAddElementaryProcess2D(sciddicaT, sciddicaT_flows_computation);
-  calAddElementaryProcess2D(sciddicaT, sciddicaT_width_update);
-  calAddElementaryProcess2D(sciddicaT, sciddicaT_remove_inactive_cells);
+%% All of this is done in the \verb'sciddicaTCADef()' function,
+%% that you can see in Listing \ref{lst:sciddicaTCADef()}, and on the
+%% $\sigma_1$ and $\sigma_3$ elementary processes, that you can find in
+%% Listing \ref{lst:sciddica_sigma13}.
 
-  // add substates
-  Q.z = calAddSubstate2Dr(sciddicaT);
-  Q.h = calAddSubstate2Dr(sciddicaT);
-  Q.f[0] = calAddSubstate2Dr(sciddicaT);
-  Q.f[1] = calAddSubstate2Dr(sciddicaT);
-  Q.f[2] = calAddSubstate2Dr(sciddicaT);
-  Q.f[3] = calAddSubstate2Dr(sciddicaT);
+%% \begin{lstlisting}[float,floatplacement=H, label=lst:sciddicaTCADef(), caption=The sciddicaTCADef() definition function.]
+%%   // define CCA and simulation objects
+%%   sciddicaT = calCADef2D (ROWS, COLS, CAL_VON_NEUMANN_NEIGHBORHOOD_2D, CAL_SPACE_TOROIDAL, CAL_OPT_ACTIVE_CELLS);
+%%   sciddicaTsimulation = calRunDef2D(sciddicaT, 1, CAL_RUN_LOOP, CAL_UPDATE_IMPLICIT);
 
-  //load configuration
-  sciddicaTLoadConfig();
+%%   // add sigma_1, sigma_2 and sigma_3 elementary processes
+%%   calAddElementaryProcess2D(sciddicaT, sciddicaT_flows_computation);
+%%   calAddElementaryProcess2D(sciddicaT, sciddicaT_width_update);
+%%   calAddElementaryProcess2D(sciddicaT, sciddicaT_remove_inactive_cells);
 
-  //simulation run setup
-  calRunAddInitFunc2D(sciddicaTsimulation, sciddicaTSimulationInit);
-  calRunInitSimulation2D(sciddicaTsimulation);
-  calRunAddSteeringFunc2D(sciddicaTsimulation, sciddicaTSteering);
-  calRunAddStopConditionFunc2D(sciddicaTsimulation, sciddicaTSimulationStopCondition);
-\end{lstlisting}
+%%   // add substates
+%%   Q.z = calAddSubstate2Dr(sciddicaT);
+%%   Q.h = calAddSubstate2Dr(sciddicaT);
+%%   Q.f[0] = calAddSubstate2Dr(sciddicaT);
+%%   Q.f[1] = calAddSubstate2Dr(sciddicaT);
+%%   Q.f[2] = calAddSubstate2Dr(sciddicaT);
+%%   Q.f[3] = calAddSubstate2Dr(sciddicaT);
 
-In particular, the active cells optimization is enableb by the
-parameter \verb'CAL_OPT_ACTIVE_CELLS' at line 2, while the third
-elementary process is added at line 8 of Listing
-\ref{lst:sciddicaTCADef()}. Note also that the
-\verb'calRunInitSimulation2D()' is called at line 23 to initialize the
-simulation. It simply calls the simulation initialization callback
-function, that is registered by means of the
-\verb'calRunAddInitFunc2D()' function at line 22. This is necessary in
-this example becaouse we don't use here the \verb'calRun2D()'
-simulation loop, but we make the simulation loop explicit into the
-idle function of a glut application. If you use the \verb'calRun2D()'
-function, as we did before, you don't need to call
-\verb'calRunInitSimulation2D()'. As you can see, besides the CCA
-object, also the definition of the simulation object has changed,
-being the last step of computation set to \verb'CAL_RUN_LOOP' (line
-3). Using such a pre-defined constant determines an infinite loop. As
-a consequence, the \verb'sciddicaTSimulationStopCondition()' callback
-has been registered to the simulation object by means of the
-\verb'calRunAddStopConditionFunc2D()' function (line 25) to stop the
-simulation\footnote{Such a callback was here introduced to show you
-  how to define a generic stoppig criterion for the simulation, even
-  the defined stopping creiterion is very trivial. It simply becomes
-  true (i.e. the function returns \texttt'CAL\_TRUE', which determines
-  the end of the simulation loop) when a predefined number of steps is
-  reached (i.e. 4000, as before).}. The
-\verb'sciddicaTSimulationStopCondition()' callback function is shown
-in Listing \ref{lst:sciddicaTSimulationStopCondition()}.
+%%   //load configuration
+%%   sciddicaTLoadConfig();
+
+%%   //simulation run setup
+%%   calRunAddInitFunc2D(sciddicaTsimulation, sciddicaTSimulationInit);
+%%   calRunInitSimulation2D(sciddicaTsimulation);
+%%   calRunAddSteeringFunc2D(sciddicaTsimulation, sciddicaTSteering);
+%%   calRunAddStopConditionFunc2D(sciddicaTsimulation, sciddicaTSimulationStopCondition);
+%% \end{lstlisting}
 
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:sciddicaTSimulationStopCondition(), caption=The sciddicaTSimulationStopCondition() callback function defining the simulation stopping criterion for the SciddicaT optimized model.]
-  CALbyte sciddicaTSimulationStopCondition(struct CALModel2D* sciddicaT)
-  {
-    if (sciddicaTsimulation->step >= STEPS)
-      return CAL_TRUE;
-    return CAL_FALSE;
-  }
-\end{lstlisting}
+%% Note also that the \verb'calRunInitSimulation2D()' is called at line
+%% 23 to initialize the simulation. It simply calls the simulation
+%% initialization callback function, that is registered by means of the
+%% \verb'calRunAddInitFunc2D()' function at line 22. This is necessary in
+%% this example becaouse we don't use here the \verb'calRun2D()'
+%% simulation loop, but we make the simulation loop explicit into the
+%% idle function of a glut application. If you use the \verb'calRun2D()'
+%% function, as we did before, you don't need to call
+%% \verb'calRunInitSimulation2D()'.
+
+%% As you can see, besides the CA object, also the definition of the
+%% simulation object has changed, being the last step of computation set
+%% to \verb'CAL_RUN_LOOP' (line 3). Using such a pre-defined constant
+%% determines an infinite loop. As a consequence, the
+%% \verb'sciddicaTSimulationStopCondition()' callback has been registered
+%% to the simulation object by means of the
+%% \verb'calRunAddStopConditionFunc2D()' function (line 25) to stop the
+%% simulation\footnote{Such a callback was here introduced to show you
+%%   how to define a generic stoppig criterion for the simulation, even
+%%   the defined stopping creiterion is very trivial. It simply becomes
+%%   true (i.e. the function returns \texttt'CAL\_TRUE', which determines
+%%   the end of the simulation loop) when a predefined number of steps is
+%%   reached (i.e. 4000, as before).}. The
+%% \verb'sciddicaTSimulationStopCondition()' callback function is shown
+%% in Listing \ref{lst:sciddicaTSimulationStopCondition()}.
 
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:sciddica_sigma13, caption=The $\sigma_1$ and $\sigma_3$ SciddicaT elementary processes with active cells optimization.]
-  // <snip>
+%% \begin{lstlisting}[float,floatplacement=H, label=lst:sciddicaTSimulationStopCondition(), caption=The sciddicaTSimulationStopCondition() callback function defining the simulation stopping criterion for the SciddicaT optimized model.]
+%%   CALbyte sciddicaTSimulationStopCondition(struct CALModel2D* sciddicaT)
+%%   {
+%%     if (sciddicaTsimulation->step >= STEPS)
+%%       return CAL_TRUE;
+%%     return CAL_FALSE;
+%%   }
+%% \end{lstlisting}
 
-  // The sigma_1 elementary process
-  void sciddicaT_flows_computation(struct CALModel2D* sciddicaT, int i, int j)
-  {
-    // <snip>
+
+%% \begin{lstlisting}[float,floatplacement=H, label=lst:sciddica_sigma13, caption=The $\sigma_1$ and $\sigma_3$ SciddicaT elementary processes with active cells optimization.]
+%%   // <snip>
+
+%%   // The sigma_1 elementary process
+%%   void sciddicaT_flows_computation(struct CALModel2D* sciddicaT, int i, int j)
+%%   {
+%%     // <snip>
     
-    for (n=1; n<sciddicaT->sizeof_X; n++)
-      if (eliminated_cells[n])
-        calSet2Dr(sciddicaT, Q.f[n-1], i, j, 0.0);
-      else
-      {
-        calSet2Dr(sciddicaT, Q.f[n-1], i, j, (average-u[n])*P.r);
-        calAddActiveCellX2D(sciddicaT, i, j, n);
-      }
-  }
+%%     for (n=1; n<sciddicaT->sizeof_X; n++)
+%%       if (eliminated_cells[n])
+%%         calSet2Dr(sciddicaT, Q.f[n-1], i, j, 0.0);
+%%       else
+%%       {
+%%         calSet2Dr(sciddicaT, Q.f[n-1], i, j, (average-u[n])*P.r);
+%%         calAddActiveCellX2D(sciddicaT, i, j, n);
+%%       }
+%%   }
 
-  // <snip>
+%%   // <snip>
   
-  // The sigma_3 elementary process
-  void sciddicaT_remove_inactive_cells(struct CALModel2D* sciddicaT, int i, int j)
-  {
-    if (calGet2Dr(sciddicaT, Q.h, i, j) <= P.epsilon)
-      calRemoveActiveCell2D(sciddicaT,i,j);
-  }
+%%   // The sigma_3 elementary process
+%%   void sciddicaT_remove_inactive_cells(struct CALModel2D* sciddicaT, int i, int j)
+%%   {
+%%     if (calGet2Dr(sciddicaT, Q.h, i, j) <= P.epsilon)
+%%       calRemoveActiveCell2D(sciddicaT,i,j);
+%%   }
 
-  // <snip>
-\end{lstlisting}
+%%   // <snip>
+%% \end{lstlisting}
 
-As regards the elementary processe $\sigma_1$, it is the same of the
-one of the basic SciddicaT version with the exception that when an
-outflow is generated, the cell receiving the flow is added to the set
-A of the active cells (line 14, Listing
-\ref{lst:sciddica_sigma13}). Moreover, an active cell is eliminated by
-the set A in the case its debris thickness is lower or equal to the
-$P_\epsilon$ parameter (lines 23-24, Listing
-\ref{lst:sciddica_sigma13}). The complete source code of the optimized
-version of SciddicaT can be found in OpenCAL examples under the name
-\verb'cal_sciddicaT-activecells-glut'.
 
-Eventually, regarding the computational preformace, the same
-simulation shown in Figure \ref{fig:sciddicaT} was executed on the
-same Intel Core i7-4702HQ CPU @ 2.20GHz processor by exploiting only a
-single core. The simulation lasted a total of 22 seconds, versus 172
+%% The complete source code of the optimized version of SciddicaT can be
+%% found in OpenCAL examples under the name
+%% \verb'cal_sciddicaT-activecells-glut'.
+
+As you can easily see, few modifications to the original source code
+are needed to add the active cells optimization to SciddicaT. In
+particular, the active cells optimization is enableb by means of the
+\verb'CAL_OPT_ACTIVE_CELLS' parameter at line 159, while the third
+elementary process added at line 165. As regards the elementary
+processe $\sigma_1$, it is the same of the one of the basic SciddicaT
+version, with the exception that when an outflow is generated, the
+cell receiving the flow is added to the set A of the active cells
+(line 88). Moreover, an active cell is eliminated by the set A by
+means of the $\sigma_3$ elementary process in the case its debris
+thickness becomes lower than or equal to the $P_\epsilon$ threshold
+parameter (lines 107-108).
+
+Regarding the computational preformace, the same simulation shown in
+Figure \ref{fig:sciddicaT} was executed using the new SciddicaT
+implementation adoptig the active cells implementation. Still, only a
+single core of the same Intel Core i7-4702HQ CPU was used, as we did
+before. The simulation lasted a total of 22 seconds, versus 172
 seconds obtained for the basic (non-optimized) version, whihc is about
-8 times faster.
+8 times faster. Given the small required implementatice effort, we
+think it can be condidered a very good result.
 
-\subsection{SciddicaT further optimized}
+\subsection{SciddicaT as eXtended CA}
 OpenCAL allows for further optimization of the SciddicaT debris flows
 simulation model by means of the so called \emph{unsafe
   operations}. In fact, in some cases, it is possible to consider an
 extended definition of the computational model, allowing for
-operations that are not strictly allowed by the formal definition of
-Cellular Automata. in particular, we will allow the transition
+operations that are not strictly permitted by the formal definition of
+Cellular Automata. In particular, we will allow the transition
 function to update the state of the neighbouring cells, while the CA
-only allows for state change for the central cell. In this case, we
-will talk about \emph{XCA eXtended Cellular Automata}. Obviously, the
-extended CA must be equivalent to the original one in terms of
-computational results.
+only allows for state change for of the central one. When we will
+permit such a kind of unsafe operations, we will talk about \emph{XCA
+  eXtended Cellular Automata}. Obviously, the extended CA must be
+equivalent to the original one in terms of computational results.
 
-In the specific case of SciddicaT, when an outflow is computed from
-the central cell towards a neighbour, the flow can be immediatly
-subtracted from the central cell and added to the neighbour. Note
-that, this does not compromise the state of the system at the current
-step of computation as updated values are written to the \emph{next}
-computational plane. Thus, the \emph{current} computational plane is
-not corrupted by the extended operation. By introducing such feature,
-ouflows don't need to be saved into otflows substates anymore, as they
-are used to account mass exchange directly during ouflows
-computation. As you can figure out, this can give rise to a further
-performace improvement of the application. The SciddicaT further
-otimized XCA model is formally defined as:
+An XCA equivalent version of SciddicaT can be obtained by obseving
+that, when an outflow is computed from the central cell towards a
+neighbour, the flow can be immediatly subtracted from the central cell
+and added to the neighbour. This does not change the state of the
+system at the current step, which is represented by means of the
+\emph{current} computational plane, as updated values are written to
+the \emph{next} plane. Thus, the \emph{current} computational plane is
+not corrupted by the extended operation, while the \emph{next} plane
+is used for immediatly accounting mass variations inside the cells. By
+introducing such feature, ouflows don't need to be saved into otflows
+substates anymore, as they are used to account mass exchange directly
+during ouflows computation. As you can figure out, this can give rise
+to a further performace improvement of the application. The SciddicaT
+XCA model is formally defined as:
 
 
 $$SciddicaT = < R, A, X, Q , P, \sigma  >$$
@@ -684,7 +733,9 @@ where:
   defines the 2-dimensional cellular space over which the phenomenon
   evolves. The generic cell in $R$ is individuated by means of a
   couple of integer coordinates $(i, j)$, where $0 \leq i < i_{max}$
-  and $0 \leq j < j_{max}$.
+  and $0 \leq j < j_{max}$. The firt coordinate, $i$, represents the
+  row, while the second, $j$, the column. The cell at coodinates
+  $(0,0)$ is located at the top-left corner of the computational grid.
 
 \item $A \subseteq R$ is the set of active cells, i.e. those cells
   actually involved in computation.
@@ -694,10 +745,18 @@ where:
   identifies the cells influencing the state transition of the central
   cell. The neighborhood of the generic cell of coordinate $(i, j)$ is
   given by
-$$V(X, (i, j)) =$$
+$$N(X, (i, j)) =$$
 $$= \{(i, j)+(0,0), (i, j)+(-1, 0), (i, j)+(0, -1),
 (i, j)+(0, 1), (i, j)+(1, 0)\} =$$
 $$= \{(i, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j)\}$$
+
+Here, a subscript operator can be used to index cells belonging to the
+neighbourhood. Let $|X|$ be the number of elements in X, and $n \in
+\mathbb{N}$, $0 \leq n < |X|$; the notation
+
+$$N(X, (i, j), n)$$
+
+represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby, $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1) = (i-1, j)$, i.e. the first neighbour, and so on.
 
 \item $Q$ is the set of cell states; it is subdivided in the following
   substates:
@@ -711,8 +770,11 @@ The Cartesian product of the substates defines the overall set of
 state $Q$:
 
 $$Q = Q_z \times Q_h$$
+so that the cell state is specified by:
 
-\item   $P$ is set of global parameters ruling the CA dynamics:
+$$ q = (q_z, q_h)$$
+
+\item   $P$ is set of parameters ruling the CA dynamics:
 
 \begin{itemize}
     \item   $p_\epsilon$ is the parameter which specifies the thickness of the debris that cannot leave the cell due to the effect of adherence;
@@ -724,9 +786,8 @@ $$Q = Q_z \times Q_h$$
 \begin{itemize}
 \item $\sigma_1 : A \times (Q_z \times Q_h)^5 \times p_\epsilon \times
   p_r\shortrightarrow (A \times Q_h)^5$ determines the outflows from
-  the central cell to the neighboring ones by applying the
-  \emph{minimization algorithm of the differences} and updates debris
-  thickness inside the central cell and its neighbour accordingly. It
+  the central cell to the neighboring ones and updates debris
+  thickness inside the central cell and its neighbours accordingly. It
   also adds the neighbouring cells receining a flow to the set A of the
   active cells.
 
@@ -735,11 +796,10 @@ $$Q = Q_z \times Q_h$$
   inside the cell is lower than or equal to the $p_\epsilon$
   threshold.
 
-
 \end{itemize}
 \end{itemize}
 
-Note tha, only the topographic altitude and the debris thicness are
+Note that, only the topographic altitude and the debris thicness are
 now considered as model's substates, as the four outflows substates
 are no longer needed. Moreover, the number of elementary process now
 considered is two, instead of three for the previous versions of
@@ -749,28 +809,29 @@ SciddicaT debris flows model is shown in Listing
 
 \lstinputlisting[label=lst:cal_sciddicaT-unsafe, caption=An OpenCAL implementation of the SciddicaT further optimized debris flows simulation model.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe/source/sciddicaT.c}
 
-As you can see, the definitions of CA and simulation objects don't
+As you can see, the definitions of CA and simulation objects doesn't
 change from the previous implementation (lines 131-132), while only
 two elementary processes are considered (lines 135-136). In
 particular, the firt call to \verb'calAddElementaryProcess2D()'
 registers the callbak function implementing the $\sigma_1$ elementary
 process. It computes outflows from the (active) central cell to its
 neighbours (line 83) and updates the debris tickness in both the
-central cells and neighbour receiving a flow (lines 84-85). Moreover,
-neighbouring cells receiving a flow are added to the set A of active
-cells (line 88) and therefore will be considered in computation in the
-subsuequent elementary process ($\sigma_2$) in the current step of
-computation\footnote{This is due to the fact that a substates' update
-  is performed after the first elementary process has been applied to
-  all the (active) cells of the cellular space. This behaviour is set
-  by menas of the \texttt{CAL\_UPDATE\_IMPLICIT} parameter used in the
-  definition of the simulation object at line 132 of Listing
-  \ref{lst:cal_sciddicaT-unsafe}.} and also in the subsequent
-computational steps. In particular, the \verb'calSetX2Dr()'
-\emph{unsafe} function is used to update the derbis thickess of the
-neighbouring cells receiving a flow, while the
-\verb'calAddActiveCellX2D()' one is used to add a neighbouring cells
-receiving a flow to the set $A$ of active cells.  The $\sigma_2$
+central cell and the neighbouring cell receiving a flow (lines
+84-85). Moreover, neighbouring cells receiving a flow are added to the
+set A of active cells (line 88) and therefore will be considered for
+elaboration by the subsuequent elementary process ($\sigma_2$) in the
+current step of computation\footnote{This is due to the fact that a
+  substates' update is performed after the first elementary process
+  has been applied to all the (active) cells of the cellular
+  space. This behaviour is set by menas of the
+  \texttt{CAL\_UPDATE\_IMPLICIT} parameter used in the definition of
+  the simulation object at line 132 of Listing
+  \ref{lst:cal_sciddicaT-unsafe}.} and, if it is not removed by
+$\sigma_2$), by the subsequent computational steps. In particular, the
+\verb'calSetX2Dr()' \emph{unsafe} function is used to update the
+derbis thickess of the neighbouring cells receiving a flow, while the
+\verb'calAddActiveCellX2D()' function is used to add a neighbouring
+cells receiving a flow to the set $A$ of active cells.  The $\sigma_2$
 elementary process, simply remove inactive cells from $A$ (lines
 95-86), as in the previous example.
 
@@ -779,27 +840,67 @@ Substates are added to the CA at lines 139-140. Here, note that the
 firt substate, $Q_z$, is added by menas of the
 \verb'calAddSingleLayerSubstate2Dr()' function. It is here considered
 to allocate memory only for the \emph{current} computing plane. In
-fact, as you can see, the topographic altitude never changes during
-computation inside the cells and, therefore, it is never updated. This
-allows for memory space allocation optimization. In effect, this is
-not entirely true, as the value of $Q_z$ is changed by the
-\verb'sciddicaT_simulation_init()' initialization function at line
-117. Here, we are forced to use the \verb'calSetCurrent2Dr()'
-function, instead of the usual \verb'calSet2Dr()' since this latter
-would update the \emph{next} computational plane of the $Q_z$
-substate, which is not present here as the substated is of single-lyer
-type.
+fact, topographic altitutde only changes at the simulation
+initialization stage (cf. lines 147 and 117), while it remains
+inalterated during computation as its value is never updated by the
+transition function. This allows for memory space allocation
+optimization and possibly for computational performance
+improvements. Note that, at line 117 we used the
+\verb'calSetCurrent2Dr()' function, instead of the usual
+\verb'calSet2Dr()'. The \verb'calSetCurrent2Dr()' function  allows for updating the \emph{current} computational plane (the only present in the $Q_z$ substate), while \verb'calSet2Dr()' would update the \emph{next}
+computational plane, by producing an access violation error.
 
 Regarding the computational preformace, the same simulation shown in
-Figure \ref{fig:sciddicaT} was executed on the same Intel Core
-i7-4702HQ CPU @ 2.20GHz processor by exploiting only a single core, as
-we already done with the previous implementations of SciddicaT. The
-simulation lasted a total of 11 seconds, versus 22 seconds obtained
-for the optimized version and 172 seconds for the basic
-(non-optimized) version, resulting in 2 time faster than the optimized
-version and about 16 times faster with respect to the optimized
-one. Table \ref{tab:speedup} resumes the computational performace of
-the above illustraed versions of SciddicaT.
+Figure \ref{fig:sciddicaT} was executed by considering the XCA
+implementation of SciddicaT on a single core of the same
+processor. The simulation lasted a total of 11 seconds, versus 22
+seconds obtained for the active cells optimized version and 172
+seconds for the basic (non-optimized) version. The XCA implementation resulted 2 times
+faster than the active cells optimized version and about 16 times faster with
+than the basic one.
+
+
+
+\subsection{SciddicaT with explicit simulation loop}
+Even if results obtained so far are more than satisfying, it is
+further possibile to improve computational performance of SciddicaT by
+avoiding unnecessary substates updating. In fact, in some cases, elementary
+processes don't affect one or more model's substates and therefore their
+updating becomes only a waste of time.
+
+As we stated above, when we use the implicit \verb'calRun2D()'
+simulation loop, an update of all the defined substates is executed at
+the end of each elementary process. However, this behaviour can be
+changed by making the OpenCAL simulation loop explicit.
+
+In the specific case of the SciddicaT XCA model, the second elementary
+process, $\sigma_2$, just remove cells that became inactive from the
+set $A$ of active cells and don't affect the mode's
+substates\footnote{Actually, only the $Q.h$ substate can be update by
+  the transition function, since the other, $Q.z$, is of single-lyer
+  type.}. As a consequence, no substates updating should be executed
+after $\sigma_2$ application, in order to avoid unnecessary
+operations.
+
+A new OpenCAL implementation of SciddicaT is presented in Listing
+\ref{lst:cal_sciddicaT-explicit}. It is based on an explicit
+simulation loop and also defines a stopping criterion for the
+simulation termination. The complete implementation is shown for the
+sake of completeness.
+
+
+\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
+
+
+
+
+
+
+
+
+Table \ref{tab:speedup} resumes the
+computational performace of the above illustraed versions of
+SciddicaT.
 
 \begin{table}
   \centering
@@ -808,12 +909,13 @@ the above illustraed versions of SciddicaT.
     CA model & Elapsed time [s] & Speedup \\
     \hline
     \hline
-    SciddicaT           & 172 & 1\\
-    SciddicaT optimized & 22  & 8\\
-    SciddicaT unsafe    & 11  & 16\\
+    SciddicaT                   & 172 & 1\\
+    SciddicaT with active cells & 22  & 8\\
+    SciddicaT XCA (eXtended CA) & 11  & 16\\
+    SciddicaT XCA explicit loop & 8   & 22\\
     \hline
   \end{tabular}
-  \caption{Computational performace of the three different
+  \caption{Computational performace of the four different
     implementations of the SciddicaT debris flows model.}
   \label{tab:speedup}
 \end{table} 
