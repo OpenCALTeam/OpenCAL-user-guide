@@ -892,9 +892,19 @@ sake of completeness.
 \lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 
-
-
-
+As you can see, the \verb'calRunAddGlobalTransitionFunc2D()' function
+is called to register a custom transition function (line 177). In the
+specific case of SciddicaT, the \verb'sciddicaTransitionFunction()'
+callback (lines 132-143) is used to make explicit the elementary
+processes application and the substates update. Here, the elementary
+processes are applyied in the same order they are defined (which is
+the default behaviour of OpenCAL). In particular, the
+\verb'sciddicaT_flows()' elementary process is applyied to each
+(active) cell into the computational domain by means of the
+\verb'calApplyElementaryProcess2D()' function. After that, the set $A$
+of the active cells and the $Q_h$ substate are updated by means of the
+\verb'calUpdateActiveCells2D()' and \verb'calUpdateSubstate2Dr()',
+respectively.
 
 
 
@@ -912,10 +922,28 @@ SciddicaT.
     SciddicaT                   & 172 & 1\\
     SciddicaT with active cells & 22  & 8\\
     SciddicaT XCA (eXtended CA) & 11  & 16\\
-    SciddicaT XCA explicit loop & 8   & 22\\
+    SciddicaT XCA explicit loop & 10  & 17\\
     \hline
   \end{tabular}
   \caption{Computational performace of the four different
     implementations of the SciddicaT debris flows model.}
+  \label{tab:speedup}
+\end{table} 
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|c|c|c|c|c|c}
+    \hline
+    CA model & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
+    \hline
+    \hline
+    SciddicaS3-hex                   & 653s & 0.52 (1267s) & 0.83 (786s) & 1.2 (540s) &  -  (-s)  & 1.29 (505s)\\
+    SciddicaS3-hex with active cells & 50s  & 0.59 (85s)   & 1.16 (43s)  & 1.36 (37s) & 2.5 (20s) & 0.6 (1086s)\\
+    SciddicaS3-hex XCA (eXtended CA) &      & - & - & - & - & -\\
+    SciddicaS3-hex XCA explicit loop &      & - & - & - & - & -\\
+    \hline
+  \end{tabular}
+  \caption{Speedup of the four different
+    implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
   \label{tab:speedup}
 \end{table} 
