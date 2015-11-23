@@ -1,2 +1,61 @@
 \chapter{OpenCAL OpenMP version}
 
+With the name OpenCAL-OMP, we identify the OpenMP implementation of
+the software library, which can run on all the cores for your CPU. If
+you are luky and have a shared memory multiptocessor system,
+OpenCAL-OMP can exploit all the cores of all your CPUs. Similarly to
+the serial version, OpenCAL-OMP allows for some \emph{unsafe
+  operations}, which can significantly speed up your
+application. Howevewr, it must be given the utmost attention due to
+possible problems related to atomic operations and race condions. In
+particular, when many theads perform concurrent operations on the same
+memory location(s), if such operation are made by more than one basic
+machine operation, it can appen they can interleave , giving rice to
+wrong results. Race conditions occur when the logic order of different
+operation is not respected. For instance, in a sequence of write-read
+operations, it can occur that the read is performed before the write
+due to the fact that the thread performing the write is executed
+first.
+
+In the following sections, we will introduce OpenCAL-OMP by comparing
+examples source code differences with respect to the serial
+implemebntations. In the first part of the Chapter, we will deal with
+the OpenCAL's safe mode, while in the last one, we will go deep inside
+OpenCAL, discussing unsafe operations.
+
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|c|c|c|c|c|c}
+    \hline
+    T version & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
+    \hline
+    \hline
+    naive         & 240s & 0.82 (293s) & 1.22 (196s) & 1.53 (157s) & 1.64 (146s) & 1.6 (150s)\\
+    active cells  & 23s  & 0.77 (30s)  & 1.36 (17s)  & 1.77 (13s)  & 2.09 (11s)  & 2.3 (10s)\\
+    eXtended CA   & 13s  & 0.77 (17s)  & 1.86 (7s)   & 2.6  (5s)   & 2.17  (6s)  & 2.6 (5s)\\
+    explicit loop & 12s  & 0.75 (16s)  & 1.2  (10s)  & 2.4  (5s)   & 2.4  (5s)   & 3.0 (4s)\\
+    \hline
+  \end{tabular}
+  \caption{Speedup of the four different
+    implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
+  \label{tab:speedup}
+\end{table} 
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|c|c|c|c|c|c}
+    \hline
+    S3-hex version & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
+    \hline
+    \hline
+    naive         & 1030s & 0.52 (1982s) & 0.9 (1142s) & 1.03 (998s) & 1.13 (913s) & 1.3  (781s)\\
+    active cells  & 55s   & 0.86 (64s)   & 1.57 (35s)  & 2.75 (20s)  & 2.5  (22s)  & 3.06 (18s)\\
+    eXtended      & 27s   & 0.87 (31s)   & 1.42 (19s)  & 2.7  (10s)  & 2.46 (11s)  & 3.38 (8s)\\
+    explicit loop & 16s   & 0.8  (20s)   & 1.33 (12s)  & 2.67 (6s)  & 2.29  (7s)   & 3.2  (5s)\\
+    \hline
+  \end{tabular}
+  \caption{Speedup of the four different
+    implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
+  \label{tab:speedup}
+\end{table} 

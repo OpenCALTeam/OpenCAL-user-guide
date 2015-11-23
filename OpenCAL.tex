@@ -895,8 +895,8 @@ sake of completeness.
 As you can see, the \verb'calRunAddGlobalTransitionFunc2D()' function
 is called to register a custom transition function (line 177). In the
 specific case of SciddicaT, the \verb'sciddicaTransitionFunction()'
-callback (lines 132-143) is used to make explicit the elementary
-processes application and the substates update. Here, the elementary
+callback (lines 132-143) is used to make the elementary processes
+application and the substates update explicit. Here, the elementary
 processes are applyied in the same order they are defined (which is
 the default behaviour of OpenCAL). In particular, the
 \verb'sciddicaT_flows()' elementary process is applyied to each
@@ -919,10 +919,10 @@ SciddicaT.
     CA model & Elapsed time [s] & Speedup \\
     \hline
     \hline
-    SciddicaT                   & 172 & 1\\
-    SciddicaT with active cells & 22  & 8\\
-    SciddicaT XCA (eXtended CA) & 11  & 16\\
-    SciddicaT XCA explicit loop & 10  & 17\\
+    SciddicaT                   & 240 & 1\\
+    SciddicaT with active cells & 23  & 8\\
+    SciddicaT XCA (eXtended CA) & 13  & 16\\
+    SciddicaT XCA explicit loop & 12  & 17\\
     \hline
   \end{tabular}
   \caption{Computational performace of the four different
@@ -930,38 +930,77 @@ SciddicaT.
   \label{tab:speedup}
 \end{table} 
 
-\begin{table}
-  \centering
-  \begin{tabular}{l|c|c|c|c|c|c}
-    \hline
-    CA model & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
-    \hline
-    \hline
-    SciddicaT                   & 240s & 0.82 (293s) & 1.22 (196s) & 1.53 (157s) & 1.64 (146s) & 1.6 (150s)\\
-    SciddicaT with active cells & 23s  & 0.77 (30s)  & 1.36 (17s)  & 1.77 (13s)  & 2.09 (11s)  & 2.3 (10s)\\
-    SciddicaT XCA (eXtended CA) & 12s  & 0.7  (17s)  & 1.71 (7s)   & 2.4  (5s)   & 2.0  (6s)   & 2.4 (5s)\\
-    SciddicaT XCA explicit loop & 12s  & 0.75 (16s)  & 1.2  (10s)  & 2.4  (5s)   & 2.4  (5s)   & 3.0 (4s)\\
-    \hline
-  \end{tabular}
-  \caption{Speedup of the four different
-    implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
-  \label{tab:speedup}
-\end{table} 
 
-\begin{table}
-  \centering
-  \begin{tabular}{l|c|c|c|c|c|c}
-    \hline
-    CA model & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
-    \hline
-    \hline
-    SciddicaS3-hex                   & 1030s & 0.52 (1982s) & 0.9 (1142s) & 1.03 (998s) & 1.13 (913s) & 1.3  (781s)\\
-    SciddicaS3-hex with active cells & 55s   & 0.86 (64s)   & 1.57 (35s)  & 2.75 (20s)  & 2.5  (22s)  & 3.06 (18s)\\
-    SciddicaS3-hex XCA (eXtended CA) & 27s   & 0.87 (31s)   & 1.42 (19s)  & 2.7  (10s)  & 2.46 (11s)  & 3.38 (8s)\\
-    SciddicaS3-hex XCA explicit loop & 16s   & 0.8  (20s)   & 1.33 (12s)  & 2.67 (6s)  & 2.29  (7s)   & 3.2  (5s)\\
-    \hline
-  \end{tabular}
-  \caption{Speedup of the four different
-    implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
-  \label{tab:speedup}
-\end{table} 
+\section{A three-dimensional example}
+
+In order to introduce you to development with of three-dimensional CA
+with OpenCAL, we start this section by implementing a simple 3D model,
+namely the mod2 3D CA. Cells can be in one of two differnt states, 0
+or 1, as in Game of Life. The cellular space is a parallelepiped made
+by cubic cells, while the cell's neighbourhood is the 3D Moore one,
+consisting of the central cell and its adjecent cells. The transition
+function simply evaluates the quantity $s$ as the number of
+neighbouring cells which are in the state 1 and sets the new state for
+the central cell as $s\%2$. As you can imagine, the OpenCAL
+implementation of the mod2 3D CA is very simple, as the Conway's game
+of Life is. The complete source code is shown in Listing
+\ref{lst:cal_mod2CA3D}.
+
+\lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal/OpenCAL/examples/cal_mod2CA3D/source/mod2CA3D.c}
+
+As you can see, even if Listing \ref{lst:cal_life} is very short, it
+completely defines the mod2 3D CA and perform a simulation (actually,
+only one step in this example). Lines 3-5 include some header files
+for the 3D version of OpenCAL, while lines 12-14 declare CA, substate
+and simulation objects. They are therefore defined later in the main
+function. In particular, line 30 defines the CA as a parallelepiped
+having \verb'ROWS' rows, \verb'COLS' columns and \verb'SLICES' slices
+(cf. lines 7-9). Moreover, the 3D Moore neighbourhood is here set as
+well as cyclic conditions at boundaries. Eventually, no optimizations
+are considered. Line 31 defines the simulation object by setting just
+one step of computation and implicit substate's update. Finally, the
+only substate, $Q$, is defined at line 34. Note that, since it was
+defined by means of the \verb'calInitSubstate3Db()' function, each
+element $q \in Q$ results to be of the CALbyte type. Line 37 registers
+the only CA's elementary process, namely the
+\verb'mod2_transition_function()' function, which is then implemnented
+at lines 17-25. Line 43 initializes the cell's substated $Q$ at
+coordinates (2, 3, 1) to the state 1. The obtained initial
+configuration is then saved to disk at line 46, and the simulation ran
+at line 49. The final configuration is therefore saved to disk at line
+52 and, eventually, memory previously and implicitly allocated is
+released at lines 55-56. Note that, diffrently to the previous
+examples, almost all the OpenCAL functions come in the 3D flower. For
+instace, this is the case of the \verb'alGetX3Db()' and
+\verb'calSet3Db()' functions at lines 22 and 24, respectively, which
+that take the \verb'k' parameter inorder to specify the slice
+coordinate for the cell.
+
+Figures \ref{fig:mod2_0000} and \ref{fig:mod2_LAST} show the initial and final configuration of mod2 3D CA as implemented in Listing \ref{lst:cal_mod2CA3D}, respectively.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=3cm]{./images/OpenCAL/mod2_0000}
+    \caption{Initial configuration of mod2 3D CA, as implemented in Listing \ref{lst:cal_mod2CA3D}.}
+    \label{fig:mod2_0000}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=3cm]{./images/OpenCAL/mod2_LAST}
+    \caption{Final configuration of mod2 3D CA (actually, just one step of computation), as implemented in Listing \ref{lst:cal_mod2CA3D}.}
+    \label{fig:mod2_LAST}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{./images/OpenCAL/mod23DCA-glut}
+    \caption{Graphical representation of the mod2 3D CA after 77 computational steps, as implemented in Listing \ref{lst:cal_mod2CA3D}. CA dimensions were set to (rows, cols, slices) = (65, 65, 56), while the initial seed located at coordinates (12, 12, 12). Cells in black are in the state 0, cell in white are in the state 1.}
+    \label{fig:mod2_LAST}
+  \end{center}
+\end{figure}
+
+
