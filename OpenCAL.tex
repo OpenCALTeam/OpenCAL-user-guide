@@ -1,11 +1,11 @@
 \chapter{OpenCAL}
 
-With the name OpenCAL, we identify the sequential version of the
-software library, which runs on just a single core of your CPU. It
-represents the basis for the other parallel versions. Moreover, it
-allows for some \emph{unsafe operations}, which can significantly speed up
-your application. Such unsafe operation can also be found in the
-OpenMP version, while they are not present to GPU one.
+With OpenCAL, we identify the sequential version of the software
+library, which runs on just a single core of your CPU, and represents
+the basis for the other parallel versions. Moreover, it allows for
+some \emph{unsafe operations}, which can significantly speed up your
+application. Such unsafe operation can also be found in the OpenMP
+version, while they are not present to GPU one.
 
 In the following sections, we will introduce OpenCAL by examples. In
 the first part of the Chapter, we will deal with the OpenCAL's safe
@@ -49,21 +49,63 @@ generations. For more details on the Game of life you can check
 Wikipedia at the URL
 \url{http://en.wikipedia.org/wiki/Conway's_Game_of_Life}.
 
+The formal definition of the Life CA is reported below.
+
+$$Life = < R, X, Q, \sigma >$$
+
+where:
+
+\begin{itemize}
+
+\item $R$ is the set of points, with integer coordinates, which
+  defines the 2-dimensional cellular space. The generic cell in $R$ is
+  individuated by means of a couple of integer coordinates $(i, j)$,
+  where $0 \leq i < i_{max}$ and $0 \leq j < j_{max}$. The firt
+  coordinate, $i$, represents the row, while the second, $j$, the
+  column. The cell at coodinates $(0,0)$ is located at the top-left
+  corner of the computational grid.
+
+\item $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0), (-1,-1), (1,-1),
+  (1,1), (-1,1)\}$ is the Moore neighborhood relation, a geometrical
+  pattern which identifies the cells influencing the state transition
+  of the central cell. The neighborhood of the generic cell of
+  coordinate $(i, j)$ is given by
+  $$N(X, (i, j)) = $$
+  $$= \{(i, j)+(0,0), (i, j)+(-1, 0), \dots, (i, j)+(-1,1)\} =$$
+  $$= \{(i, j), (i-1, j), \dots, (i-1,j+1)\}$$
+  Here, a subscript operator can be used to index cells belonging to the
+  neighbourhood. Let $|X|$ be the number of elements in X, and $n \in
+  \mathbb{N}$, $0 \leq n < |X|$; the notation
+
+  $$N(X, (i, j), n)$$
+
+  represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby,
+  $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1)
+  = (i-1, j)$, i.e. the first neighbour, and so on.
+  
+\item $Q = \{0, 1\}$ is the set of cell states.
+  
+\item $\sigma : Q^9 \shortrightarrow Q$ is the deterministic cell
+  transition function. It is composed by one elementary process, which
+  implements the previously descripted transition rules.
+\end{itemize}
+
+
 The program below shows a simple Game of Life sequential
-implementation in C with OpenCAL.
+implementation in C with OpenCAL. As you can see, even if Listing
+\ref{lst:cal_life} is very short, it completely defines the Conway's
+Game of Life CA and perform a simulation (actually, only one step in
+this example).
 
 \lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal/OpenCAL/examples/cal_life/source/life.c}
 
-As you can see, even if Listing \ref{lst:cal_life} is very short, it
-completely defines the Conway's Game of Life CA and perform a
-simulation (actually, only one step in this example). In order to use
-OpenCAL, you need to include some header files (lines
-3-5). Specifically, among other things, \verb'cal2D.h' (line 3) allows
-you to define the CA object (line 9) and the related substate (line
-10), while \verb'cal2DRun.h' (line 5) allows you to define a CA
-simulation object (line 11), needed to run the CA model. The
-\verb'cal2DIO.h' header file (line 4) provides you some input/output
-functions for reading/writing substates from/to file.
+In order to use OpenCAL, you need to include some header files (lines
+3-5). Specifically, \verb'cal2D.h' (line 3) allows you to define the
+CA object (line 9) and the related substate (line 10), while
+\verb'cal2DRun.h' (line 5) allows you to define a CA simulation object
+(line 11), needed to run the CA model. The \verb'cal2DIO.h' header
+file (line 4) provides you some input/output functions for
+reading/writing substates from/to file.
 
 While statements at lines 9-11 just declare the required objects, they are
 defined later in the \verb'main' function. In particular, the life CA
@@ -75,8 +117,7 @@ cellular space is considered as a torus, with cyclic behaviour at
 boundaries. The last parameter allows you to specify if your model
 has to use the so called \emph{active cells optimization}, that is
 able to restrict the computation to only \emph{non-stationary cells}. In this
-case, no optimization is considered.  The complete definition of
-\verb'calCADef2D()' is provided in Listing \ref{lst:calCADef2D}.
+case, no optimization is considered.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
   struct CALModel2D* calCADef2D (
@@ -88,15 +129,16 @@ case, no optimization is considered.  The complete definition of
   )
 \end{lstlisting}  
 
-In particular, the \verb'CALNeighborhood2D' enum type (Listing
-\ref{lst:CALNeighborhood2D}) allows you to select one of the square or
-hexagonal predefined neighbourhoods, or a custom neighbourhood, whose
-pattern can be defined directly in your application. Custom
-neighbourhoods will be discussed later in this Chapter. Similarly, the
-\verb'CALSpaceBoundaryCondition' enum type (Listing
-\ref{lst:CALSpaceBoundaryCondition}) allows you to set non-ciclic or
-cyclic behaviour at the boundaries of the cellular space. Eventually,
-the \verb'CALOptimization' enum type (Listing
+The complete definition of \verb'calCADef2D()' is provided in Listing
+\ref{lst:calCADef2D}. In particular, the \verb'CALNeighborhood2D' enum
+type (Listing \ref{lst:CALNeighborhood2D}) allows you to select one of
+the square or hexagonal predefined neighbourhoods, or a custom
+neighbourhood, whose pattern can be defined directly in your
+application. Custom neighbourhoods will be discussed later in this
+Chapter. Similarly, the \verb'CALSpaceBoundaryCondition' enum type
+(Listing \ref{lst:CALSpaceBoundaryCondition}) allows you to set
+non-ciclic or cyclic behaviour at the boundaries of the cellular
+space. Eventually, the \verb'CALOptimization' enum type (Listing
 \ref{lst:CALOptimization}) allows you to use or not the active cells
 optimization.
 
@@ -126,20 +168,20 @@ optimization.
 
 The CA simulation object is defined at line 30 by the
 \verb'calRunDef2D()' function. The first parameter is a pointer to a
-CA object (\verb'life' in our case), while the second and third parameters
-specify the initial and last simulation step, respectively. In this
-case, we just perform one step of computation, being both the first
-and last step set to 1. The last parameter allows you to specify the
-substate update policy. It can be implicit or explicit. In the first
-case, OpenCAL does substates' updates for you, while in the second case
-the substates' updates is your responsibility. Note that, in case
-implicit update policy is applyied, all the CA substates are updated
-after the execution of each elementary process composing the CA
-transition function. We will discuss update policies later in
-this Chapter. The complete definition of \verb'calRunDef2D()' is
-provided in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode'
-type (Listing \ref{lst:CALUpdateMode}) enumerates possible update
-policies.
+CA object (\verb'life' in our case), while the second and third
+parameters specify the initial and last simulation step,
+respectively. In this case, we just perform one step of computation,
+being both the first and last step set to 1. The last parameter allows
+you to specify the substate update policy. It can be implicit or
+explicit. In the first case, OpenCAL does substates' updates for you,
+while in the second case the substates' updates is your
+responsibility. Note that, in case implicit update policy is applyied,
+all the CA substates are updated after the execution of each
+elementary process composing the CA transition function. We will
+discuss update policies later in this Chapter. The complete definition
+of \verb'calRunDef2D()' is provided in Listing
+\ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type (Listing
+\ref{lst:CALUpdateMode}) enumerates possible update policies.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calRunDef2D(), caption=Definition of the calRunDef2D() function., numbers=none]
   struct CALRun2D* calRunDef2D (
@@ -233,6 +275,36 @@ Figures \ref{fig:life_0000} and \ref{fig:life_LAST} show the initial and final c
     \label{fig:life_LAST}
   \end{center}
 \end{figure}
+
+\subsection{OpenCAL statement convention}
+As you can easily see from a rapid sight to the source code, all the
+OpenCAL statements are characterized by a prefix and a suffix. All the
+data types have the \verb'CAL' prefix, and an optional suffix that
+identifies the CA dimension (e.g. 2D for a two-dimensional model) and
+the basic type. For instance, in the case of the Life's \verb'Q'
+substate, the 2Di suffix of the \verb'CALSubstate2Di' type specifies
+that it is a two-dimensional substate in whihc each element is of
+integer type.
+
+More in detail, OpenCAL comes with three different basic numeric
+types, whihc are in lowercase (besides the prefix):
+\begin{itemize}
+\item \verb'CALbyte', corresponding to the \verb'char' C data type;
+\item \verb'CALint', corresponding to the \verb'int' C data type;
+\item \verb'CALreal', corresponding to the \verb'long double' C data type;
+\end{itemize}
+while the possible substates types are:
+\begin{itemize}
+\item \verb'CALSubstate2Db', corresponding to a \verb'CALbyte' based substate;
+\item \verb'CALSubstate2Di', corresponding to a \verb'CALint' based substate;
+\item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate;
+\end{itemize}
+Also the OpenCAL constants have a prefix, namely the \verb'CAL_' one,
+followd by at least one uppercase keyword. In case of more kewords, they
+are separated by the \verb'_' character. Eventually, all the OpenCAL
+functions start with the \verb'cal' suffix, followed by at least one
+capitalized keyword, and end with a suffix specifying the CA dimension
+and the basic datatype.
 
 
 \section{A more complex example}
@@ -920,9 +992,9 @@ SciddicaT.
     \hline
     \hline
     SciddicaT                   & 240 & 1\\
-    SciddicaT with active cells & 23  & 8\\
-    SciddicaT XCA (eXtended CA) & 13  & 16\\
-    SciddicaT XCA explicit loop & 12  & 17\\
+    SciddicaT with active cells & 23  & 10.43\\
+    SciddicaT XCA (eXtended CA) & 13  & 18.46\\
+    SciddicaT XCA explicit loop & 12  & 20\\
     \hline
   \end{tabular}
   \caption{Computational performace of the four different
@@ -941,10 +1013,52 @@ by cubic cells, while the cell's neighbourhood is the 3D Moore one,
 consisting of the central cell and its adjecent cells. The transition
 function simply evaluates the quantity $s$ as the number of
 neighbouring cells which are in the state 1 and sets the new state for
-the central cell as $s\%2$. As you can imagine, the OpenCAL
-implementation of the mod2 3D CA is very simple, as the Conway's game
-of Life is. The complete source code is shown in Listing
-\ref{lst:cal_mod2CA3D}.
+the central cell as $s\%2$.
+
+$$mod2 = < R, X, Q, \sigma >$$
+
+where:
+
+\begin{itemize}
+
+\item $R$ is the set of points, with integer coordinates, which
+  defines the 3-dimensional cellular space. The generic cell in $R$ is
+  individuated by means of a triple of integer coordinates $(i, j,
+  k)$, where $0 \leq i < i_{max}$, $0 \leq j < j_{max}$, and $0 \leq k
+  < k_{max}$. The firt coordinate, $i$, represents the row, the
+  second, $j$, the column, while the third coordinate represents the
+  slice. The cell at coodinates $(0,0,0)$ is located at the
+  top-left-far corner of the computational grid.
+
+\item $X = \{(0,0,0), \dots, (-1,1,0), (0,0,-1), \dots, (-1,1,-1),
+  (0,0,1), \dots, (-1,1,1)\}$ is the Moore neighborhood
+  relation, a geometrical pattern which identifies the cells
+  influencing the state transition of the central cell. The
+  neighborhood of the generic cell of coordinate $(i, j)$ is given by
+  $$N(X, (i, j, k)) = $$
+  $$= \{(i, j, k)+(0,0,0), \dots, (i, j, k)+(-1,1,-1)\} =$$
+  $$= \{(i, j, k), \dots, (i-1,j+1,-1)\}$$
+  Here, a subscript operator can be used to index cells belonging to the
+  neighbourhood. Let $|X|$ be the number of elements in X, and $n \in
+  \mathbb{N}$, $0 \leq n < |X|$; the notation
+
+  $$N(X, (i, j), n)$$
+
+  represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby,
+  $N(X, (i, j, k), 0) = (i, j, k)$, i.e. the central cell, $N(X, (i, j, k), 1)
+  = (i-1, j, k)$, i.e. the first neighbour, and so on.
+  
+\item $Q = \{0, 1\}$ is the set of cell states.
+  
+\item $\sigma : Q^{27} \shortrightarrow Q$ is the deterministic cell
+  transition function. It is composed by one elementary process, which
+  implements the previously descripted transition rules.
+\end{itemize}
+
+
+As you can imagine, the OpenCAL implementation of the mod2 3D CA is
+very simple, as the Conway's game of Life is. The complete source code
+is shown in Listing \ref{lst:cal_mod2CA3D}.
 
 \lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal/OpenCAL/examples/cal_mod2CA3D/source/mod2CA3D.c}
 
@@ -980,7 +1094,7 @@ Figures \ref{fig:mod2_0000} and \ref{fig:mod2_LAST} show the initial and final c
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=3cm]{./images/OpenCAL/mod2_0000}
+    \includegraphics[width=3.5cm]{./images/OpenCAL/mod2_0000}
     \caption{Initial configuration of mod2 3D CA, as implemented in Listing \ref{lst:cal_mod2CA3D}.}
     \label{fig:mod2_0000}
   \end{center}
@@ -988,7 +1102,7 @@ Figures \ref{fig:mod2_0000} and \ref{fig:mod2_LAST} show the initial and final c
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=3cm]{./images/OpenCAL/mod2_LAST}
+    \includegraphics[width=3.5cm]{./images/OpenCAL/mod2_LAST}
     \caption{Final configuration of mod2 3D CA (actually, just one step of computation), as implemented in Listing \ref{lst:cal_mod2CA3D}.}
     \label{fig:mod2_LAST}
   \end{center}
@@ -998,9 +1112,11 @@ Figures \ref{fig:mod2_0000} and \ref{fig:mod2_LAST} show the initial and final c
 \begin{figure}
   \begin{center}
     \includegraphics[width=12cm]{./images/OpenCAL/mod23DCA-glut}
-    \caption{Graphical representation of the mod2 3D CA after 77 computational steps, as implemented in Listing \ref{lst:cal_mod2CA3D}. CA dimensions were set to (rows, cols, slices) = (65, 65, 56), while the initial seed located at coordinates (12, 12, 12). Cells in black are in the state 0, cell in white are in the state 1.}
+    \caption{Graphical representation of the mod2 3D CA after 77 computational steps, as implemented in Listing \ref{lst:cal_mod2CA3D}. CA dimensions were set to (rows, cols, slices) = (65, 65, 65), while the initial seed located at coordinates (12, 12, 12). Cells in black are in the state 0, cell in white are in the state 1.}
     \label{fig:mod2_LAST}
   \end{center}
 \end{figure}
 
 
+\section{Custom Neighbourhoods}
+xxx
