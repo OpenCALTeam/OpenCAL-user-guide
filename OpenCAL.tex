@@ -276,7 +276,7 @@ Figures \ref{fig:life_0000} and \ref{fig:life_LAST} show the initial and final c
   \end{center}
 \end{figure}
 
-\subsection{OpenCAL statement convention}
+\section{OpenCAL statement convention}
 As you can easily see from a rapid sight to the source code, all the
 OpenCAL statements are characterized by a prefix and a suffix. All the
 data types have the \verb'CAL' prefix, and an optional suffix that
@@ -307,8 +307,7 @@ capitalized keyword, and end with a suffix specifying the CA dimension
 and the basic datatype.
 
 
-\section{A more complex example}
-
+\section{SciddicaT}
 In the previous section we illustrated an OpenCAL implementation of a
 simple cellular automaton, namely the Conway’s Game of Life. Here, we
 will deal with a more complex example concerning the implementations
@@ -316,7 +315,6 @@ of the SciddicaT Cellular Automata model for landslide
 simulation. Different versions will be presented, ranging from a naiv
 to a fully optimized implementation.
 
-\subsection{SciddicaT}
 Sciddica is a family of bi-dimensional CCA debris flow models,
 successfully applied to the simulation of many real cases, such as the
 1988 Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy)
@@ -567,7 +565,7 @@ which the stop condition can be defined.
 \end{figure}
 
 
-\subsection{SciddicaT with active cells optimization}
+\section{SciddicaT with active cells optimization}
 Here we present a computationally improved version of SciddicaT, which
 takes advantage of the built-in OpenCAL active cells optimization. As
 stated above, this optimization is able to restrict computation to a
@@ -766,7 +764,7 @@ seconds obtained for the basic (non-optimized) version, whihc is about
 8 times faster. Given the small required implementatice effort, we
 think it can be condidered a very good result.
 
-\subsection{SciddicaT as eXtended CA}
+\section{SciddicaT as eXtended CA}
 OpenCAL allows for further optimization of the SciddicaT debris flows
 simulation model by means of the so called \emph{unsafe
   operations}. In fact, in some cases, it is possible to consider an
@@ -933,7 +931,7 @@ than the basic one.
 
 
 
-\subsection{SciddicaT with explicit simulation loop}
+\section{SciddicaT with explicit simulation loop}
 Even if results obtained so far are more than satisfying, it is
 further possibile to improve computational performance of SciddicaT by
 avoiding unnecessary substates updating. In fact, in some cases, elementary

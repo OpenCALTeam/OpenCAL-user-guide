@@ -3,16 +3,18 @@
 With the name OpenCAL-OMP, we identify the OpenMP implementation of
 the software library, which can run on all the cores for your CPU. If
 you are luky and have a shared memory multiptocessor system,
-OpenCAL-OMP can exploit all the cores of all your CPUs. Similarly to
-the serial version, OpenCAL-OMP allows for some \emph{unsafe
-  operations}, which can significantly speed up your
+OpenCAL-OMP can also exploit all the cores of all your CPUs.
+
+Similarly to the serial version, OpenCAL-OMP allows for some
+\emph{unsafe operations}, which can significantly speed up your
 application. Howevewr, it must be given the utmost attention due to
-possible problems related to atomic operations and race condions. In
-particular, when many theads perform concurrent operations on the same
-memory location(s), if such operation are made by more than one basic
-machine operation, it can appen they can interleave , giving rice to
-wrong results. Race conditions occur when the logic order of different
-operation is not respected. For instance, in a sequence of write-read
+possible problems related to race condions. In particular, when many
+theads perform concurrent operations on the same memory locations, if
+such operation are made by more than one basic machine instructions,
+it can appen they can interleave, giving rice to wrong
+results. Furthermore, even in the case of atomic operations, race
+conditions can occur if the logic order of execution is not
+respected. For instance, in a sequence of write-read atomic
 operations, it can occur that the read is performed before the write
 due to the fact that the thread performing the write is executed
 first.
@@ -20,8 +22,76 @@ first.
 In the following sections, we will introduce OpenCAL-OMP by comparing
 examples source code differences with respect to the serial
 implemebntations. In the first part of the Chapter, we will deal with
-the OpenCAL's safe mode, while in the last one, we will go deep inside
-OpenCAL, discussing unsafe operations.
+the OpenCAL's safe mode, while in the last one, we will discuss unsafe
+operations.
+
+\section{Conway's Game of Life in OpenCAL-OMP}
+
+In Section \ref{sec:cal_life}, we described Conway's Game of Life and
+shown a possible implementation using the \verb'OpenCAL' serial
+library. Here, we present a \verb'OpenCAL-OMP' implementation of the
+same cellular automaton in listing \ref{lst:calomp_life}, by
+discussing the differences with respect the serial implementation.
+
+\lstinputlisting[float,floatplacement=H, label=lst:calomp_life, caption=An OpenCAL-OMP implementation of the Conway's game of Life.]{../opencal/OpenCAL-OMP/examples/calomp_life/source/life.c}
+
+As you can see, the OpenMP-based implementation of Life, which uses
+only safe operations, is alsmost identical to the serial one (listing
+\ref{lst:cal_life}). The only differences can be found at lines 3-5
+where, instead of including the OpenCAL header files, you can find the
+OpenCAL-OMP headers. All the remaining source code is unchanged. Note
+that also the OpenCAL-OMP statements' prefix does not change with
+respect to the OpenCAL's one (i.e. \verb'cal' for the functions,
+\verb'CAL' for the data types, and \verb'CAL_' for the constants). In
+conclusion, if you only use OpenCAL-OMP in safe mode, besides
+including the proper OpenCAL-OMP header files instead of the OpenCAL
+ones, you don't need to change the serial code at all.
+
+\section{SciddicaT}
+
+As for the case of Conway's Game of Life, even the OpenCAL-OMP
+implementation of SciddicaT cellular automaton, shown in Lsting
+\ref{lst:calomp_sciddicaT}, does not significantly differ from the
+serial implementation that you can find in the previous Chapter. As
+before, the only differences regard the included headers (lines
+3-5). In conclusion, as for the Life cellular automaton, due to the
+fact we used only OpenCAL-OMP safe operations, besides including the
+proper OpenCAL-OMP header files instead of the OpenCAL ones, you don't
+need to change the serial code at all.
+
+\lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT/source/sciddicaT.c}
+
+\section{SciddicaT with active cells optimization}
+Here we present an OpenCAL-OMP implemenation of SciddicaT, which takes
+advantage of the built-in OpenCAL active cells optimization. You can
+find the complete source code in Listing
+\ref{lst:calomp_Sciddicat-activecells}, while the corresponding serial
+implementation can be found in previous Chapter.
+
+\lstinputlisting[label=lst:calomp_Sciddicat-activecells, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-activecells/source/sciddicaT.c}
+
+With respect to the Sciddica implementation in Listing
+\ref{lst:calomp_sciddicaT}, which is exclusively based on safe
+OpenCAL-OMP operations, the active cells management, as implemented
+here, requires an unsafe operation. Such an unsafe operation is
+performed by means of the \verb'calAddActiveCellX2D()' function (line
+87), which adds a cell belonging to the neighbourhood to the set $A$
+of active cells. Such an operation both breasks the formal definition
+of Omogeneous Cellular Automanta, and also can give rise to race
+condition. In fact, if more threads try to add the same cell to the
+set $A$ at the same time, being this a non-atomic operation, the
+result can be wrong. In order to avoid this possible error,
+OpenCAL-OMP is able to \emph{lock} the memory locations involved in
+the operations so that each thread can entirely perform its own task,
+without the risk other threads interfere. In order to do that, it is
+sufficient to put OpenCAL-OMP in \emph{unsafe} state by calling the
+\verb'calSetUnsafe2D()', as done al line 163. No other modifications
+to the serial source code are required.
+
+\section{SciddicaT as eXtended CA}
+
+
+\subsection{SciddicaT with explicit simulation loop}
 
 
 \begin{table}
@@ -59,3 +129,6 @@ OpenCAL, discussing unsafe operations.
     implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
   \label{tab:speedup}
 \end{table} 
+
+
+\section{A three-dimensional example}
