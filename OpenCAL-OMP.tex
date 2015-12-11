@@ -91,7 +91,7 @@ to the serial source code are required.
 \section{SciddicaT as eXtended CA}
 
 
-\subsection{SciddicaT with explicit simulation loop}
+\section{SciddicaT with explicit simulation loop}
 
 
 \begin{table}
@@ -129,6 +129,39 @@ to the serial source code are required.
     implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
   \label{tab:speedup}
 \end{table} 
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|c|c|c}
+    \hline
+    mbusu version & Serial [s] & OpenMP 6th & OpenCL (Quadro FX 1100M)\\
+    \hline
+    \hline
+    naive         & 7796s & 3.57 (2185s) & 3.52 (2213s)\\
+    \hline
+  \end{tabular}
+  \caption{mbusu Speedup.}
+  \label{tab:speedup}
+\end{table} 
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|c|c}
+    \hline
+    Threads & Elapsed time [s] & Speedup\\
+    \hline
+    \hline
+    1       & 7308             & 1     \\
+    2       &                  &       \\
+    4       &                  &       \\
+    6       & 2185             & 3.34  \\
+    8       &                  &       \\
+    \hline
+  \end{tabular}
+  \caption{mbusu Speedup.}
+  \label{tab:speedup}
+\end{table} 
+
 
 
 \section{A three-dimensional example}
