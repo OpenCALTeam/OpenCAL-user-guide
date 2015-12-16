@@ -20,6 +20,8 @@
 *.mtc
 *.mtc1
 *.out
+*.pdf
+*.bak
 *.synctex.gz
 
 # other stuff to be ignored
