@@ -130,15 +130,17 @@ case, no optimization is considered.
 \end{lstlisting}  
 
 The complete definition of \verb'calCADef2D()' is provided in Listing
-\ref{lst:calCADef2D}. In particular, the \verb'CALNeighborhood2D' enum
-type (Listing \ref{lst:CALNeighborhood2D}) allows you to select one of
-the square or hexagonal predefined neighbourhoods, or a custom
-neighbourhood, whose pattern can be defined directly in your
-application. Custom neighbourhoods will be discussed later in this
-Chapter. Similarly, the \verb'CALSpaceBoundaryCondition' enum type
-(Listing \ref{lst:CALSpaceBoundaryCondition}) allows you to set
-non-ciclic or cyclic behaviour at the boundaries of the cellular
-space. Eventually, the \verb'CALOptimization' enum type (Listing
+\ref{lst:calCADef2D}, here reported together with few other OpenCAL
+important functions and data types. In particular, the
+\verb'CALNeighborhood2D' enum type (Listing
+\ref{lst:CALNeighborhood2D}) allows you to select one of the square or
+hexagonal predefined neighbourhoods, or a custom neighbourhood, whose
+pattern can be defined directly in your application. Custom
+neighbourhoods will be discussed later in this Chapter. Similarly, the
+\verb'CALSpaceBoundaryCondition' enum type (Listing
+\ref{lst:CALSpaceBoundaryCondition}) allows you to set non-ciclic or
+cyclic behaviour at the boundaries of the cellular space. Eventually,
+the \verb'CALOptimization' enum type (Listing
 \ref{lst:CALOptimization}) allows you to use or not the active cells
 optimization.
 
@@ -199,25 +201,36 @@ of \verb'calRunDef2D()' is provided in Listing
   };
 \end{lstlisting}
 
-Line 33 allocates memory and registers the substate \verb'Q' to the
+Line 33 allocates memory and registers the \verb'Q' substate to the
 \verb'life' CA, while line 36 adds an elementary process to the cell
 transition function. The \verb'calAddSubstate2Di()' function is very
 simple and self-explanatory. At the contrary,
-\verb'calAddElementaryProcess2D()' must be discussed more in detail. It
-takes the handle to the CA model to which the elementary process must
-be attached and a pointer to a callback function, that defines the
-elementary process itself. In our example, we specified
+\verb'calAddElementaryProcess2D()' must be discussed more in
+detail. It takes the handle to the CA model to which the elementary
+process must be attached and a pointer to a callback function, that
+defines the elementary process itself. In our example, we specified
 \verb'life_transition_function' as second parameter, being it the name
 of a developer-defined function that you can find at lines 14-24. As
 you can see, the elementary process callback returns
 \verb'void'. Moreover, it takes a pointer to a CA object as first
 parameter, followeb by a couple of integers, representing the
 coordinates of the generic cell in the CA space. This is the function
-prototype which is common to each elementary process you add to your
-application. Note that, each elementary process is applyed by OpenCAL
-simultaneously to each cell of the cellular space in a computational
-step. However, this is completely transparent to the user, so that he/she
-can concentrate his/her effort on the definition of single cell behaviour.
+prototype which is common to each elementary process. Note that, each
+elementary process is applyed by OpenCAL simultaneously to each cell
+of the cellular space in a computational step \footnote{This
+  characteristic is colled \emph{implicit parallelism} and is obtained
+  in OpenCAL by considering two different working planes for each
+  registered substate, namely \emph{current} and \emph{next} working
+  planes. However, behind the scene, cells are updated sequentially,
+  being OpenCAL a serial library. The \emph{current} working plane is
+  used to read current values for the cells, while the \emph{next}
+  working place is used to write new computed values. The
+  \emph{implicit parallelism} is also used in the parallel versions of
+  OpenCAL, with the difference that more than one cell can be
+  processed and updated concurrently by exploiting mre than one
+  processing unit.}. However, this is completely transparent to the
+user, so that he/she can concentrate his/her effort on the definition
+of single cell behaviour.
 
 When the user is going to implement an elementary process, by defining
 its callback function, he/she can rely on a set of OpenCAL functions that
