@@ -82,7 +82,11 @@
   tabsize=2,                      % sets default tabsize to 2 spaces
   captionpos=b,                   % sets the caption-position to bottom
   morekeywords=[2]{               % if you want to add more keywords to the set
+    CAL_CUSTOM_NEIGHBORHOOD_2D,
     CAL_FALSE,
+    CAL_HEXAGONAL_NEIGHBORHOOD_2D,
+    CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D,
+    CAL_MOORE_NEIGHBORHOOD_2D,
     CAL_NO_OPT,
     CAL_OPT_ACTIVE_CELLS,
     CAL_RUN_LOOP,
@@ -149,6 +153,8 @@
     calLoadSubstate3Dr,
     CALModel2D,
     CALModel3D,
+    CALNeighborhood2D,
+    CALOptimization,
     CALParameterb,
     CALParameteri,
     CALParameterr,
@@ -199,12 +205,14 @@
     calSetCurrent3Db,
     calSetCurrent3Di,
     calSetCurrent3Dr,
+    CALSpaceBoundaryCondition,
     CALSubstate2Db
     CALSubstate2Di,
     CALSubstate2Dr,
     CALSubstate3Db
     CALSubstate3Di,
     CALSubstate3Dr,
+    CALUpdateMode,
     }   
 }
 
