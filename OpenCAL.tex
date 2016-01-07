@@ -1,16 +1,18 @@
-\chapter{OpenCAL}
+\chapter{OpenCAL}\label{ch:opencal}
 
-With OpenCAL, we identify the sequential version of the software
-library, which runs on just a single core of your CPU, and represents
-the basis for the other parallel versions. Moreover, it allows for
-some \emph{unsafe operations}, which can significantly speed up your
+With OpenCAL (without any suffix) we identify the sequential version
+of the OpenCAL software library, which runs on just a single core of
+your CPU, and represents the basis for the other parallel versions,
+namely OpenCAL-OMP, based on OpenMP, and OpenCAL-CL, based on OpenCL
+(and thus able to run on you GPU). Moreover, OpenCAL allows for some
+\emph{unsafe operations}, which can significantly speed up your
 application. Such unsafe operations can also be found in the OpenMP
-version, while they are not present to GPU one.
+version, while they are not currently available in OpenCAL-CL.
 
 In the following sections, we will introduce OpenCAL by examples. In
-the first part of the Chapter, we will deal with the OpenCAL's safe
-mode, while in the last one, we will go deep inside OpenCAL,
-discussing unsafe operations.
+the first part of the Chapter, we will deal with the OpenCAL's
+\emph{safe mode}, while in the last one, we will go deep inside
+OpenCAL, discussing \emph{unsafe mode}'s operations.
 
 \section{Conway's Game of Life}
 
@@ -20,13 +22,13 @@ Life. It represents one of the most simple, yet powerful examples of
 Cellular Automata, devised by mathematician John Horton Conway in
 1970.
 
-The Game of Life can be thought as an infinite two-dimensional
-orthogonal grid of square cells (the cellular space), each of which is
-in one of two possible states, dead or alive. Every cell interacts
-with its eight neighbors, which are the cells that are directly
-horizontally, vertically, or diagonally adjacent to it (the Moore
-neighborhood). At each time step, one of the following transitions
-occur:
+Game of Life can be thought as an infinite two-dimensional orthogonal
+grid of square cells, each of which is in one of two possible states,
+\emph{dead} or \emph{alive}. Every cell interacts with the
+eight\footnote{Note that, in the case of the Game of Life CA, the
+  central cell does not belong to its own neighborhood.} adjecent
+neighbors belonging to the Moore neighborhood. At each time step, one
+of the following transitions occur:
 
 \begin{enumerate}
     \item Any live cell with fewer than two alive neighbors dies, as
@@ -41,13 +43,32 @@ occur:
 
 The initial configuration of the system specifies the state (dead or
 alive) of each cell into the cellular space. The evolution of the
-system is thus obtained by applying the above rules (the CA transition
-function) simultaneously to every cell in the cellular space, so that
-each new configuration is function of the one at the previous
-step. The rules continue to be applied repeatedly to create further
-generations. For more details on the Game of life you can check
-Wikipedia at the URL
+system is thus obtained by applying the above rules (which define the
+cell's transition function) simultaneously to every cell in the
+cellular space, so that each new configuration is function of the one
+at the previous step. The rules continue to be applied repeatedly to
+create further generations. For more details on the Game of life you
+can check Wikipedia at the URL
 \url{http://en.wikipedia.org/wiki/Conway's_Game_of_Life}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=5cm]{./images/OpenCAL/LifeNeighborhood.png}
+    \caption{OpenCAL's 2D cellular space and Moore neighborhood. Cells
+      are individuated by a couple of matrix-style integer coordinates
+      $(i, j)$, where $i$ represents the row and $j$ the column. Cell
+      (0,0) is the one located at the upper-left corner. Moore
+      neighborhood is represented in gray scale, whit the central cell
+      highlated in dark gray. Neighboring cells can also be indexed by
+      the integer subscript shown within the cell. Cells indices are
+      impliclitly assigned by OpenCAL, both in the case of predefined
+      and custom neighborhoods. In the first case, indices can not be
+      modified, while in the second case, indices as assigned
+      progressively in automatic way each time a new neighbor is added
+      to the CA by means of the \texttt{calAddNeighbor2D()} function.}
+    \label{fig:LifeNeighborhood}
+  \end{center}
+\end{figure}
 
 The formal definition of the Life CA is reported below.
 
@@ -81,13 +102,14 @@ where:
 
   represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby,
   $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1)
-  = (i-1, j)$, i.e. the first neighbour, and so on.
+  = (i-1, j)$, i.e. the first neighbour, and so on (see Figure
+  \ref{fig:LifeNeighborhood}).
   
-\item $Q = \{0, 1\}$ is the set of cell states.
+\item $Q = \{0, 1\}$ is the set of cell's states.
   
-\item $\sigma : Q^9 \shortrightarrow Q$ is the deterministic cell
+\item $\sigma : Q^8 \rightarrow Q$ is the deterministic cell
   transition function. It is composed by one elementary process, which
-  implements the previously descripted transition rules.
+  implements the previously above mentioned transition rules.
 \end{itemize}
 
 
@@ -104,20 +126,30 @@ In order to use OpenCAL, you need to include some header files (lines
 CA object (line 9) and the related substate (line 10), while
 \verb'cal2DRun.h' (line 5) allows you to define a CA simulation object
 (line 11), needed to run the CA model. The \verb'cal2DIO.h' header
-file (line 4) provides you some input/output functions for
+file (line 4) provides you some basic input/output functions for
 reading/writing substates from/to file.
 
-While statements at lines 9-11 just declare the required objects, they are
-defined later in the \verb'main' function. In particular, the life CA
-object is defined at line 29 by the \verb'calCADef2D()' function. The
-first 2 parameters define the CA dimensions (the number of rows and
-columns, respectively), while the third the neighbourhood pattern. The
-fourth parameter specifies the boundary conditions. In this case, the CA
-cellular space is considered as a torus, with cyclic behaviour at
-boundaries. The last parameter allows you to specify if your model
-has to use the so called \emph{active cells optimization}, that is
-able to restrict the computation to only \emph{non-stationary cells}. In this
-case, no optimization is considered.
+While statements at lines 9-11 just declare the required objects, they
+are defined later in the \verb'main' function. In particular, the life
+CA object is defined at line 29 by the \verb'calCADef2D()'
+function. The first 2 parameters define the CA dimensions (the number
+of rows and columns, respectively), while the third parameter defines
+the neighbourhood pattern. Here, the predefined Moore neighborhood is
+selected (see Figure \ref{fig:LifeNeighborhood}), among those provided
+by OpenCAL. See Listings \ref{lst:CALNeighborhood2D} and
+\ref{lst:CALNeighborhood3D} for a list of OpenCAL's 2D and 3D
+neighborhoods, respectively. Custom neighborhoods can also be defined
+by means of the \verb'calAddNeighbor2D()' function. In both cases,
+indices are assigned progressively, starting from 0, each time a new
+cell is added to the neighborhood..
+
+The fourth parameter specifies the boundary
+conditions. In this case, the CA cellular space is considered as a
+torus, with cyclic conditions at boundaries. The last parameter allows
+you to specify if your model has to use the so called \emph{active
+  cells optimization}, that is able to restrict the computation to
+only \emph{non-stationary cells}. In this case, no optimization is
+considered.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
   struct CALModel2D* calCADef2D (
@@ -131,7 +163,7 @@ case, no optimization is considered.
 
 The complete definition of \verb'calCADef2D()' is provided in Listing
 \ref{lst:calCADef2D}, here reported together with few other OpenCAL
-important functions and data types. In particular, the
+key functions and data types. In particular, the
 \verb'CALNeighborhood2D' enum type (Listing
 \ref{lst:CALNeighborhood2D}) allows you to select one of the square or
 hexagonal predefined neighbourhoods, or a custom neighbourhood, whose
@@ -153,6 +185,15 @@ optimization.
     CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D 
 };
 \end{lstlisting}  
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood3D, caption=The CALNeighborhood3D enum type., numbers=none]
+  enum CALNeighborhood3D {
+    CAL_CUSTOM_NEIGHBORHOOD_3D,
+    CAL_VON_NEUMANN_NEIGHBORHOOD_3D,
+    CAL_MOORE_NEIGHBORHOOD_3D
+};
+\end{lstlisting}  
+
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALSpaceBoundaryCondition, caption=The CALSpaceBoundaryCondition enum type., numbers=none]
   enum CALSpaceBoundaryCondition{
@@ -190,7 +231,7 @@ of \verb'calRunDef2D()' is provided in Listing
     struct CALModel2D* ca2D,
     int initial_step,
     int final_step,
-    enum CALUpdateMode UPDATE_MODE 
+    enum CALUpdateMode UPDATE_MODE
   )	
 \end{lstlisting}
 
