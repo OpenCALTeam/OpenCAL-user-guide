@@ -3,12 +3,12 @@
 
 \section{Introduction}
 
-This guide presents \verb"OpenCAL", an open source C/C++ library
+This guide presents \texttt{\ocal}, an open source C/C++ library
 for implementing models based on the Cellular Automata (CA)
 paradighm. Specifically, the library was developed with the aim to permit a
 straightforward and simple implementation of Cellular Automata models, which are
 particularly suitable for the simulation of spatial extended dynamical systems.
-Key features of \verb"OpenCAL" are the
+Key features of \texttt{OpenCAL} are the
 following:
 
 \begin{itemize}
@@ -22,7 +22,14 @@ following:
 \end{itemize}
 
 
-\section{Obtaining OpenCAL}
+\section{Obtaining \texttt{\ocal}}
+
+\begin{enumerate}
+\item  \texttt{\ocal} source code is available on the following \emph{github} repository \url{https://github.com/OpenCALTeam/OpenCAL}. 
+
+\item \texttt{\ocal} is also downloadable as zip file at the following URL: \url{www.urldellozip}
+\end{enumerate}
+
 
 
 
@@ -32,26 +39,29 @@ The distribution contains the following files and subdirectories:
 
 \begin{itemize}
 
-    \item \textbf{AUTHORS}: Authors of \verb"libautoti".
-
+	
+    \item \textbf{AUTHORS}: Authors of \texttt{\ocal}.
+	\item \textbf{\ocal}: core and examples code of the \emph{serial} implementation  
+	\item \textbf{\ocal-CL}:  core and examples code of the \emph{Open-CL} implementation  
+	\item \textbf{\ocal-GL}:  \texttt{\ocal} graphic core library and examples   
+	\item \textbf{\ocal-OMP}:  core and examples code of the \emph{Open-MP}  multicore implementation  
 
 \end{itemize}
 
 
 \section{Requirements and dependencies}
 
-To compile \verb"libautoti", you must have an ANSI C++ compiler
-that includes a full implementation of the Standard Library and
-related header files. Additionally, if you want to obtain a
-parallel version of the library, you must have an implementation
-of the Message Passing Interface (MPI) for the parallel computer
-or workstation network you are running on. If you do not have a
-native version of MPI for your computer, several
-machine-independent implementations are available. Most of the
-testing and development of \verb"libautoti" was done by using the
-MPICH2 implementation of MPI, which is freely available.
-Additional information about MPICH2 is available on the World Wide
-Web at \url{http://www.mcs.anl.gov/research/projects/mpich2/}.
+To compile \texttt{\ocal}, you must have an at least an ANSI C compiler and \texttt{cmake} $\geq$ 2.8 intalled in your system.
+\ocal was succesfully compiled and tested with\texttt{gcc} $\geq 4.8$. \texttt{clang} can be also used, taking in mind that it still does not fully support  \emph1{Open-MP} natively.
+The following is a list of additional dependencies required for each \ocal version:
+
+\begin{itemize}
+	\item \texttt{\ocal-OMP}: a C compiler that supports \emph{Open-MP} $\geq 2.0$ (for a list of \emph{OpenMP} compliant compiler see the following link: \url{http://openmp.org/wp/openmp-compilers/})
+	\item  \texttt{\ocal-GL}: GLUT/OpenGL libraries and headers. (for example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages on \texttt{yum/dnf} and Debian-like systems respectively).
+	\item \texttt{\ocal-CL}: 
+\end{itemize}
+
+
 
 \subsection{Installing prerequisites}
 
@@ -65,7 +75,7 @@ Web at \url{http://www.mcs.anl.gov/research/projects/mpich2/}.
 
 \section{Web Page and Bug Reporting}
 
-The World Wide Web page for \verb"libautoti" is
+The World Wide Web page for \texttt{\ocal} is
 \url{http://autoti.mat.unical.it} and contains up-to-date news and
 a list of bug reports. For info or bug reports send an electronic
 mail to
@@ -73,6 +83,6 @@ mail to
 
 When reporting a bug, please include as much information and
 documentation as possible. Helpful information would include
-\verb"libautoti" version, MPI implementation and version used,
+\texttt{\ocal} version, MPI implementation and version used,
 configuration options, type of computer system, problem
 description, and error message output.
