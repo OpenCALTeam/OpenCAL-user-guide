@@ -58,14 +58,55 @@ The following is a list of additional dependencies required for each \ocal versi
 \begin{itemize}
 	\item \texttt{\ocal-OMP}: a C compiler that supports \emph{Open-MP} $\geq 2.0$ (for a list of \emph{OpenMP} compliant compiler see the following link: \url{http://openmp.org/wp/openmp-compilers/})
 	\item  \texttt{\ocal-GL}: GLUT/OpenGL libraries and headers. (for example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages on \texttt{yum/dnf} and Debian-like systems respectively).
-	\item \texttt{\ocal-CL}: 
+	\item \texttt{\ocal-CL}: OpenCL platform should be installed in the system. \texttt{\ocal-CL} was tested on NVIDIA  \emph{OpenCL} implementation (see the following link to know how to obtain the NVIDIA's \texttt{OpenCL} implementation, shipped with the CUDA platform \url{http://docs.nvidia.com/cuda/#installation-guides}).
 \end{itemize}
 
 
 
-\subsection{Installing prerequisites}
+\subsection{CMake}
+\ocal uses CMake to generate project files or makefiles for a particular configuration (development environment and library features). If you are on a Unix-like system such as Linux or FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake package. If not, you can download installers for Windows and OS X from the CMake website.
+
+CMake only generates project files or makefiles that describe how and which characteristics should be compiled. It does not compile the actual \ocal library. To compile \ocal, first generate these files for your chosen development environment and then use them to compile the actual \ocal library.
+
+Suppose you want to compile \ocal and enable support for OpenMP. You will instruct CMake to create the correct makefiles for the compilation of the \ocal and \ocal-MP version of the library.
+
+\subsection{Generating MakFiles}
+\textbf{This section is about generating the project files or makefiles necessary to compile the}  \texttt{\ocal} \textbf{library, not about compiling the actual library.}
+
+Once you have all necessary dependencies it is time to generate the project files or makefiles for your development environment. CMake needs to know two paths for this: the path to the root directory of the \ocal source tree (i.e. not the src subdirectory) and the target path for the generated files and compiled binaries. If these are the same, it is called an in-tree build, otherwise it is called an out-of-tree build.
+
+One of several advantages of out-of-tree builds is that you can generate files and compile for different development environments using a single source tree.
+
+To make an out-of-tree build, enter the root directory of the \texttt{\ocal} source tree (i.e. not the src subdirectory) and run CMake using zero or more of the options listed below to control which features will be enabled in the compiled library. The current directory is used as target path, while the path provided as an argument is used to find the source tree.
 
 
+ \begin{lstlisting}[language=bash,caption={OpenCAL simple build},label={ch:quickstart:simplebuild}]
+user@machine:-$ cd opencal && mkdir build && cd build
+user@machine:-$ cmake {[-DOPTION]} ../
+user@machine:-$ make -jn
+\end{lstlisting}
+where $n$ is the number of cores of you machine ($-jk$ option enable the parallel compilation using $k$ processors).
+
+CMake options are listed in table \ref{ch:installation:cmakeoptions} alongside their effects and default value.
+
+\begin{table}[]
+\centering
+\caption{List of CMAKE options}
+\label{ch:installation:cmakeoptions}
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{OPTION} & \textbf{EFFECT} & \textbf{DEFAULT}\\ \hline
+   \texttt{BUILD\_DOCUMENTATION}  &  Build the HTML based API documentation (Doxygen required)  & OFF   \\ \hline
+  \texttt{BUILD\_OPENCAL\_SERIAL} & Build the OpenCAL serial version  & ON   \\ \hline
+   \texttt{BUILD\_OPENCAL\_OMP} &  Build the OpenCAL-OMP OpenMP parallel version (OpenMP required)    & OFF \\ \hline
+   \texttt{BUILD\_OPENCAL\_OMP\_PARALLEL} &  Controls if OpenCAL-OMP is compiled agaist libomp. If OFF, the OPENMP version uses only one processor! Turn it ON for if you want parallelism  &  ON  \\ \hline
+   \texttt{BUILD\_OPENCAL\_CL} &  Build the OpenCAL-CL OpenCL parallel version (OpenCL required)     &OFF\\ \hline
+   \texttt{BUILD\_OPENCAL\_GL} & Build the OpenCAL-GL visualization library (OpenGL and GLUT required)      &OFF \\ \hline                          
+   \texttt{BUILD\_EXAMPLES} & Build the examples for each OpenCAL version      &\\ \hline
+   \texttt{BUILD\_OPENCAL\_PP} &  Build the OpenCAL-C++ version (C++11 compliant compiler Required)    &  OFF\\ \hline
+   \texttt{ENABLE\_SHARED} &  Controls whether the library should be compiles as shared  (.so .dll) object (If off static objects will be produced) & OFF\\ \hline                        
+\end{tabularx}
+\end{table}
 \section{Build and installing}
 
 \subsection{cmake options}
