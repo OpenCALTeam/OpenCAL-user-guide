@@ -10,8 +10,8 @@
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
     unicode=false,          % non-Latin characters in Acrobat�s bookmarks
-    pdftoolbar=true,        % show Acrobat�s toolbar?
-    pdfmenubar=true,        % show Acrobat�s menu?
+    pdftoolbar=true,        % show Acrobats toolbar?
+    pdfmenubar=true,        % show Acrobats menu?
     pdffitwindow=true,      % page fit to window when opened
 %   pdftitle={My title},    % title
 %   pdfauthor={Author},     % author
@@ -28,7 +28,6 @@
 \usepackage{xcolor}
 \usepackage{pxfonts}
 \usepackage{fancyhdr}
-
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -208,8 +207,14 @@
     }   
 }
 
+
 \oddsidemargin80pt      %commentare se si stampa solo fronte
 \evensidemargin40pt     %commentare se si stampa solo fronte
+
+\graphicspath{{./images/}}
+
+\newcommand{\ocal}{OpenCAL} %OpenCAL name macro expansion
+\newcommand{\ocalt}{\texttt{\ocal}} %OpenCAL name macro expansion
 
 
 \begin{document}
@@ -230,7 +235,7 @@
 \input{introduction.tex}
 \input{quickstart.tex}
 \input{installation.tex}
-\input{CellularAutomata}
+\input{CellularAutomata.tex}
 \input{OpenCAL.tex}
 \input{OpenCAL-OMP.tex}
 \input{OpenCAL-CL.tex}
