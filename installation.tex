@@ -1,25 +1,6 @@
 \chapter{Installation} 
 \label{ch:installation}
 
-\section{Introduction}
-
-This guide presents \texttt{\ocal}, an open source C/C++ library
-for implementing models based on the Cellular Automata (CA)
-paradighm. Specifically, the library was developed with the aim to permit a
-straightforward and simple implementation of Cellular Automata models, which are
-particularly suitable for the simulation of spatial extended dynamical systems.
-Key features of \texttt{OpenCAL} are the
-following:
-
-\begin{itemize}
-    \item Parallel and Multiplatform. 
-    
-    \item Support for GPU execution, using OpenCL and CUDA.
-    
-    \item Support for Complex Cellular Automata 
-    
-    \item Other Key features here 
-\end{itemize}
 
 
 \section{Obtaining \texttt{\ocal}}
@@ -35,7 +16,7 @@ following:
 
 \section{Structure of the Distribution Directory}
 
-The distribution contains the following files and subdirectories:
+The tarball file contains the following files and directories:
 
 \begin{itemize}
 
@@ -51,8 +32,8 @@ The distribution contains the following files and subdirectories:
 
 \section{Requirements and dependencies}
 
-To compile \texttt{\ocal}, you must have an at least an ANSI C compiler and \texttt{cmake} $\geq$ 2.8 intalled in your system.
-\ocal was succesfully compiled and tested with\texttt{gcc} $\geq 4.8$. \texttt{clang} can be also used, taking in mind that it still does not fully support  \emph1{Open-MP} natively.
+To compile \texttt{\ocal}, you must have an ANSI C compiler and \texttt{cmake} $\geq$ 2.8 intalled in your system.
+\ocal was succesfully compiled and tested with\texttt{gcc} $\geq 4.8$. \texttt{clang} can be also used, taking in mind that it still does not fully support  \emph{Open-MP} natively.
 The following is a list of additional dependencies required for each \ocal version:
 
 \begin{itemize}
@@ -64,30 +45,29 @@ The following is a list of additional dependencies required for each \ocal versi
 
 
 \subsection{CMake}
-\ocal uses CMake to generate project files or makefiles for a particular configuration (development environment and library features). If you are on a Unix-like system such as Linux or FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake package. If not, you can download installers for Windows and OS X from the CMake website.
+\texttt{\ocal} uses CMake to generate project files or makefiles for a particular configuration (development environment and library features). If you are on a Unix-like system such as Linux or FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake package. If not, you can download installers for Windows and OS X from the CMake website.
 
-CMake only generates project files or makefiles that describe how and which characteristics should be compiled. It does not compile the actual \ocal library. To compile \ocal, first generate these files for your chosen development environment and then use them to compile the actual \ocal library.
+CMake only generates project files or makefiles that describe how and which characteristics should be compiled. It does not compile the actual \ocal library. To compile \ocal, first generate these files for your chosen development environment and then use them to compile the actual \texttt{\ocal} library.
 
-Suppose you want to compile \ocal and enable support for OpenMP. You will instruct CMake to create the correct makefiles for the compilation of the \ocal and \ocal-MP version of the library.
+Suppose you want to compile \texttt{\ocal} and enable support for OpenMP. You will instruct CMake to create the correct makefiles for enabling supportfor OpenMP passing \texttt{-DBUILD\_OPENCAL\_OMP=ON} and \texttt{-DBUILD\_OPENCAL\_OMP\_PARALLEL=ON} as cmake arguments. 
 
 \subsection{Generating MakFiles}
 \textbf{This section is about generating the project files or makefiles necessary to compile the}  \texttt{\ocal} \textbf{library, not about compiling the actual library.}
 
-Once you have all necessary dependencies it is time to generate the project files or makefiles for your development environment. CMake needs to know two paths for this: the path to the root directory of the \ocal source tree (i.e. not the src subdirectory) and the target path for the generated files and compiled binaries. If these are the same, it is called an in-tree build, otherwise it is called an out-of-tree build.
+Once you have all necessary dependencies it is time to generate the project files or makefiles for your development environment. CMake needs to know two paths for this: the path to the root directory of the \texttt{\ocal} source tree (i.e. not the src subdirectory) and the target path for the generated files and compiled binaries. If these are the same, it is called an in-tree build, otherwise it is called an out-of-tree build.
 
+We strongly suggest to do an out-of-tree build.
 One of several advantages of out-of-tree builds is that you can generate files and compile for different development environments using a single source tree.
+To make an out-of-tree build, enter the root directory of the \texttt{\ocal} source tree (i.e. not the src subdirectory) and run CMake using zero or more of the options listed in table \ref{ch:installation:cmakeoptions}  at page  \pageref{ch:installation:cmakeoptions} to control which features will be enabled in the compiled library. The current directory is used as target path, while the path provided as an argument is used to find the source tree.
 
-To make an out-of-tree build, enter the root directory of the \texttt{\ocal} source tree (i.e. not the src subdirectory) and run CMake using zero or more of the options listed below to control which features will be enabled in the compiled library. The current directory is used as target path, while the path provided as an argument is used to find the source tree.
 
-
- \begin{lstlisting}[language=bash,caption={OpenCAL simple build},label={ch:quickstart:simplebuild}]
+ \begin{lstlisting}[language=bash,caption={OpenCAL CMake configuration},label={ch:quickstart:simplebuild}]
 user@machine:-$ cd opencal && mkdir build && cd build
 user@machine:-$ cmake {[-DOPTION]} ../
-user@machine:-$ make -jn
 \end{lstlisting}
-where $n$ is the number of cores of you machine ($-jk$ option enable the parallel compilation using $k$ processors).
 
-CMake options are listed in table \ref{ch:installation:cmakeoptions} alongside their effects and default value.
+
+\texttt{CMake} options are listed in table \ref{ch:installation:cmakeoptions} alongside their effects and default value.
 
 \begin{table}[]
 \centering
@@ -107,23 +87,42 @@ CMake options are listed in table \ref{ch:installation:cmakeoptions} alongside t
    \texttt{ENABLE\_SHARED} &  Controls whether the library should be compiles as shared  (.so .dll) object (If off static objects will be produced) & OFF\\ \hline                        
 \end{tabularx}
 \end{table}
-\section{Build and installing}
 
-\subsection{cmake options}
+
+\section{Build and installing}
+Once \texttt{MakeFile}s have been produced by \texttt{CMake}, everything is set up and ready for compiling. 
+
+\begin{lstlisting}[language=bash,caption={OpenCAL build},label={ch:quickstart:ebuild}]
+user@machine:-$ make -jn
+\end{lstlisting}
+where $n$ is the number of cores of you machine ($-jk$ option enable the parallel compilation using $k$ processors).
+
+You can install the compiled objects (libraries and examples if enabled during the CMake configuration), headers and API documentation in the appropriate folders using the following command:
+
+\begin{lstlisting}[language=bash,caption={OpenCAL installation},label={ch:quickstart:install}]
+user@machine:-$ sudo - 
+root@machine:-$ make install
+root@machine:-$ exit
+\end{lstlisting}
+
+or equivalently, if your user is in the \texttt{sudoers} list
+\begin{lstlisting}[language=bash,caption={OpenCAL sudo installation},label={ch:quickstart:sudoinstall}]
+user@machine:-$ sudo make install
+\end{lstlisting}
 
 
 
 
 \section{Web Page and Bug Reporting}
 
-The World Wide Web page for \texttt{\ocal} is
+The Web page for \texttt{\ocal} is at 
 \url{http://autoti.mat.unical.it} and contains up-to-date news and
-a list of bug reports. For info or bug reports send an electronic
-mail to
-\href{mailto:libautoti@mat.unical.it}{libautoti@mat.unical.it}.
+a list of bug reports. \ocal's GitHub homepage is at \url{https://github.com/OpenCALTeam/opencal} 
+For further information or bug reports contact
+\url{mailto:opencal@mat.unical.it} or use the submit an issue at the following url \url{https://github.com/OpenCALTeam/opencal/issues}.
 
 When reporting a bug, please include as much information and
 documentation as possible. Helpful information would include
-\texttt{\ocal} version, MPI implementation and version used,
+\texttt{\ocal} version, OpenMP/CV implementation and version used,
 configuration options, type of computer system, problem
 description, and error message output.
