@@ -1,49 +1,59 @@
 \chapter{OpenCAL OpenCL version}\label{ch:opencal-cl}
 
-The goal of this chapter is to introduce to the user how to programme CA (Cellular Auto-
-mata) with OpenCAL-CL (an extention of OpenCAL). OpenCAL-CL has
-various benefit, infact it allows the user to execute your CA in a very easy
-way on GPGPU through the OpenCL framework. OpenCL standard was
-initially developed by Apple Inc. after it submitted this initial proposal
-to Khronos Group. The main advantage of OpenCL is the portability. You can
-execute your program whereever you want. You can execute across hetero-
-geneous platforms consinsting of central processing units (CPUs), graphics
-processing units (GPUs), digital signal processors (DSPs), field-programmable
-gate arrays (FPGAs) and other processors. For this framework OpenCL a
-more suitable motto might be, ''write once, run on anything''.\\
-As previously mentioned OpenCAL-CL is an extention of OpenCAL (Open
-Cellular Automata Library). 
-OpenCAL-CL absorbs all the properties of
-OpenCAL library moreover it adds parallel computation. Nowadays parallel 
-computing is the best solution to cross temporal limits.
-The AC definition in the host side is equals to the definition with the Open-
-CAL library. However, the elementary process and other function of the
-execution loop must be implemented as kernels. So one prerequisite to program 
- 	with OpenCAL-CL is that the user must know OpenCL framework
-to write kernels. On the other hand the library hide all things that the user
-must not know, like execution loop is internal managed and the user can
-set some properties about execution through some functions. Another thing
-that it’s very boring in OpenCL and that the user must not do, it’s the data
-transfer from host to kernel and vice versa because the user must call only
-one easy function. So OpenCAL-CL library has the aim to simplify the user
-prommaning. This book is divided into two parts. The first part focuses on
-exploring the framework OpenCL and its capabilities. The second part
-exploring the OpenCAL-CL library with some example to understand better the features of the library.
+
+Nowadays parallel computing is the best solution to cross temporal
+limits. This chapter introduces OpenCAL-CL, a porting of OpenCAL in
+OpenCL.
+
+OpenCL is a parallel framework originally proposed by Apple and then
+released as an Open Standard under the Khronos Group
+management. Besides computational efficiency, one of the main
+advantages of OpenCL is portability. In fact, you can run your program
+whereever you want across heterogeneous processors like Central
+Processing Units (CPUs), Graphics Processing Units (GPUs), Digital
+Signal Processors (DSPs), and Field-Programmable Gate Arrays (FPGAs).
+
+OpenCAL-CL inherits many OpenCAL's features, by also adding parallel
+computation capability thanks to the adoption of OpenCL. The
+application is now subdivided in two parts: the \emph{host program},
+running on the CPU, and the \emph{device program}, running on a
+compliant computational device (e.g. an Nvidia or AMD GPU). The CA
+object is still defined host-side, as in OpenCAL, while elementary
+processes (and possibly other functions) are defined
+device-side. Belonging to the device program, elementary processes
+must be defined as OpenCL's \emph{kernels} and therefore the
+programmer have to be able to write some OpenCL code to implement
+them. Fortunately, OpenCAL-CL hides lots of parallel aspects to the
+user (e.g. the simulation loop is internally managed by the library)
+and also simplify data exchange between host and device. The users's
+OpenCL parallel programming background can be therefore limited or
+even null. In the latter case, the user can learn some basic elements
+of OpenCL kernel programming thanks to this guide.
+
+This chapter is divided into two parts: the first part is a very brief
+overview of OpenCL, while the second one introduces OpenCAL-CL by
+examples.
 
 \section{OpenCL framework}
-OpenCL enables parallel programming that assigns computational tasks to multiple processing elements 
-to be perfomed at the same time. These tasks are called kernels. The kernel is a special function that can be executed 
-to different OpenCL-compliant devices. The kernels are sent to the devices or device by host application.
-The host application is a C/C++ application running on the user's system, called host.
-The host application manage all the connection with devices by a container called context. 
-In the host application, the user can select the kernel's functions to insert inside a container called program.
-The program connects the kernel with argument data and dispaches it to a structure called command queue.
-The command queue is a structure that allows the host to decide what the devices have to do, and when a kernel is enqueued, the device 
-will execute the relative function.
+OpenCL enables parallel programming that assigns computational tasks
+to multiple processing elements to be perfomed at the same time. These
+tasks are called kernels. The kernel is a special function that can be
+executed to different OpenCL-compliant devices. The kernels are sent
+to the device(s) by the host application. The host application defines
+a structure called \emph{context}, needed to manage data exchange and
+computation on the compliant devices. XXX
+
+In particular, host application links kernels into one or more programs In the host application, the
+user can select the kernel's functions to insert inside a container
+called \emph{program},.  The program connects the kernel with argument
+data and dispaches it to a structure called command queue.  The
+command queue is a structure that allows the host to decide what the
+devices have to do, and when a kernel is enqueued, the device will
+execute the relative function.
 
 \begin{figure}[htp]
   \begin{center}
-    \includegraphics[width=12cm]{./images/OpenCAL-CL/kernelDistribution.png}
+    \includegraphics[width=12cm]{./images/OpenCAL-CL/kernelDistribution}
     \caption{General structure of a OpenCL program}
     \label{fig:GeneralStructure}
   \end{center}
