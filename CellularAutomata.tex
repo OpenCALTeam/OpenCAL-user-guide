@@ -2,9 +2,9 @@
 
 Cellular Automata (CA) are parallel computing models, whose evolution
 is ruled by local rules. They are largely employed in Science and
-Engineering for a wide range of problems, especially when calssic
-methods, e.g. based on differential equations, can not be conveniently
-applied. In this Chapter, CA are briefly introduced, togheter with a
+Engineering for a wide range of problems, especially when classic
+methods (e.g., based on differential equations) can not be conveniently
+applied. In this Chapter, CA are briefly introduced, together with a
 recent extension of them, known as eXtended Cellular Automata (XCA),
 which are widely used for the modelling of physical extended systems.
 
@@ -13,22 +13,21 @@ which are widely used for the modelling of physical extended systems.
 
 A cellular automaton can be thought as a $d$-dimensional space, called
 \emph{cellular space}, subdivided in regular cells of uniform shape
-and size. Each cell embeds a \emph{finite automaton}, that is one of
-the most simple and well known computational model in Computer
-Science, and can assume a finite number of states. At time $t=0$,
+and size. Each cell embeds a \emph{finite automaton}, one of
+the most simple and well known computational models, which can assume a finite number of states. At time $t=0$,
 cells are in arbitrary states and the CA evolves step by step by
 changing the states of the cells at discrete time steps, by applying
 the same local rule of evolution, i.e. the cell's \emph{transition
   function}, simultaneously (i.e. in parallel) to each cell of the
-CA. Input for the cell is given by the states of a predefined set of
+CA. Input for the cell is given by the states of a predefined (small) set of
 neighboring cells, which is assumed constant in space and time. It is
-possible to indentify an informal definition of cellular automaton by
+possible to identify an informal definition of cellular automaton by
 simply listing its main properties:
 
 \begin{itemize}
 \item It is formed by a $d$-dimensional space (i.e. the \emph{cellular
   space}), partitioned into cells of uniform shape and size
-  (e.g. triangles, squared, hexagons, cubes, etc. - see Figure
+  (e.g. triangles, squares, hexagons, cubes, etc. - see Figure
   \ref{fig:cellularspaces});
 \item The number of cell's states is finite;
 \item The evolution occurs through discrete steps;
@@ -36,7 +35,7 @@ simply listing its main properties:
   change state concurrently, in parallel) thanks to the application of
   the cell's \emph{transition function};
 \item The cell's state transition depends on the states of a set of neighboring cells;
-\item The evolving cell's is called \emph{central cell} and can belong
+\item The evolving cell is called \emph{central cell} and can belong
   to its neighbourhood;
 \item The neighboring relationship is local, uniform and invariant
   over time (see Figures \ref{fig:1Dneighborhood} and
@@ -62,8 +61,8 @@ simply listing its main properties:
     \includegraphics[width=12cm]{./images/CellularAutomata/onedimensional.pdf}
     \caption{Example of neighborood with radius (a) $r = 1$ and (b) $r
       = 2$ for one-dimensional Cellular Automata. Central cell is
-      represented in dark gray, while adjecet cells are in light
-      gray. Note that centrall cell can optionally belong to its own
+      represented in dark gray, while adjacent cells are in light
+      gray. Note that the central cell can optionally belong to its own
       neighborhood.}
     \label{fig:1Dneighborhood}
   \end{center}
@@ -76,19 +75,19 @@ simply listing its main properties:
     \caption{Examples of von Neumann (a) and Moore (b) neighboroods
       for two-dimensional CA with square cells. Examples of (Moore)
       neighborhoods are also shows for hexagonal CA, both for the
-      cases of orizontal (c) and vertical (d) cells
+      cases of horizontal (c) and vertical (d) cells
       orientation. Central cell is represented in dark gray, while
-      adjecet cells are in light gray. Note that centrall cell can
+      adjacent cells are in light gray. Note that the central cell can
       optionally belong to its own neighborhood.}
     \label{fig:2Dneighborhood}
   \end{center}
 \end{figure}
 
 
-Despite their simple definition, CA can exhibit very interesting,
+Despite their simple definition, CA can exhibit very interesting
 complex global behaviors. Moreover, from a computational point of
 view, they are equivalent to Turing Machines. This means, in
-principle, that everything can be computed can be computed by means of
+principle, that everything that can be computed can also be by means of
 a cellular automaton (Church–Turing thesis). Thanks to their
 \emph{computational universality}, CA gained a great consideration
 inside the Scientific Community and were employed for solving a great
@@ -126,16 +125,16 @@ $$A = <R,X,Q,\sigma>$$
 
 \section{Some Applications of Cellular Automata}
 
-CA are particularly suited to model and simulate some classes of
-complex systems characterized by a large numebr of interacting
+CA are particularly suited to model and simulate classes of
+complex systems characterized by a large number of interacting
 elementary components.  The assumption that if a system behaviour is
 complex, the model that describes it must necessarily be of the same
-complexitiy is replaced by the idea that its behavior can be
+complexity is replaced by the idea that its behavior can be
 described, at least in some cases, in very simple terms.
 
 Among different fields, fluid-dynamics is one of most important
-application for CA and, in this research branch, many different
-CA-based methods can be found to simulate fluid flows.  Lattice Gas
+applications for CA and, in this research branch, many different
+CA-based methods can be found in the literature to simulate fluid flows.  For instance, Lattice Gas
 Automata (LGA) were introduced for describing the motion and collision of
 \emph{particles} on a grid and it was shown that such models can
 reproduce the main fluid dynamical properties. The continuum limit of
@@ -145,29 +144,29 @@ fluid particles which interact by scattering. An advantage of Lattice
 Gas models is that the simplicity of particles, and of their
 interactions, allow for the simulation of a large number of them,
 making it therefore possible to observe the emergence of flow
-patterns. Furthermore, since they are CA systems, it makes easily to
-run simulations with parallel computing. A different approach to LGA
+patterns. Furthermore, since they are CA systems, it is possible to easily
+run simulations in parallel. A different approach to LGA
 is represented by Lattice Boltzmann models in which the state
 variables can take continuous values, as they are supposed to
 represent the density of fluid particles, endowed with certain
-properties, located in each cell (here space and time are discrete, as
+properties, located in each cell (space and time are also discrete, as
 in lattice gas models). Both Lattice Gas and Lattice Boltzmann Models
 have been applied for the description of fluid turbulence.
 
-Because many complex natural phenomena evolve on very large areas,
+Since many complex natural phenomena evolve on very large areas,
 they are therefore difficult to be modelled at a microscopic level of
 description. Among these, we can find some real flow-type phenomena
 like debris and lava flows, as well as floods and pyroclastic
-flows. Besides rehological complex behaviour, they generally evolve on
+flows. Besides rheological complex behaviour, they generally evolve on
 complex topographies, that can even change during the phenomenon
 evolution, and are often characterised by branching and rejoining of
 the flow. In order to better model such kind of phenomena, an extended
-notion of Cellular Automata, described in the next Section, can
+notion of Cellular Automata (eXtended Cellular Automata, described in the next Section), can
 represent a valid alternative to classical CA.
 
 \section{eXtended Cellular Automata}
 
-As regards the modeling of natural complex phenomena, Crisci and
+As regards the modeling of natural complex phenomena, Prof. Gino `Miracle Crisci' and
 co-workers from University of Calabria (Italy) proposed a method based
 on an eXtended notion of CA (XCA), firstly applied to the simulation
 of basaltic lava flows in the 80's\footnote{XCA are also known as
@@ -182,22 +181,26 @@ the following reasons:
 \begin{itemize}
 
 \item The cell's state is decomposed in \emph{substates}, each of them
-  representing the set of ammissible values of a given characteristic
-  assumed to be relevant for the modeled system and its evolution. The
+  representing the set of admissible values of a given characteristic
+  assumed to be relevant for the modeled system and its evolution (e.g., lava temperature, lava thickness, etc, in the case of ca lava flow model). The
   set of states for the cell is simply obtained as the Cartesian
   product of the considered substates.
 
 \item As the cell's state can be decomposed in substates, also the
   transition function can be split into \emph{elementary processes},
   each of them representing a particular aspect that rules the dynamic
-  of the considered phenomenon.
+  of the considered phenomenon. In turn, \emph{elementary processes} can be split into \emph{local interactions}, which refer to rules that deal with interactions among substates of the cell with neighbor ones (e.g., mass exchange with neighbours) and \emph{internal transformations}, defined as the
+changes in the values of the substates due only
+to interactions among substates inside the cell
+(e.g. the solidi¢cation of the lava inside the cell
+due to the substate ‘lava temperature’).
 
 \item A set of \emph{parameters}, commonly used to characterize the dynamic behaviors of the considered phenomenon, can be defined.
 
-\item Global operations can also be allowed, (e.g. to model external
+\item Global operations can also be allowed (e.g. to model external
   influences that can not easily be described in terms of local
-  interactions, or to perdorm reductions over the whole, or a subset of,
-  the cellular space). Such operation go under the name of
+  interactions, or to perform reductions over the whole, or a subset of,
+  the cellular space). Such operations go under the name of
   \emph{steering}.
   
 \end{itemize}

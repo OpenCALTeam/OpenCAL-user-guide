@@ -8,7 +8,7 @@
 \begin{enumerate}
 \item  \texttt{\ocal} source code is available on the following \emph{github} repository \url{https://github.com/OpenCALTeam/OpenCAL}. 
 
-\item \texttt{\ocal} is also downloadable as zip file at the following URL: \url{www.urldellozip}
+\item \texttt{\ocal} is also downloadable as a zip file at the following URL: \url{www.urldellozip}
 \end{enumerate}
 
 
@@ -32,24 +32,24 @@ The tarball file contains the following files and directories:
 
 \section{Requirements and dependencies}
 
-To compile \texttt{\ocal}, you must have an ANSI C compiler and \texttt{cmake} $\geq$ 2.8 intalled in your system.
-\ocal was succesfully compiled and tested with\texttt{gcc} $\geq 4.8$. \texttt{clang} can be also used, taking in mind that it still does not fully support  \emph{Open-MP} natively.
+To compile \texttt{\ocal}, you must have an ANSI C compiler and \texttt{cmake} $\geq$ 2.8 installed in your system.
+\ocal was successfully compiled and tested with\texttt{gcc} $\geq 4.8$. \texttt{clang} can be also used, taking in mind that it still does not fully support \emph{Open-MP} natively.
 The following is a list of additional dependencies required for each \ocal version:
 
 \begin{itemize}
-	\item \texttt{\ocal-OMP}: a C compiler that supports \emph{Open-MP} $\geq 2.0$ (for a list of \emph{OpenMP} compliant compiler see the following link: \url{http://openmp.org/wp/openmp-compilers/})
-	\item  \texttt{\ocal-GL}: GLUT/OpenGL libraries and headers. (for example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages on \texttt{yum/dnf} and Debian-like systems respectively).
-	\item \texttt{\ocal-CL}: OpenCL platform should be installed in the system. \texttt{\ocal-CL} was tested on NVIDIA  \emph{OpenCL} implementation (see the following link to know how to obtain the NVIDIA's \texttt{OpenCL} implementation, shipped with the CUDA platform \url{http://docs.nvidia.com/cuda/#installation-guides}).
+	\item \texttt{\ocal-OMP}: a C compiler that supports \emph{Open-MP} $\geq 2.0$ (for a list of \emph{OpenMP} compliant compiler see the following link: \url{http://openmp.org/wp/openmp-compilers/});
+	\item  \texttt{\ocal-GL}: GLUT/OpenGL libraries and headers. (for example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages on \texttt{yum/dnf} and Debian-like systems respectively);
+	\item \texttt{\ocal-CL}: The OpenCL platform should be installed in the system. \texttt{\ocal-CL} was tested on the NVIDIA \emph{OpenCL} implementation (see the following link to know how to obtain the NVIDIA's \texttt{OpenCL} implementation, shipped with the CUDA platform \url{http://docs.nvidia.com/cuda/#installation-guides}).
 \end{itemize}
 
 
 
 \subsection{CMake}
-\texttt{\ocal} uses CMake to generate project files or makefiles for a particular configuration (development environment and library features). If you are on a Unix-like system such as Linux or FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake package. If not, you can download installers for Windows and OS X from the CMake website.
+\texttt{\ocal} uses CMake to generate project files or makefiles for a particular configuration (development environment and library features). If you are on a Unix-like system, such as Linux or FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake package. If not, you can download installers for Windows and OS X from the CMake website.
 
 CMake only generates project files or makefiles that describe how and which characteristics should be compiled. It does not compile the actual \ocal library. To compile \ocal, first generate these files for your chosen development environment and then use them to compile the actual \texttt{\ocal} library.
 
-Suppose you want to compile \texttt{\ocal} and enable support for OpenMP. You will instruct CMake to create the correct makefiles for enabling supportfor OpenMP passing \texttt{-DBUILD\_OPENCAL\_OMP=ON} and \texttt{-DBUILD\_OPENCAL\_OMP\_PARALLEL=ON} as cmake arguments. 
+Suppose you want to compile \texttt{\ocal} and enable support for OpenMP. You will instruct CMake to create the correct makefiles for enabling support for OpenMP passing \texttt{-DBUILD\_OPENCAL\_OMP=ON} and \texttt{-DBUILD\_OPENCAL\_OMP\_PARALLEL=ON} as cmake arguments. 
 
 \subsection{Generating MakFiles}
 \textbf{This section is about generating the project files or makefiles necessary to compile the}  \texttt{\ocal} \textbf{library, not about compiling the actual library.}

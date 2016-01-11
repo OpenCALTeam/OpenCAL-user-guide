@@ -4,15 +4,15 @@ With OpenCAL (without any suffix) we identify the sequential version
 of the OpenCAL software library, which runs on just a single core of
 your CPU, and represents the basis for the other parallel versions,
 namely OpenCAL-OMP, based on OpenMP, and OpenCAL-CL, based on OpenCL
-(and thus able to run on you GPU). Moreover, OpenCAL allows for some
-\emph{unsafe operations}, which can significantly speed up your
+(and thus able to run on GPUs). Moreover, OpenCAL allows for some
+\emph{unsafe operations}\footnote{here, \emph{unsafe operations} are referred to operations that violate the CA principle that a cell cannot modify neighbour values}, which can significantly speed up your
 application. Such unsafe operations can also be found in the OpenMP
 version, while they are not currently available in OpenCAL-CL.
 
 In the following sections, we will introduce OpenCAL by examples. In
 the first part of the Chapter, we will deal with the OpenCAL's
 \emph{safe mode}, while in the last one, we will go deep inside
-OpenCAL, discussing \emph{unsafe mode}'s operations.
+OpenCAL, discussing \emph{unsafe mode} operations.
 
 \section{Conway's Game of Life}
 
@@ -22,12 +22,11 @@ Life. It represents one of the most simple, yet powerful examples of
 Cellular Automata, devised by mathematician John Horton Conway in
 1970.
 
-Game of Life can be thought as an infinite two-dimensional orthogonal
+The Game of Life can be thought as an infinite two-dimensional orthogonal
 grid of square cells, each of which is in one of two possible states,
 \emph{dead} or \emph{alive}. Every cell interacts with the
-eight\footnote{Note that, in the case of the Game of Life CA, the
-  central cell does not belong to its own neighborhood.} adjecent
-neighbors belonging to the Moore neighborhood. At each time step, one
+eight adjacent neighbors \footnote{Note that, in the case of the Game of Life CA, the
+  central cell does not belong to its own neighborhood.} belonging to the Moore neighborhood. At each time step, one
 of the following transitions occur:
 
 \begin{enumerate}
@@ -47,8 +46,7 @@ system is thus obtained by applying the above rules (which define the
 cell's transition function) simultaneously to every cell in the
 cellular space, so that each new configuration is function of the one
 at the previous step. The rules continue to be applied repeatedly to
-create further generations. For more details on the Game of life you
-can check Wikipedia at the URL
+create further generations. For more details on the Game of Life, please check Wikipedia at the URL
 \url{http://en.wikipedia.org/wiki/Conway's_Game_of_Life}.
 
 \begin{figure}
@@ -58,13 +56,13 @@ can check Wikipedia at the URL
       are individuated by a couple of matrix-style integer coordinates
       $(i, j)$, where $i$ represents the row and $j$ the column. Cell
       (0,0) is the one located at the upper-left corner. Moore
-      neighborhood is represented in gray scale, whit the central cell
-      highlated in dark gray. Neighboring cells can also be indexed by
+      neighborhood is represented in gray scale, with the central cell
+      highlighted in dark gray. Neighboring cells can also be indexed by
       the integer subscript shown within the cell. Cells indices are
-      impliclitly assigned by OpenCAL, both in the case of predefined
+      implicitly assigned by OpenCAL, both in the case of predefined
       and custom neighborhoods. In the first case, indices can not be
-      modified, while in the second case, indices as assigned
-      progressively in automatic way each time a new neighbor is added
+      modified, while in the second case, indices are assigned
+      progressively in an automatic way each time a new neighbor is added
       to the CA by means of the \texttt{calAddNeighbor2D()} function.}
     \label{fig:LifeNeighborhood}
   \end{center}
@@ -81,9 +79,9 @@ where:
 \item $R$ is the set of points, with integer coordinates, which
   defines the 2-dimensional cellular space. The generic cell in $R$ is
   individuated by means of a couple of integer coordinates $(i, j)$,
-  where $0 \leq i < i_{max}$ and $0 \leq j < j_{max}$. The firt
+  where $0 \leq i < i_{max}$ and $0 \leq j < j_{max}$. The first
   coordinate, $i$, represents the row, while the second, $j$, the
-  column. The cell at coodinates $(0,0)$ is located at the top-left
+  column. The cell at coordinates $(0,0)$ is located at the top-left
   corner of the computational grid.
 
 \item $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0), (-1,-1), (1,-1),
@@ -116,7 +114,7 @@ where:
 The program below shows a simple Game of Life sequential
 implementation in C with OpenCAL. As you can see, even if Listing
 \ref{lst:cal_life} is very short, it completely defines the Conway's
-Game of Life CA and perform a simulation (actually, only one step in
+Game of Life CA and performs a simulation (actually, only one computational step in
 this example).
 
 \lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal/OpenCAL/examples/cal_life/source/life.c}
@@ -141,7 +139,7 @@ by OpenCAL. See Listings \ref{lst:CALNeighborhood2D} and
 neighborhoods, respectively. Custom neighborhoods can also be defined
 by means of the \verb'calAddNeighbor2D()' function. In both cases,
 indices are assigned progressively, starting from 0, each time a new
-cell is added to the neighborhood..
+cell is added to the neighborhood.
 
 The fourth parameter specifies the boundary
 conditions. In this case, the CA cellular space is considered as a
