@@ -5,7 +5,7 @@ of the OpenCAL software library, which runs on just a single core of
 your CPU, and represents the basis for the other parallel versions,
 namely OpenCAL-OMP, based on OpenMP, and OpenCAL-CL, based on OpenCL
 (and thus able to run on GPUs). Moreover, OpenCAL allows for some
-\emph{unsafe operations}\footnote{here, \emph{unsafe operations} are referred to operations that violate the CA principle that a cell cannot modify neighbour values}, which can significantly speed up your
+\emph{unsafe operations}, which can significantly speed up your
 application. Such unsafe operations can also be found in the OpenMP
 version, while they are not currently available in OpenCAL-CL.
 
@@ -22,12 +22,13 @@ Life. It represents one of the most simple, yet powerful examples of
 Cellular Automata, devised by mathematician John Horton Conway in
 1970.
 
-The Game of Life can be thought as an infinite two-dimensional orthogonal
-grid of square cells, each of which is in one of two possible states,
-\emph{dead} or \emph{alive}. Every cell interacts with the
-eight adjacent neighbors \footnote{Note that, in the case of the Game of Life CA, the
-  central cell does not belong to its own neighborhood.} belonging to the Moore neighborhood. At each time step, one
-of the following transitions occur:
+The Game of Life can be thought as an infinite two-dimensional
+orthogonal grid of square cells, each of which is in one of two
+possible states, \emph{dead} or \emph{alive}. Every cell interacts
+with the eight adjacent neighbors \footnote{Note that, in the case of
+  the Game of Life CA, the central cell does not belong to its own
+  neighborhood.} belonging to the Moore neighborhood. At each time
+step, one of the following transitions occur:
 
 \begin{enumerate}
     \item Any live cell with fewer than two alive neighbors dies, as
@@ -46,7 +47,8 @@ system is thus obtained by applying the above rules (which define the
 cell's transition function) simultaneously to every cell in the
 cellular space, so that each new configuration is function of the one
 at the previous step. The rules continue to be applied repeatedly to
-create further generations. For more details on the Game of Life, please check Wikipedia at the URL
+create further generations. For more details on the Game of Life,
+please check Wikipedia at the URL
 \url{http://en.wikipedia.org/wiki/Conway's_Game_of_Life}.
 
 \begin{figure}
@@ -82,7 +84,8 @@ where:
   where $0 \leq i < i_{max}$ and $0 \leq j < j_{max}$. The first
   coordinate, $i$, represents the row, while the second, $j$, the
   column. The cell at coordinates $(0,0)$ is located at the top-left
-  corner of the computational grid.
+  corner of the computational grid (see Figure
+  \ref{fig:LifeNeighborhood}).
 
 \item $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0), (-1,-1), (1,-1),
   (1,1), (-1,1)\}$ is the Moore neighborhood relation, a geometrical
@@ -105,7 +108,7 @@ where:
   
 \item $Q = \{0, 1\}$ is the set of cell's states.
   
-\item $\sigma : Q^8 \rightarrow Q$ is the deterministic cell
+\item $\sigma : Q^9 \rightarrow Q$ is the deterministic cell
   transition function. It is composed by one elementary process, which
   implements the previously above mentioned transition rules.
 \end{itemize}
@@ -114,8 +117,8 @@ where:
 The program below shows a simple Game of Life sequential
 implementation in C with OpenCAL. As you can see, even if Listing
 \ref{lst:cal_life} is very short, it completely defines the Conway's
-Game of Life CA and performs a simulation (actually, only one computational step in
-this example).
+Game of Life CA and performs a simulation (actually, only one
+computational step in this example).
 
 \lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal/OpenCAL/examples/cal_life/source/life.c}
 
@@ -135,19 +138,18 @@ of rows and columns, respectively), while the third parameter defines
 the neighbourhood pattern. Here, the predefined Moore neighborhood is
 selected (see Figure \ref{fig:LifeNeighborhood}), among those provided
 by OpenCAL. See Listings \ref{lst:CALNeighborhood2D} and
-\ref{lst:CALNeighborhood3D} for a list of OpenCAL's 2D and 3D
-neighborhoods, respectively. Custom neighborhoods can also be defined
-by means of the \verb'calAddNeighbor2D()' function. In both cases,
-indices are assigned progressively, starting from 0, each time a new
-cell is added to the neighborhood.
+\ref{lst:CALNeighborhood3D} for a list of OpenCAL's predefined 2D and
+3D neighborhoods, respectively. Custom neighborhoods can also be
+defined by means of the \verb'calAddNeighbor2D()' function. In both
+cases, indices are assigned progressively, starting from 0, each time
+a new cell is added to the neighborhood.
 
-The fourth parameter specifies the boundary
-conditions. In this case, the CA cellular space is considered as a
-torus, with cyclic conditions at boundaries. The last parameter allows
-you to specify if your model has to use the so called \emph{active
-  cells optimization}, that is able to restrict the computation to
-only \emph{non-stationary cells}. In this case, no optimization is
-considered.
+The fourth parameter specifies the boundary conditions. In this case,
+the CA cellular space is considered as a torus, with cyclic conditions
+at boundaries. The last parameter allows you to specify if your model
+has to use the so called \emph{active cells optimization}, that is
+able to restrict the computation to only \emph{non-stationary
+  cells}. In this case, no optimization is considered.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
   struct CALModel2D* calCADef2D (
@@ -165,14 +167,13 @@ key functions and data types. In particular, the
 \verb'CALNeighborhood2D' enum type (Listing
 \ref{lst:CALNeighborhood2D}) allows you to select one of the square or
 hexagonal predefined neighbourhoods, or a custom neighbourhood, whose
-pattern can be defined directly in your application. Custom
-neighbourhoods will be discussed later in this Chapter. Similarly, the
+pattern must be defined in the application. Custom neighbourhoods will
+be discussed later in this Chapter. Similarly, the
 \verb'CALSpaceBoundaryCondition' enum type (Listing
-\ref{lst:CALSpaceBoundaryCondition}) allows you to set non-ciclic or
-cyclic behaviour at the boundaries of the cellular space. Eventually,
-the \verb'CALOptimization' enum type (Listing
-\ref{lst:CALOptimization}) allows you to use or not the active cells
-optimization.
+\ref{lst:CALSpaceBoundaryCondition}) allows you to set cyclicality
+condition at boundaries. Eventually, the \verb'CALOptimization' enum
+type (Listing \ref{lst:CALOptimization}) allows you to consider the
+active cells optimization.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood2D, caption=The CALNeighborhood2D enum type., numbers=none]
   enum CALNeighborhood2D { 
@@ -214,13 +215,13 @@ parameters specify the initial and last simulation step,
 respectively. In this case, we just perform one step of computation,
 being both the first and last step set to 1. The last parameter allows
 you to specify the substate update policy. It can be implicit or
-explicit. In the first case, OpenCAL does substates' updates for you,
-while in the second case the substates' updates is your
-responsibility. Note that, in case implicit update policy is applyied,
-all the CA substates are updated after the execution of each
-elementary process composing the CA transition function. We will
-discuss update policies later in this Chapter. The complete definition
-of \verb'calRunDef2D()' is provided in Listing
+explicit (Listing \ref{lst:CALUpdateMode}). In the first case, OpenCAL
+does substates' updates for you, while in the second case the
+substates' updates is your responsibility. Note that, in case implicit
+update policy is applyied, all the CA substates are updated after the
+execution of each elementary process composing the CA transition
+function. We will discuss update policies later in this Chapter. The
+complete definition of \verb'calRunDef2D()' is provided in Listing
 \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type (Listing
 \ref{lst:CALUpdateMode}) enumerates possible update policies.
 
@@ -261,15 +262,15 @@ of the cellular space in a computational step \footnote{This
   in OpenCAL by considering two different working planes for each
   registered substate, namely \emph{current} and \emph{next} working
   planes. However, behind the scene, cells are updated sequentially,
-  being OpenCAL a serial library. The \emph{current} working plane is
+  being OpenCAL a serial software. The \emph{current} working plane is
   used to read current values for the cells, while the \emph{next}
-  working place is used to write new computed values. The
-  \emph{implicit parallelism} is also used in the parallel versions of
-  OpenCAL, with the difference that more than one cell can be
-  processed and updated concurrently by exploiting mre than one
-  processing unit.}. However, this is completely transparent to the
-user, so that he/she can concentrate his/her effort on the definition
-of single cell behaviour.
+  working plane is used to write updated values. The \emph{implicit
+    parallelism} is also used in the parallel versions of OpenCAL,
+  with the difference that more than one cell can be processed and
+  updated concurrently by exploiting mre than one processing
+  unit.}. However, this is completely transparent to the user, so that
+he/she can concentrate his/her effort on the definition of single cell
+behaviour.
 
 When the user is going to implement an elementary process, by defining
 its callback function, he/she can rely on a set of OpenCAL functions that
@@ -335,7 +336,7 @@ data types have the \verb'CAL' prefix, and an optional suffix that
 identifies the CA dimension (e.g. 2D for a two-dimensional model) and
 the basic type. For instance, in the case of the Life's \verb'Q'
 substate, the 2Di suffix of the \verb'CALSubstate2Di' type specifies
-that it is a two-dimensional substate in whihc each element is of
+that it is a two-dimensional substate in which each element is of
 integer type.
 
 More in detail, OpenCAL comes with three different basic numeric
@@ -349,14 +350,15 @@ while the possible substates types are:
 \begin{itemize}
 \item \verb'CALSubstate2Db', corresponding to a \verb'CALbyte' based substate;
 \item \verb'CALSubstate2Di', corresponding to a \verb'CALint' based substate;
-\item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate;
+\item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate.
 \end{itemize}
 Also the OpenCAL constants have a prefix, namely the \verb'CAL_' one,
-followd by at least one uppercase keyword. In case of more kewords, they
-are separated by the \verb'_' character. Eventually, all the OpenCAL
-functions start with the \verb'cal' suffix, followed by at least one
-capitalized keyword, and end with a suffix specifying the CA dimension
-and the basic datatype.
+followd by at least one uppercase keyword. In case of more kewords,
+they are separated by the \verb'_' character. Eventually, all the
+OpenCAL functions start with the \verb'cal' suffix, followed by at
+least one capitalized keyword, and end with a suffix specifying the CA
+dimension and the basic datatype (e.g. the suffix \verb'2Dr' is for a
+two-dimensionale real substate).
 
 
 \section{SciddicaT}
@@ -367,12 +369,13 @@ of the SciddicaT Cellular Automata model for landslide
 simulation. Different versions will be presented, ranging from a naiv
 to a fully optimized implementation.
 
-Sciddica is a family of bi-dimensional CCA debris flow models,
-successfully applied to the simulation of many real cases, such as the
-1988 Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy)
-disaster. An oversimplified toy-version of Sciddica (SciddicaT in the
-following) was here considered to be implemented in \verb"OpenCAL",
-and its application to the 1992 Tessina (Italy) landslide shown.
+Sciddica is a family of two-dimensional XCA debris flow
+models, successfully applied to the simulation of many real cases,
+such as the 1988 Mt. Ontake (Japan) landslide and the 1998 Sarno
+(Italy) disaster. An oversimplified toy-version of Sciddica (SciddicaT
+in the following) was here considered to be implemented in
+\verb"OpenCAL", and its application to the 1992 Tessina (Italy)
+landslide shown.
 
 SciddicaT considers the surface over which the phenomenon evolves as
 subdivided in square cells of uniform size. Each cell changes its

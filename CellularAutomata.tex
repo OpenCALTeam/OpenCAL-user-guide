@@ -1,4 +1,4 @@
-\chapter{(eXtended) Cellular Automata}
+\chapter{Cellular Automata}
 
 Cellular Automata (CA) are parallel computing models, whose evolution
 is ruled by local rules. They are largely employed in Science and
@@ -13,16 +13,17 @@ which are widely used for the modelling of physical extended systems.
 
 A cellular automaton can be thought as a $d$-dimensional space, called
 \emph{cellular space}, subdivided in regular cells of uniform shape
-and size. Each cell embeds a \emph{finite automaton}, one of
-the most simple and well known computational models, which can assume a finite number of states. At time $t=0$,
-cells are in arbitrary states and the CA evolves step by step by
-changing the states of the cells at discrete time steps, by applying
-the same local rule of evolution, i.e. the cell's \emph{transition
-  function}, simultaneously (i.e. in parallel) to each cell of the
-CA. Input for the cell is given by the states of a predefined (small) set of
-neighboring cells, which is assumed constant in space and time. It is
-possible to identify an informal definition of cellular automaton by
-simply listing its main properties:
+and size. Each cell embeds a \emph{finite automaton}, one of the most
+simple and well known computational models, which can assume a finite
+number of states. At time $t=0$, cells are in arbitrary states and the
+CA evolves step by step by changing the states of the cells at
+discrete time steps, by applying the same local rule of evolution,
+i.e. the cell's \emph{transition function}, simultaneously (i.e. in
+parallel) to each cell of the CA. Input for the cell is given by the
+states of a predefined (small) set of neighboring cells, which is
+assumed constant in space and time. It is possible to identify an
+informal definition of cellular automaton by simply listing its main
+properties:
 
 \begin{itemize}
 \item It is formed by a $d$-dimensional space (i.e. the \emph{cellular
@@ -45,10 +46,7 @@ simply listing its main properties:
 
 \begin{figure}
   \begin{center}
-
-
     \includegraphics[width=12cm]{./images/CellularAutomata/cellularspaces}
-
     \caption{Example of cellular spaces: (a) one-dimensional, (b)
       two-dimensional with square cells, (c) two-dimensional with
       hexagonal cells, (d) three-dimensional with cubic cells.}
@@ -87,8 +85,8 @@ simply listing its main properties:
 Despite their simple definition, CA can exhibit very interesting
 complex global behaviors. Moreover, from a computational point of
 view, they are equivalent to Turing Machines. This means, in
-principle, that everything that can be computed can also be by means of
-a cellular automaton (Church–Turing thesis). Thanks to their
+principle, that everything that can be computed can also be by means
+of a cellular automaton (Church–Turing thesis). Thanks to their
 \emph{computational universality}, CA gained a great consideration
 inside the Scientific Community and were employed for solving a great
 variety of different complex problems.
@@ -134,46 +132,48 @@ described, at least in some cases, in very simple terms.
 
 Among different fields, fluid-dynamics is one of most important
 applications for CA and, in this research branch, many different
-CA-based methods can be found in the literature to simulate fluid flows.  For instance, Lattice Gas
-Automata (LGA) were introduced for describing the motion and collision of
-\emph{particles} on a grid and it was shown that such models can
-reproduce the main fluid dynamical properties. The continuum limit of
-these models leads to the Navier-Stokes equations. Lattice Gas models
-can be regarded as microscopic models, as they describe the motion of
-fluid particles which interact by scattering. An advantage of Lattice
-Gas models is that the simplicity of particles, and of their
-interactions, allow for the simulation of a large number of them,
-making it therefore possible to observe the emergence of flow
-patterns. Furthermore, since they are CA systems, it is possible to easily
-run simulations in parallel. A different approach to LGA
-is represented by Lattice Boltzmann models in which the state
-variables can take continuous values, as they are supposed to
-represent the density of fluid particles, endowed with certain
-properties, located in each cell (space and time are also discrete, as
-in lattice gas models). Both Lattice Gas and Lattice Boltzmann Models
-have been applied for the description of fluid turbulence.
+CA-based methods can be found in the literature to simulate fluid
+flows.  For instance, Lattice Gas Automata (LGA) were introduced for
+describing the motion and collision of \emph{particles} on a grid and
+it was shown that such models can reproduce the main fluid dynamical
+properties. The continuum limit of these models leads to the
+Navier-Stokes equations. Lattice Gas models can be regarded as
+microscopic models, as they describe the motion of fluid particles
+which interact by scattering. An advantage of Lattice Gas models is
+that the simplicity of particles, and of their interactions, allow for
+the simulation of a large number of them, making it therefore possible
+to observe the emergence of flow patterns. Furthermore, since they are
+CA systems, it is possible to easily run simulations in parallel. A
+different approach to LGA is represented by Lattice Boltzmann models
+in which the state variables can take continuous values, as they are
+supposed to represent the density of fluid particles, endowed with
+certain properties, located in each cell (space and time are also
+discrete, as in lattice gas models). Both Lattice Gas and Lattice
+Boltzmann Models have been applied for the description of fluid
+turbulence.
 
-Since many complex natural phenomena evolve on very large areas,
-they are therefore difficult to be modelled at a microscopic level of
+Since many complex natural phenomena evolve on very large areas, they
+are therefore difficult to be modelled at a microscopic level of
 description. Among these, we can find some real flow-type phenomena
 like debris and lava flows, as well as floods and pyroclastic
 flows. Besides rheological complex behaviour, they generally evolve on
 complex topographies, that can even change during the phenomenon
 evolution, and are often characterised by branching and rejoining of
 the flow. In order to better model such kind of phenomena, an extended
-notion of Cellular Automata (eXtended Cellular Automata, described in the next Section), can
-represent a valid alternative to classical CA.
+notion of Cellular Automata (eXtended Cellular Automata, described in
+the next Section), can represent a valid alternative to classical CA.
 
 \section{eXtended Cellular Automata}
 
-As regards the modeling of natural complex phenomena, Prof. Gino `Miracle Crisci' and
-co-workers from University of Calabria (Italy) proposed a method based
-on an eXtended notion of CA (XCA), firstly applied to the simulation
-of basaltic lava flows in the 80's\footnote{XCA are also known as
-  Complex Cellular Automata (CCA), Macroscopic Cellular Automata
-  (MCA), and Multicomponent Cellular Automata (MCA)}. It was shown
-that the approach behind XCA can greatly make more straightforward the
-modeling of some complex systems.
+As regards the modeling of natural complex phenomena, Prof. Gino
+`Miracle Crisci' and co-workers from University of Calabria (Italy)
+proposed a method based on an eXtended notion of CA (XCA), firstly
+applied to the simulation of basaltic lava flows in the
+80's\footnote{XCA are also known as Complex Cellular Automata (CCA),
+  Macroscopic Cellular Automata (MCA), and Multicomponent Cellular
+  Automata (MCA)}. It was shown that the approach behind XCA can
+greatly make more straightforward the modeling of some complex
+systems.
 
 Informally, XCA, compared to classical CA, are different because of
 the following reasons:
@@ -182,25 +182,30 @@ the following reasons:
 
 \item The cell's state is decomposed in \emph{substates}, each of them
   representing the set of admissible values of a given characteristic
-  assumed to be relevant for the modeled system and its evolution (e.g., lava temperature, lava thickness, etc, in the case of ca lava flow model). The
-  set of states for the cell is simply obtained as the Cartesian
-  product of the considered substates.
+  assumed to be relevant for the modeled system and its evolution
+  (e.g., lava temperature, lava thickness, etc, in the case of ca lava
+  flow model). The set of states for the cell is simply obtained as
+  the Cartesian product of the considered substates.
 
 \item As the cell's state can be decomposed in substates, also the
   transition function can be split into \emph{elementary processes},
   each of them representing a particular aspect that rules the dynamic
-  of the considered phenomenon. In turn, \emph{elementary processes} can be split into \emph{local interactions}, which refer to rules that deal with interactions among substates of the cell with neighbor ones (e.g., mass exchange with neighbours) and \emph{internal transformations}, defined as the
-changes in the values of the substates due only
-to interactions among substates inside the cell
-(e.g. the solidi¢cation of the lava inside the cell
-due to the substate ‘lava temperature’).
+  of the considered phenomenon. In turn, \emph{elementary processes}
+  can be split into \emph{local interactions}, which refer to rules
+  that deal with interactions among substates of the cell with
+  neighbor ones (e.g., mass exchange with neighbours) and
+  \emph{internal transformations}, defined as the changes in the
+  values of the substates due only to interactions among substates
+  inside the cell (e.g. the solidi¢cation of the lava inside the cell
+  due to the substate ‘lava temperature’).
 
-\item A set of \emph{parameters}, commonly used to characterize the dynamic behaviors of the considered phenomenon, can be defined.
+\item A set of \emph{parameters}, commonly used to characterize the
+  dynamic behaviors of the considered phenomenon, can be defined.
 
 \item Global operations can also be allowed (e.g. to model external
   influences that can not easily be described in terms of local
-  interactions, or to perform reductions over the whole, or a subset of,
-  the cellular space). Such operations go under the name of
+  interactions, or to perform reductions over the whole, or a subset
+  of, the cellular space). Such operations go under the name of
   \emph{steering}.
   
 \end{itemize}
