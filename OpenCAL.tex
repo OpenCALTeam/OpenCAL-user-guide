@@ -14,7 +14,7 @@ the first part of the Chapter, we will deal with the OpenCAL's
 \emph{safe mode}, while in the last one, we will go deep inside
 OpenCAL, discussing \emph{unsafe mode} operations.
 
-\section{Conway's Game of Life}
+\section{Conway's Game of Life}\label{sec:cal_life}
 
 In order to introduce you to Cellular Automata development with
 OpenCAL, we start this section by implementing the Conway's Game of
@@ -455,7 +455,7 @@ the \verb'calCADef2D' function) and then add further neighbours by
 calling \verb'calAddNeighbor2D()' as meny times the as the number of
 cells you want to add is.
 
-\section{SciddicaT}
+\section{SciddicaT}\label{sec:sciddicaT}
 In the previous section we illustrated an OpenCAL implementation of a
 simple cellular automaton, namely the Conway’s Game of Life. Here, we
 will deal with a more complex example concerning the implementations
@@ -714,7 +714,7 @@ which the stop condition can be defined.
 \end{figure}
 
 
-\section{SciddicaT with active cells optimization}
+\section{SciddicaT with active cells optimization}\label{sec:sciddicaT_active}
 Here we present a computationally improved version of SciddicaT, which
 takes advantage of the built-in OpenCAL active cells optimization. As
 stated above, this optimization is able to restrict computation to a
@@ -916,7 +916,7 @@ seconds obtained for the basic (non-optimized) version, which is about
 easily obtain when your simulation involves only a limited subset of
 the computational domain.
 
-\section{SciddicaT as eXtended CA}
+\section{SciddicaT as eXtended CA}\label{sec:sciddicaT_extended}
 OpenCAL allows for further optimization of the SciddicaT debris flows
 simulation model by means of the so called \emph{unsafe
   operations}. In fact, in some cases, it is possible to consider an
@@ -1179,7 +1179,7 @@ illustraed SciddicaT implementations.
 \end{table} 
 
 
-\section{A three-dimensional example}
+\section{A three-dimensional example}\label{sec:mod2}
 
 In order to introduce you to development with of three-dimensional CA
 with OpenCAL, we start this section by implementing a simple 3D model,
