@@ -1,29 +1,2 @@
 \chapter{Quick Start}
 
-If you wish to get started by just typing a few lines and running
-an example, this section is for you. Further details on
-the installation process are given in chapter \nameref{ch:installation} at page
-\pageref{ch:installation}.
-
-\section{Download}
-OpenCAL source code is available on
-\url{https://github.com/OpenCALTeam/opencal}. To obtain a working copy of the
-library use the following commands:
-
-\begin{lstlisting}[language=bash,caption={OpenCAL download}]
-user@machine:-$ cd <git root>
-user@machine:-$ git clone https://github.com/OpenCALTeam/opencal
-user@machine:-$ cd opencal
-\end{lstlisting}
-
-\section{Build}
-\textit{OpenCAL} requires \textit{cmake}\footnote{Minimum required version: 2.8}
-and \textit{make} for building the library (see section
-\nameref{ch:installation:sect:build} on page \pageref{ch:installation:sect:build} .  
-
-Use the command in listing \ref{ch:quickstart:simplebuild}
- \begin{lstlisting}[language=bash,caption={OpenCAL simple build},label={ch:quickstart:simplebuild}]
-user@machine:-$ cd opencal && mkdir build && cd build
-user@machine:-$ cmake ../
-user@machine:-$ make
-\end{lstlisting}

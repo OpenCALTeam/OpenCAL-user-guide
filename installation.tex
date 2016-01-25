@@ -1,128 +1,225 @@
-\chapter{Installation} 
-\label{ch:installation}
+\chapter{Installation} \label{ch:installation}
 
+The 1.0 release of \verb'OpenCAL', here presented, is a collection of
+four different software libraries. Under the name \verb'OpenCAL' we
+identify the serial version of the library. It comes together with two
+different parallel implementations based on OpenMP and OpenCL, namely
+OpenCAL-OMP and OpenCAL-CL, respectively. Moreover, OpenCAL-GL
+identifies a general purpose OpenGL/GLUT visualization library. Many
+examples are also included into the distribution.
 
+The library can be obtained as source code from GitHub to be compiled
+in your system. You can chose if compiling all the four different
+implementations or only some of them, and also if compling the
+examples. Some dependencies must be satisfied, depending on what you
+want to compile. Libraries can be compiled both statically (as .lib
+files) and as a shared objects (as .so files). Eventually, you can
+install headers and libraries in your system and also uninstall them
+if no longer needed.
 
-\section{Obtaining \texttt{\ocal}}
-
-\begin{enumerate}
-\item  \texttt{\ocal} source code is available on the following \emph{github} repository \url{https://github.com/OpenCALTeam/OpenCAL}. 
-
-\item \texttt{\ocal} is also downloadable as a zip file at the following URL: \url{www.urldellozip}
-\end{enumerate}
-
-
-
-
-\section{Structure of the Distribution Directory}
-
-The tarball file contains the following files and directories:
-
-\begin{itemize}
-
-	
-    \item \textbf{AUTHORS}: Authors of \texttt{\ocal}.
-	\item \textbf{\ocal}: core and examples code of the \emph{serial} implementation  
-	\item \textbf{\ocal-CL}:  core and examples code of the \emph{Open-CL} implementation  
-	\item \textbf{\ocal-GL}:  \texttt{\ocal} graphic core library and examples   
-	\item \textbf{\ocal-OMP}:  core and examples code of the \emph{Open-MP}  multicore implementation  
-
-\end{itemize}
+In the following Sections we will see all the steps needed to obtain
+the software and make it working on your computer.
 
 
 \section{Requirements and dependencies}
 
-To compile \texttt{\ocal}, you must have an ANSI C compiler and \texttt{cmake} $\geq$ 2.8 installed in your system.
-\ocal was successfully compiled and tested with\texttt{gcc} $\geq 4.8$. \texttt{clang} can be also used, taking in mind that it still does not fully support \emph{Open-MP} natively.
-The following is a list of additional dependencies required for each \ocal version:
+In order to compile OpenCAL, you essentially need CMake (version 2.8
+or greater) and an ANSI C compiler (e.g. gcc 4.9 or greater\footnote{
+  The clang C compiler can also be used, taking in mind that it still
+  does not fully support Open-MP natively.}) installed in your
+system. CMake is used to generate the makefiles (or even project
+files for several IDEs) to be used to build OpenCAL.
 
-\begin{itemize}
-	\item \texttt{\ocal-OMP}: a C compiler that supports \emph{Open-MP} $\geq 2.0$ (for a list of \emph{OpenMP} compliant compiler see the following link: \url{http://openmp.org/wp/openmp-compilers/});
-	\item  \texttt{\ocal-GL}: GLUT/OpenGL libraries and headers. (for example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages on \texttt{yum/dnf} and Debian-like systems respectively);
-	\item \texttt{\ocal-CL}: The OpenCL platform should be installed in the system. \texttt{\ocal-CL} was tested on the NVIDIA \emph{OpenCL} implementation (see the following link to know how to obtain the NVIDIA's \texttt{OpenCL} implementation, shipped with the CUDA platform \url{http://docs.nvidia.com/cuda/#installation-guides}).
-\end{itemize}
+An OpenCL implementation (e.g. by NVIDIA, AMD, Intel) is also needed
+to compile OpenCAL-CL. Moreover, still to compile OpenCAL-CL, at least
+the 3.1 version of CMake is required. Eventually, a GLUT development
+library is needed to compile OpenCAL-GL. The following is a
+dependencies list for each of the above software libraries:
+
+\begin{description}
+\item[OpenCAL: ] CMake version 2.8 or grater, and a quite new C
+  compiler.
+\item[OpenCAL-OMP: ] A C compiler supporting at least Open-MP version
+  2.0\footnote{For a list of OpenMP compliant compilers see the
+    following link: \url{http://openmp.org/wp/openmp-compilers/}.}.
+\item[Open-CL: ] At least one OpenCL implementation installed in your
+  system\footnote{OpenCAL-CL was tested on the NVIDIA OpenCL
+    implementation. You can find the NVIDIA's OpenCL implementation,
+    shipped with the CUDA platform, at the following url:
+    \url{http://docs.nvidia.com/cuda/\#installation-guides}}.
+\item[OpenCAL-GL: ] OpenGL/GLUT headers and libraries \footnote{For
+  example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages
+  on \texttt{yum/dnf}- and \texttt{apt}-based systems, respectively.};
+\end{description}
 
 
+\section{Obtaining OpenCAL}
 
-\subsection{CMake}
-\texttt{\ocal} uses CMake to generate project files or makefiles for a particular configuration (development environment and library features). If you are on a Unix-like system, such as Linux or FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake package. If not, you can download installers for Windows and OS X from the CMake website.
+OpenCAL is available as source code you can downoad from \verb'GitHub'
+and build into your own system. We suggest you to download the stable
+software release at the following GitHub url:
 
-CMake only generates project files or makefiles that describe how and which characteristics should be compiled. It does not compile the actual \ocal library. To compile \ocal, first generate these files for your chosen development environment and then use them to compile the actual \texttt{\ocal} library.
+\vspace{0.3cm}
+\begin{center}
+\url{https://github.com/OpenCALTeam/opencal/archive/OpenCAL-1.0.zip}
+\end{center}
+\vspace{0.3cm}
 
-Suppose you want to compile \texttt{\ocal} and enable support for OpenMP. You will instruct CMake to create the correct makefiles for enabling support for OpenMP passing \texttt{-DBUILD\_OPENCAL\_OMP=ON} and \texttt{-DBUILD\_OPENCAL\_OMP\_PARALLEL=ON} as cmake arguments. 
+\noindent Another (not recommended) option is to dowload the
+development release. It can be obtained as compressed archive at the
+GitHub \url{https://github.com/OpenCALTeam/opencal/archive/master.zip}
+web page, or by \emph{cloning} the Git repository through the
+following commands:
 
-\subsection{Generating MakFiles}
-\textbf{This section is about generating the project files or makefiles necessary to compile the}  \texttt{\ocal} \textbf{library, not about compiling the actual library.}
+\begin{lstlisting}[numbers=none,language=bash]
+user@machine:-$ cd <git root>
+user@machine:-$ git clone https://github.com/OpenCALTeam/OpenCAL
+user@machine:-$ cd opencal
+\end{lstlisting}
 
-Once you have all necessary dependencies it is time to generate the project files or makefiles for your development environment. CMake needs to know two paths for this: the path to the root directory of the \texttt{\ocal} source tree (i.e. not the src subdirectory) and the target path for the generated files and compiled binaries. If these are the same, it is called an in-tree build, otherwise it is called an out-of-tree build.
+\noindent Here \verb'<git root>' represents the directory in your file system
+containing your git respositories. If you don't have a git working
+directory, we suggest you to create one or use an alternative working
+directory.
 
-We strongly suggest to do an out-of-tree build.
-One of several advantages of out-of-tree builds is that you can generate files and compile for different development environments using a single source tree.
-To make an out-of-tree build, enter the root directory of the \texttt{\ocal} source tree (i.e. not the src subdirectory) and run CMake using zero or more of the options listed in table \ref{ch:installation:cmakeoptions}  at page  \pageref{ch:installation:cmakeoptions} to control which features will be enabled in the compiled library. The current directory is used as target path, while the path provided as an argument is used to find the source tree.
 
+\section{Structure of the Distribution Directory}
 
- \begin{lstlisting}[language=bash,caption={OpenCAL CMake configuration},label={ch:quickstart:simplebuild}]
-user@machine:-$ cd opencal && mkdir build && cd build
-user@machine:-$ cmake {[-DOPTION]} ../
+The software distribution contains the following files and
+directories:
+
+\begin{description}
+\item[AUTHORS: ] Authors of OpenCAL;
+\item[OpenCAL: ] Core and examples code of the \emph{serial}
+  implementation;
+\item[OpenCAL-CL: ] Core and examples code of the Open-CL-based
+  parallel implementation;
+\item[openCAL-GL: ] Graphic OpenGL/GLUT-based visualization system
+  library and examples;
+\item[OpenCAL-OMP: ] Core and examples code of the Open-MP-based
+  parallel implementation.
+\item[...] Other files ...
+\end{description}
+
+%% \subsection{CMake}
+%% \verb'OpenCAL' uses \verb'CMake' to generate Project Files or
+%% Makefiles for a particular configuration (development environment and
+%% library features). If you are on a Unix-like system, such as a
+%% Linux-based distribution or FreeBSD, or have a package system like
+%% Fink, MacPorts, Cygwin or Homebrew, you can simply install its CMake
+%% package. If this is not the case, you can download the installers for
+%% Windows and Mac OS X from the CMake website.
+
+%% CMake only generates Project Files or Makefiles that describe how and
+%% which characteristics should be compiled. It does not compile the
+%% actual \verb'OpenCAL' library. To compile \verb'OpenCAL', first
+%% generate these files for your chosen development environment and then
+%% use them to compile the actual \verb'OpenCAL' library.
+
+%% Suppose you want to compile \verb'OpenCAL' and enable support for
+%% OpenMP. You will instruct \verb'CMake' to create the correct Makefiles
+%% for enabling support for \verb'OpenMP' using the
+%% \texttt{-DBUILD\_OPENCAL\_OMP=ON} and
+%% \texttt{-DBUILD\_OPENCAL\_OMP\_PARALLEL=ON} arguments.
+
+\subsection{Generating makfiles}
+
+Once you have satisfied all necessary dependencies it is time to
+generate the makefiles (or the project files or for your development
+environment) needed to build the software distribution. CMake needs to
+know two paths for this:
+\begin{enumerate}
+\item the path to the OpenCAL source tree root directory;
+\item the target path for the generated files and compiled binaries.
+\end{enumerate}
+
+If these paths are the same, we are in front of an in-tree build,
+otherwise of an out-of-tree build. We strongly suggest to do an
+out-of-tree build. One of several advantages of out-of-tree builds is
+that you can generate files and compile for different development
+environments using a single source tree.
+
+To make an out-of-tree build you need to:
+\begin{enumerate}
+\item Enter the source tree root directory (e.g. \verb'<gitwd>/opencal/');
+\item Create a directory for the binaries
+  (e.g. \verb'<gitwd>/opencal/build/') and enter into it;
+\item Run CMake using zero or more of the options listed in table
+  \ref{ch:installation:cmakeoptions} to control which features will be
+  enabled in the compiled library. The current directory is used as
+  target path, while the path provided as an argument is used to find
+  the source tree.
+\end{enumerate}
+
+For instance, to build ... 
+
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:simplebuild}]
+  user@machine:-$ cd <gitwd>/opencal/
+  user@machine:-$ mkdir build && cd build
+  user@machine:-$ cmake {[-DOPTION]} ../
 \end{lstlisting}
 
 
-\texttt{CMake} options are listed in table \ref{ch:installation:cmakeoptions} alongside their effects and default value.
-
 \begin{table}[]
-\centering
-\caption{List of CMAKE options}
-\label{ch:installation:cmakeoptions}
-\begin{tabularx}{\textwidth}{|l|X|l|}
-\hline
-\textbf{OPTION} & \textbf{EFFECT} & \textbf{DEFAULT}\\ \hline
-   \texttt{BUILD\_DOCUMENTATION}  &  Build the HTML based API documentation (Doxygen required)  & OFF   \\ \hline
-  \texttt{BUILD\_OPENCAL\_SERIAL} & Build the OpenCAL serial version  & ON   \\ \hline
-   \texttt{BUILD\_OPENCAL\_OMP} &  Build the OpenCAL-OMP OpenMP parallel version (OpenMP required)    & OFF \\ \hline
-   \texttt{BUILD\_OPENCAL\_OMP\_PARALLEL} &  Controls if OpenCAL-OMP is compiled agaist libomp. If OFF, the OPENMP version uses only one processor! Turn it ON for if you want parallelism  &  ON  \\ \hline
-   \texttt{BUILD\_OPENCAL\_CL} &  Build the OpenCAL-CL OpenCL parallel version (OpenCL required)     &OFF\\ \hline
-   \texttt{BUILD\_OPENCAL\_GL} & Build the OpenCAL-GL visualization library (OpenGL and GLUT required)      &OFF \\ \hline                          
-   \texttt{BUILD\_EXAMPLES} & Build the examples for each OpenCAL version      &\\ \hline
-   \texttt{BUILD\_OPENCAL\_PP} &  Build the OpenCAL-C++ version (C++11 compliant compiler Required)    &  OFF\\ \hline
-   \texttt{ENABLE\_SHARED} &  Controls whether the library should be compiles as shared  (.so .dll) object (If off static objects will be produced) & OFF\\ \hline                        
-\end{tabularx}
+  \centering
+  \caption{List of CMake options alongside their effects and default
+    value}
+  \label{ch:installation:cmakeoptions}
+  \begin{tabularx}{\textwidth}{lXl}
+    \hline
+    \textbf{OPTION} & \textbf{EFFECT} & \textbf{DEFAULT}\\
+    \hline\hline
+    \texttt{BUILD\_DOCUMENTATION}  &  Build the HTML based API documentation (Doxygen required)  & OFF   \\ \hline
+    \texttt{BUILD\_OPENCAL\_SERIAL} & Build the OpenCAL serial version  & ON   \\ \hline
+    \texttt{BUILD\_OPENCAL\_OMP} &  Build the OpenCAL-OMP OpenMP parallel version (OpenMP required)    & OFF \\ \hline
+    \texttt{BUILD\_OPENCAL\_OMP\_PARALLEL} &  Controls if OpenCAL-OMP is compiled agaist libomp. If OFF, the OPENMP version uses only one processor! Turn it ON for if you want parallelism  &  ON  \\ \hline
+    \texttt{BUILD\_OPENCAL\_CL} &  Build the OpenCAL-CL OpenCL parallel version (OpenCL required)     &OFF\\ \hline
+    \texttt{BUILD\_OPENCAL\_GL} & Build the OpenCAL-GL visualization library (OpenGL and GLUT required)      &OFF \\ \hline                          
+    \texttt{BUILD\_EXAMPLES} & Build the examples for each OpenCAL version      &\\ \hline
+    \texttt{BUILD\_OPENCAL\_PP} &  Build the OpenCAL-C++ version (C++11 compliant compiler Required)    &  OFF\\ \hline
+    \texttt{ENABLE\_SHARED} &  Controls whether the library should be compiles as shared  (.so .dll) object (If off static objects will be produced) & OFF\\ \hline                        
+  \end{tabularx}
 \end{table}
 
 
-\section{Build and installing}
-Once \texttt{MakeFile}s have been produced by \texttt{CMake}, everything is set up and ready for compiling. 
+\section{Build and Install}
+Once makefiles have been produced by CMake, everything is set up and
+ready for compiling. To build use the following command:
 
-\begin{lstlisting}[language=bash,caption={OpenCAL build},label={ch:quickstart:ebuild}]
-user@machine:-$ make -jn
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:ebuild}]
+  user@machine:-$ make -jn
 \end{lstlisting}
-where $n$ is the number of cores of you machine ($-jk$ option enable the parallel compilation using $k$ processors).
+where \verb'n' is the number of cores of your machine you want use for
+speeding up the compilation process.
 
-You can install the compiled objects (libraries and examples if enabled during the CMake configuration), headers and API documentation in the appropriate folders using the following command:
+You can install the compiled objects (libraries and examples if
+enabled during the CMake configuration), headers and API documentation
+in the appropriate folders using the following command:
 
-\begin{lstlisting}[language=bash,caption={OpenCAL installation},label={ch:quickstart:install}]
-user@machine:-$ sudo - 
-root@machine:-$ make install
-root@machine:-$ exit
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:install}]
+  user@machine:-$ sudo - 
+  root@machine:-$ make install
+  root@machine:-$ exit
 \end{lstlisting}
 
 or equivalently, if your user is in the \texttt{sudoers} list
-\begin{lstlisting}[language=bash,caption={OpenCAL sudo installation},label={ch:quickstart:sudoinstall}]
-user@machine:-$ sudo make install
+
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
+  user@machine:-$ sudo make install
 \end{lstlisting}
-
-
 
 
 \section{Web Page and Bug Reporting}
 
-The Web page for \texttt{\ocal} is at 
-\url{http://autoti.mat.unical.it} and contains up-to-date news and
-a list of bug reports. \ocal's GitHub homepage is at \url{https://github.com/OpenCALTeam/opencal} 
-For further information or bug reports contact
-\url{mailto:opencal@mat.unical.it} or use the submit an issue at the following url \url{https://github.com/OpenCALTeam/opencal/issues}.
+The Web page for OpenCAL is at \url{http://opencal.telesio.unical.it} and
+contains up-to-date news and a list of bug reports. \ocal's GitHub
+homepage is at \url{https://github.com/OpenCALTeam/opencal}. For
+further information or bug reports contact
+\url{mailto:opencal@telesio.unical.it} or use the submit an issue at the
+following url \url{https://github.com/OpenCALTeam/opencal/issues}.
 
 When reporting a bug, please include as much information and
-documentation as possible. Helpful information would include
-\texttt{\ocal} version, OpenMP/CV implementation and version used,
-configuration options, type of computer system, problem
-description, and error message output.
+documentation as possible. Helpful information would include OpenCAL
+version, OpenMP/OpenCL implementation and version used,
+configuration options, type of computer system, problem description,
+and error message output.

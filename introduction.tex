@@ -1,17 +1,17 @@
 \chapter{Introduction}
 
-Cellular Automata (CA) represent a parallel computing
-methodology for modelling
-complex systems. Well known
-examples of applications include the simulation of natural phenomena
-such as lava and debris flows, forest fires, agent based social
-processes such as pedestrian evacuation and highway traffic problems,
-besides many others (e.g., theoretical studies).
+Cellular Automata (CA) represent a parallel computing methodology for
+modelling complex systems. Well known examples of applications include
+the simulation of natural phenomena such as lava and debris flows,
+forest fires, agent based social processes such as pedestrian
+evacuation and highway traffic problems, besides many others (e.g.,
+theoretical studies).
 
 Many Cellular Automata software environments and libraries exist.
 However, when non-trivial modelling is needed, only non-open source
 software are generally available. This is particularly true for
-Extended Cellular Automata, adopted for simulating phenomena at a macroscopic point of view, for which only a significant example of
+eXtended Cellular Automata (XCA), adopted for simulating phenomena at
+a macroscopic point of view, for which only a significant example of
 non free software exists, namely the CAMELot Cellular Automata
 Simulation Environment.
 
@@ -26,16 +26,38 @@ to the user.
 
 The library has been tested on both CPUs anf GPUs by considering
 different Cellular Automata, including the well known Conway's Game of
-Life and the Extened Cellular Automata model SciddicaT for the
-simulation of debris flows. Results have demonstrated the goodness the
-library both in terms of usability and performance.
+Life and the SciddicaT XCA debris flows simulation model. Results have
+demonstrated the goodness the library both in terms of usability and
+performance.
 
 In the present release 1.0 of the library, 2D and 3D cellular automata
-can be defined. The library also offers diverse facilities (e.g. it
-provides many pre-defined cell's neighborhoods), allows to explicate
-the simulation main cycle and provides a dynamic load balancing
-algorithm. Moreover, an interactive 2D/3D visualization system was
-developed, based on OpenGL compatibility profile.
+can be defined\footnote{Indeed, even 1D CA can be defined oas a
+  degenerate case of 2D, or even 3D, CA.}. The library also offers
+diverse facilities (e.g. it provides many pre-defined cell's
+neighborhoods), allows to explicate the simulation main cycle and
+provides a built in optimization algorithm to speed up your
+simulation. Moreover, OpenCAL offers you a built in interactive 2D/3D
+visualization system you can use to graphically represent step by step
+your simulation based. The visualization system was developed in
+OpenGL Compatibility Profile, thus is able to run everywhere, also on
+old workstations.
 
-The present manual reports the main usage of the \verb'OpenCAL' library related to 
-the sequential, OpenMP and OpenCL versions, the library installation procedure, besides diverse examples of application. 
+The present manual reports the main usage of the \verb'OpenCAL'
+library related to the sequential, OpenMP and OpenCL versions, the
+library installation procedure, besides diverse examples of
+application. In particular, Chapter \ref{ch:installation} deals with
+OpenCAL download and installation, while Chapter \ref{ch:CA} introduce
+you to the CA and XCA computational paradigms. If you already know
+theese topics, you can skip this Chapter. Chapter \ref{ch:opencal} is
+about serial CA and XCA development with OpenCAL, and introduce the
+different library features by examples. Chapter \ref{ch:opencal-omp}
+is about the OpenMP-based parallel version of OpenCAL and also
+introduces the library by examples. Chapter \ref{ch:opencal-cl}
+briefly introduces you to General Purpose GPU programmin with OpenCL
+and then presents you the OpenCL-based version of OpenCAL, still by
+examples. OpenCAL-GL, whihch is the name that identifies the OpenGL
+visualization system built into OpenCAL, is introduced at the end of
+each of the above Chapters, together with computational performaces of
+some of the implemented CA. Eventually, Chapter \ref{ch:utility} ends
+this user guide by presenting you some usefull library features that
+weren't presented previously, like reduction functions.
