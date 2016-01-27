@@ -1,20 +1,17 @@
 \chapter{OpenCAL OpenCL version}\label{ch:opencal-cl}
 
 
-Nowadays parallel computing is the best solution to cross temporal limits. This chapter introduces OpenCAL-CL, a porting of OpenCAL in OpenCL.
+This chapter introduces OpenCAL-CL, a porting of OpenCAL in OpenCL. OpenCL is a parallel framework originally proposed by Apple and then released as an Open Standard under the Khronos Group management. Besides computational efficiency, one of the main advantages of OpenCL is portability. In fact, you can run your program wherever you want across heterogeneous processors like Central Processing Units (CPUs), Graphics Processing Units (GPUs), Digital Signal Processors (DSPs), and Field-Programmable Gate Arrays (FPGAs).
 
-OpenCL is a parallel framework originally proposed by Apple and then released as an Open Standard under the Khronos Group management. Besides computational efficiency, one of the main advantages of OpenCL is portability. In fact, you can run your program whereever you want across heterogeneous processors like Central Processing Units (CPUs), Graphics Processing Units (GPUs), Digital Signal Processors (DSPs), and Field-Programmable Gate Arrays (FPGAs).
-
-OpenCAL-CL inherits many OpenCAL's features, by also adding parallel computation capability thanks to the adoption of OpenCL. The application is now subdivided in two parts: the \emph{host program}, running on the CPU, and the \emph{device program}, running on a compliant computational device (e.g. an Nvidia or AMD GPU). The CA object is still defined host-side, as in OpenCAL, while elementary processes (and possibly other functions) are defined device-side. Belonging to the device program, elementary processes must be defined as OpenCL's \emph{kernels} and therefore the programmer have to be able to write some OpenCL code to implement them. Fortunately, OpenCAL-CL hides lots of parallel aspects to the user (e.g. the simulation loop is internally managed by the library) and also simplify data exchange between host and device. The users's OpenCL parallel programming background can be therefore limited or even null. In the latter case, the user can learn some basic elements of OpenCL
-kernel programming thanks to this guide.
+OpenCAL-CL inherits many OpenCAL's features, by also adding parallel computation capability thanks to the adoption of OpenCL. The application is now subdivided in two parts: the \emph{host program}, running on the CPU, and the \emph{device program}, running on a compliant computational device (e.g. an Nvidia or AMD GPU). The CA object is still defined host-side, as in OpenCAL, while elementary processes (and possibly other functions) are defined device-side. Belonging to the device program, elementary processes must be defined as OpenCL's \emph{kernels} and therefore the programmer has to be able to write some minimal OpenCL code to implement them. Fortunately, OpenCAL-CL hides lots of parallel aspects to the user (e.g. the simulation loop is internally managed by the library) and also simplifies data exchange between host and device. The users's OpenCL parallel programming background can be therefore limited or even null. In the latter case, the user can learn some basic elements of OpenCL kernel programming thanks to this guide.
 
 This chapter is divided into two parts: the first part is a very brief overview of OpenCL, while the second one introduces OpenCAL-CL by examples.
 
 \section{OpenCL framework}
-OpenCL enables parallel programming that assigns computational tasks to multiple processing elements to be perfomed at the same time. These tasks are called \emph{kernels}. The kernel is a special function that can be executed to different OpenCL-compliant devices. In the OpenCAL library, each elementary process of the CA transition function can be devised as a kernel.
-The kernels are sent to the device(s) by the host application.(spiegare due righe OpenCL) The host application defines a structure called \emph{context}, needed to manage data exchange and computation on the compliant devices. XXX
+OpenCL enables parallel programming that assigns computational tasks to multiple processing elements to be performed at the same time. These tasks are called \emph{kernels}. The kernel is a special function that can be executed to different OpenCL-compliant devices. In the OpenCAL library, each elementary process of the CA transition function can be devised as a kernel.
+The kernels are sent to the device(s) by the host application. The host application defines a structure called \emph{context}, needed to manage data exchange and computation on the compliant devices.
 
-In particular, host application links kernels into one or more programs In the host application, the user can select the kernel's functions to insert inside a container called \emph{program},.  The program connects the kernel with argument data and dispaches it to a structure called command queue.  The command queue is a structure that allows the host to decide what the devices have to do, and when a kernel is enqueued, the device will execute the relative function.
+In particular, host application links kernels into one or more programs In the host application, the user can select the kernel's functions to insert inside a container called \emph{program}.  The program connects the kernel with argument data and dispatches it to a structure called command queue.  The command queue is a structure that allows the host to decide what the devices have to do, and when a kernel is enqueued, the device will execute the relative function.
 
 \begin{figure}[htp]
   \begin{center}
@@ -25,27 +22,26 @@ In particular, host application links kernels into one or more programs In the h
 \end{figure}
 
 As we can see from the picture above, the context contains all the devices, all the command queues and all the kernels.
-More in details, for every device is associated a command queue and every command queue has inside all the kernel functions
+More in detail, for every device a command queue is associated and every command queue has inside all the kernel functions
 that the device has to execute.
 
 \section{The structure of OpenCAL-CL}
 As each OpenCL applications, the library OpenCAL-CL has a set of structures and
 functions to develop host program and to define kernels. The definition of the
-CA is specified in the host program. The user can define two type of model 2D or
+CA is specified in the host program. The user can define two types of models, 2D or
 3D, as shown in \ref{ch:opencal}. 
-The host program manages the kernels and dispatches the data of the model, like (substates, type of neighbourhood, 
-size of the cellular space,\ldots)
-to the computation units.
+The host program manages the kernels and dispatches the data of the model, like substates, the type of neighbourhood, 
+size of the cellular space, etc, to the computation units.
 The host program
 manages the execution loop and which computation unit has to execute the
-transaction functions. \\
-The host program is divided in the follows sections:
+transition functions. \\
+The host program is typically divided in the following sections:
 \begin{itemize}
 \item definition of the model (Chapter \ref{ch:opencal}) 
-\item manage of the devices OpenCL
-\item allocation of kernels
-\item send data from the model to devices
-\item start execution loop
+\item management of the OpenCL devices
+\item kernels allocation
+\item data sending from the model to devices
+\item execution loop start
 \end{itemize}
 
 \section{Host programming} 
@@ -56,14 +52,14 @@ XXX
 
 \subsection{Manage of the devices}
 
-After we created the model, the user must choose the device for the computation.
-Inside the library there is a structure called CALOpenCL that allows the user to manage all 
+After the model creation, the user must choose the device for the kernel computation.
+Inside the library a structure called CALOpenCL allows the user to manage all 
 available platforms and devices.
 This structure simplifies the access to the devices compared with the native API
-of OpenCL. The library supplies other function to know which platforms and
+of OpenCL. The library supplies other functions to know which platforms and
 devices are available on the system and to have information about these.\\
-Below you can see a simply program explains how the structure
-CALOpenCL can be used.
+Below you can see a simply program that explains how the 
+CALOpenCL structure can be used.
 
 
 \begin{lstlisting}
@@ -87,13 +83,10 @@ CALOpenCL can be used.
  }
 \end{lstlisting}
 
-Inside the library, the platforms and the devices are store in a matrix where the
-rows represent the platforms and the columns represent the devices. So to choose which one we can use for the computation,
-it's necessary specify the index of platform and the index of the device. For
+Inside the library, the platforms and the devices are store in a matrix where rows represent the platforms and columns represent the devices. Thus, to choose which one we can use for the computation,
+it's necessary to specify the index of platform and the index of the device. For
 example, at lines 12, we chose the platform number
-0 and the device number 0. If we have an system with 3 GPUs NVIDIA and 3 GPUs
-AMD, the library will have a matrix with size 2x3 where 2 are the
-vendors(the platforms NVIDIA and AMD) and 3 are the GPUs for each platforms.If we want to 	
+0 and the device number 0. If we have a system with 3 NVIDIA GPUs and 3 AMD GPUs, the library will have a 2x3 size matrix, where 2 are the vendors (i.e, the platforms NVIDIA and AMD) and 3 are the GPUs for each platforms. If we want to 	
 run the program to the third AMD GPU we can specify as indices 1 and 2.
 If we don't know how the system identify the platforms and devices, the
 library give us a function called \verb'calclGetPlatformsAndDeviceFromStandardInput'
