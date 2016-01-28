@@ -1304,15 +1304,35 @@ In this section, we will show how you can combine the OpenCAL and
 OpenCAL-GL libraries to have an immediate graphic output of your
 simulation. At this purpose, here we re-propose two of the examples
 presented above, namely the SciddicaT debris flow model and the
-\emph{mod2} CA, by adding them an OpenGL (compatibility profile) based
-visualizer in a straightforward manner. The visualization system
-provided by OpenCAL-GL is however rather simplyfied and therefore, if
-you need a more sophisticated graphic system you have to develop an
-alternative by yourself.
+\emph{mod2} CA, by adding them an OpenGL-based visualizer in a
+straightforward manner. The visualization system provided by
+OpenCAL-GL is however rather simplyfied and therefore, if you need a
+more sophisticated graphic system you have to develop an alternative
+by yourself.
 
 \subsection{Implementing SciddicaT in OpenCAL and OpenCAL-GL}
 
-\lstinputlisting[label=lst:calgl_sciddicaT, caption=An OpenCAL implementation of the sciddicaT 3D CA with openCAL-GL graphic output.]{../opencal/OpenCAL-GL/examples/calgl_sciddicaT/source/sciddicaT.c}
+A new implementation of SciddicaT is presented in Listing
+\ref{lst:calgl_sciddicaT}, which integrates a simple multi-view 2D and
+3D visualization system based on OpenCAL-GL. The complete
+implementation is shown for the sake of completeness in Listing
+\ref{lst:calgl_sciddicaT}. A screenshot is shown in Figure
+\ref{fig:calgl_sciddicaT1}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{./images/OpenCAL/calgl_sciddicaT1}
+    \caption{Screenshot of the SciddicaT debris flow model with a
+      multi-view 2D and 3D visualization system based on OpenCAL-GL.}
+    \label{fig:calgl_sciddicaT1}
+  \end{center}
+\end{figure}
+
+\lstinputlisting[label=lst:calgl_sciddicaT, caption=An OpenCAL
+  implementation of the sciddicaT 3D CA with openCAL-GL graphic
+  output.]{../opencal/OpenCAL-GL/examples/calgl_sciddicaT/source/sciddicaT.c}
+
+As you can see, 
 
 \subsection{Implementing the \emph{mod2} CA in OpenCAL and OpenCAL-GL}
 
