@@ -244,43 +244,78 @@ memory (citazione libro). In order to use these memory level, we must
 declare the variables using this specific syntax respectively
 \verb'__global', \verb'__local', \verb'__private'.
 
-\subsection{Conway’s Game of Life}
+\subsection{Conway's Game of Life}
  
  
-As we did in \ref{sec:cal_life}, to introduce how to develop a
-Cellular Automata with OpenCAL-CL, we start implementing the Conway’s
+As we did in \ref{sec:cal_life}, to introduce how develop a Cellular
+Automata with OpenCAL-CL, we start implementing the Conway’s
 Game of Life.  Below you can see the host application of the Conway’s
-Game of Life.  In order to use OpenCAL-CL, you need to include some
-header files (lines 3-8).  Firstly, we include the OpenCAL library and
-sencondly we include the OpenCAL-CL library.  The OpenCAL library
-inclusion inside host application is necessary to define the CA object
-(line 46) and the related substate (line 49). The cal2DIO.h header
-file (line 4) provides you some basic input/output functions for
-reading/writing substates from/to file.  To run our application with
-OpenCAL-CL, we need to declare all the necessary objects (line
+Game of Life.\\  In order to use OpenCAL-CL, you need to include some
+header files (lines 3-5).  Firstly, we include the OpenCAL library and
+sencondly we include the OpenCAL-CL library.  The inclusion of OpenCAL library
+is necessary to define the CA object (line 46) and the
+related substate (line 49) inside host application. The cal2DIO.h
+header file (line 4) provides you some basic input/output functions
+for reading/writing substates from/to file.\\  To run our application
+with OpenCAL-CL, we need to declare all the necessary objects (line
 27-31). Respectively, we have to declare the following variables: the
-\verb'CALOpenCL' structure (line 27), the \verb'CALCLcontext', the
+\verb'CALOpenCL' structure, the \verb'CALCLcontext', the
 \verb'CALCLdevice', the \verb'CALCLprogram' and the
 \verb'CALCLToolkit2D'.  To create and initialize these variables we
 need to call the function \verb'calclCreateCALOpenCL' that create the
 CALOpenCL structure, the functions \verb|calclInitializePlatforms| and
 \verb|calclInitializeDevices| to initialize all the platforms and
-devices on the machine and the function \verb'calclGetDevice()' which
+devices availables the machine and the function \verb'calclGetDevice()' which
 will return the device where we want to compute our elementary process
 choosing by the integers \verb'platformNum' and \verb'deviceNum' (line
 24-25).  Another two important functions are \verb'calclcreateContext'
 and \verb'calclLoadProgramLib2D'.  The first returns the context
-\ref{sec:openclstructure} and the second builds all kernel inside the
+\ref{sec:openclstructure}, the second builds all the kernels inside the
 path specified by \verb'kernelSrc'(line 15) including the files
 specified by \verb'kernelInc'(line 16) and returns a program
 containing all the compiled kernels.
-
+The definition and declaration of the model (line 46) is the same code
+that we discussed in \ref{sec:cal_life}, we specify all the informations
+to create our model, create and initialize the substate (line 49 52) and 
+set a intial configuration (line 55-59).
 \lstinputlisting[label=lst:cal_sciddicaT, caption=An OpenCAL-CL
   implementation of the Conway's game of
-  Life.]{../opencal/OpenCAL-CL/examples/calcl_life/source/life.c} Here
-you can see the device code of the Conway’s Game of Life:
-\lstinputlisting[label=lst:cal_sciddicaT, caption=An OpenCAL-CL kernel
+  Life.]{../opencal/OpenCAL-CL/examples/calcl_life/source/life.c}
+Although the OpenCAL-CL library uses the same function of OpenCAL
+library to create the model and the substates, the execution of the
+elementary processes it's different. Indeed, we compute our elementary
+process on GPU side through a kernel, so we need to manage the
+transfer memory between host and device sides and to decide which and
+when run the kernels. In a classical OpenCL application it's not
+trivial to handle all these initial configurations.  For this reason,
+in OpenCAL-CL we decided to introduce a intermediate object
+(\verb'CALCLToolkit') that hides the memory managment and absorbs the
+compiled choosed kernels. The user must only initialize the
+\verb'CALCLToolkit' structure(line 62) and choose which kernel he/she
+want to execute by the function \verb'calclGetKernelFromProgram'
+specifying the program and the kernel name. Once we chose the kernel
+the user must only call the function
+\verb'calclAddElementaryProcessKernel2D' (line 71) that adds the
+kernel elementary process inside the \verb'CALCLToolkit'
+structure. Finally, to run the simulation the user must call the function
+\verb'calclRun2D' specifying the initial and final step.
+
+Instead below, you can see the device code of the Conway’s Game of
+Life.  In this application we have only one elementary process, so in
+code snippet we define only one kernel called
+\verb'life_transition_function'.\\ The OpenCAL-CL library will launch
+exactly a number of threads equal to the entire cellular space,
+structured like matrix. In this way, every cells can do in parallel
+their own computation.  To access to the indexes of the cell the user
+must call the function \verb'getRow' and \verb'getCol'
+line(14-15). Furthermore the user can use the function
+\verb'get_columns' and \verb'get_rows' (line 17-18) to get the
+dimensions of the cellular space.  In the specific case of the Game of
+Life, we used the \verb'calGet2Di' function to get the central cell’s value of the sub-
+state Q (remember that the central cell is identified by the coordinates (i, j), coming from the callback parameters), the \verb'calGetX2Di' function to get the value
+of the n-th neighbour’s substate Q, and the \verb'calSet2Di' function to update the
+value of the substate Q for the central cell. 
+
+\lstinputlisting[label=lst:calcl_life, caption=An OpenCAL-CL kernel
   to implement the Conway's game of Life elementary
   process.]{../opencal/OpenCAL-CL/examples/calcl_life/kernel/source/life.cl}
-
- 
