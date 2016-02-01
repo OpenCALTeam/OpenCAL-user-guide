@@ -1,8 +1,15 @@
+  
 
-Acknowledgements {#acknowledgements .unnumbered}
+  
+
+  
+
+  
+
+Acknowledgements
 ================
 
-*……*
+*â€¦â€¦*
 
 Introduction
 ============
@@ -31,14 +38,14 @@ CPUs and GPUs (thanks to the adoption of the OpenMP and OpenCL APIs,
 respectively), hiding most parallel implementation issues to the user.
 
 The library has been tested on both CPUs anf GPUs by considering
-different Cellular Automata, including the well known Conway’s Game of
+different Cellular Automata, including the well known Conwayâ€™s Game of
 Life and the SciddicaT XCA debris flows simulation model. Results have
 demonstrated the goodness the library both in terms of usability and
 performance.
 
 In the present release 1.0 of the library, 2D and 3D cellular automata
-can be defined[^1]. The library also offers diverse facilities (e.g. it
-provides many pre-defined cell’s neighborhoods), allows to explicate the
+can be defined[1]. The library also offers diverse facilities (e.g. it
+provides many pre-defined cellâ€™s neighborhoods), allows to explicate the
 simulation main cycle and provides a built in optimization algorithm to
 speed up your simulation. Moreover, OpenCAL offers you a built in
 interactive 2D/3D visualization system you can use to graphically
@@ -63,13 +70,13 @@ identifies the OpenGL visualization system built into OpenCAL, is
 introduced at the end of each of the above Chapters, together with
 computational performaces of some of the implemented CA. Eventually,
 Chapter \[ch:utility\] ends this user guide by presenting you some
-usefull library features that weren’t presented previously, like
+usefull library features that werenâ€™t presented previously, like
 reduction functions.
 
 Quick Start
 ===========
 
-Installation {#ch:installation}
+Installation
 ============
 
 The 1.0 release of `OpenCAL`, here presented, is a collection of four
@@ -96,7 +103,7 @@ Requirements and dependencies
 -----------------------------
 
 In order to compile OpenCAL, you essentially need CMake (version 2.8 or
-greater) and an ANSI C compiler (e.g. gcc 4.9 or greater[^2]) installed
+greater) and an ANSI C compiler (e.g. gcc 4.9 or greater[2]) installed
 in your system. CMake is used to generate the makefiles (or even project
 files for several IDEs) to be used to build OpenCAL.
 
@@ -106,25 +113,21 @@ compile OpenCAL-CL. Moreover, still to compile OpenCAL-CL, at least the
 is needed to compile OpenCAL-GL. The following is a dependencies list
 for each of the above software libraries:
 
-OpenCAL: 
+OpenCAL:   
+CMake version 2.8 or grater, and a quite new C compiler.
 
-:   CMake version 2.8 or grater, and a quite new C compiler.
+OpenCAL-OMP:   
+A C compiler supporting at least Open-MP version 2.0[3].
 
-OpenCAL-OMP: 
+Open-CL:   
+CMake version 3.1 or grater and at least one OpenCL implementation
+installed in your system[4].
 
-:   A C compiler supporting at least Open-MP version 2.0[^3].
-
-Open-CL: 
-
-:   CMake version 3.1 or grater and at least one OpenCL implementation
-    installed in your system[^4].
-
-OpenCAL-GL: 
-
-:   OpenGL/GLUT headers and libraries [^5];
+OpenCAL-GL:   
+OpenGL/GLUT headers and libraries [5];
 
 Eventually, Doxygen and Graphviz are required to build the software
-documentation, which provides specific information about library’s data
+documentation, which provides specific information about libraryâ€™s data
 structures and functions.
 
 Obtaining OpenCAL
@@ -141,14 +144,12 @@ It can be obtained as compressed archive at
 <https://github.com/OpenCALTeam/opencal/archive/master.zip>, or by
 *cloning* the Git repository through the following commands:
 
-``` {.bash numbers="none" language="bash"}
-user@machine:-$ cd <gitwd>
-user@machine:-$ git clone https://github.com/OpenCALTeam/OpenCAL
-user@machine:-$ cd opencal
-```
+    user@machine:-$ cd <gitwd>
+    user@machine:-$ git clone https://github.com/OpenCALTeam/OpenCAL
+    user@machine:-$ cd opencal
 
 Here `<gitwd>` represents the directory in your file system containing
-your git respositories. If you don’t have a git working directory, we
+your git respositories. If you donâ€™t have a git working directory, we
 suggest you to create one.
 
 Structure of the Distribution Directory
@@ -156,45 +157,35 @@ Structure of the Distribution Directory
 
 The software distribution contains the following files and directories:
 
-AUTHORS - 
+AUTHORS -   
+OpenCAL Authors list;
 
-:   OpenCAL Authors list;
+OpenCAL -   
+Core and examples code of the *serial* implementation;
 
-OpenCAL - 
+OpenCAL-CL -   
+Core and examples code of the Open-CL-based parallel implementation;
 
-:   Core and examples code of the *serial* implementation;
+OpenCAL-GL -   
+Graphic OpenGL/GLUT-based visualization system library and examples;
 
-OpenCAL-CL - 
+OpenCAL-OMP -   
+Core and examples code of the Open-MP-based parallel implementation;
 
-:   Core and examples code of the Open-CL-based parallel implementation;
+CMakeLists.txt -   
+CMake configuration file;
 
-OpenCAL-GL - 
+cmake\_uninstall.cmake.in -   
+Uninstall script;
 
-:   Graphic OpenGL/GLUT-based visualization system library and examples;
+configure.cmake -   
+File needed by (i.e. included in) CMakeLists.txt;
 
-OpenCAL-OMP - 
+LICENSE  
+The GNU LGPL licence;
 
-:   Core and examples code of the Open-MP-based parallel implementation;
-
-CMakeLists.txt - 
-
-:   CMake configuration file;
-
-cmake\_uninstall.cmake.in - 
-
-:   Uninstall script;
-
-configure.cmake - 
-
-:   File needed by (i.e. included in) CMakeLists.txt;
-
-LICENSE
-
-:   The GNU LGPL licence;
-
-Other minor files - 
-
-:   Other minor files can also be included into the distribution.
+Other minor files -   
+Other minor files can also be included into the distribution.
 
 ### Generating makfiles
 
@@ -247,19 +238,20 @@ libraries (.a files under Linux systems) instead of shared objects (.so
 files). If you omit a CMake option, the default value will be assumed
 (cf. Table \[ch:installation:cmakeoptions\]).
 
-<span>lXl</span> **OPTION** & **EFFECT** & **DEFAULT**\
-`BUILD_OPENCAL_SERIAL` & Build the OpenCAL serial version & ON\
+<span>lXl</span> **OPTION** & **EFFECT** & **DEFAULT**  
+`BUILD_OPENCAL_SERIAL` & Build the OpenCAL serial version & ON  
 `BUILD_OPENCAL_OMP` & Build the OpenCAL-OMP OpenMP parallel version
-(OpenMP required) & OFF\
+(OpenMP required) & OFF  
 `BUILD_OPENCAL_CL` & Build the OpenCAL-CL OpenCL parallel version
-(OpenCL required) &OFF\
+(OpenCL required) &OFF  
 `BUILD_OPENCAL_GL` & Build the OpenCAL-GL visualization library (OpenGL
-and GLUT required) &OFF\
-`BUILD_EXAMPLES` & Build the examples for each OpenCAL version &\
+and GLUT required) &OFF  
+`BUILD_EXAMPLES` & Build the examples for each OpenCAL version &  
 `BUILD_DOCUMENTATION` & Build the HTML based API documentation (Doxygen
-and Graphviz required) & OFF\
+and Graphviz required) & OFF  
 `ENABLE_SHARED` & Controls whether the library should be compiles as
-shared object (.so). If OFF, static objects (.a) will be produced & OFF\
+shared object (.so). If OFF, static objects (.a) will be produced &
+OFF  
 
 Build and Install/Uninstall
 ---------------------------
@@ -300,7 +292,7 @@ Web Page and Bug Reporting
 
 The Web page for OpenCAL is at <http://opencal.telesio.unical.it> and
 contains up-to-date news and a list of bug reports.
-<span>OpenCAL</span>’s GitHub homepage is at
+<span>OpenCAL</span>â€™s GitHub homepage is at
 <https://github.com/OpenCALTeam/opencal>. For further information or bug
 reports contact
 [mailto:opencal@telesio.unical.it](mailto:opencal@telesio.unical.it) or
@@ -313,7 +305,7 @@ version, OpenMP/OpenCL implementation and version used, configuration
 options, type of computer system, problem description, and error message
 output.
 
-Cellular Automata {#ch:CA}
+Cellular Automata
 =================
 
 Cellular Automata (CA) are parallel computing models, whose evolution is
@@ -324,35 +316,35 @@ applied. In this Chapter, CA are briefly introduced, together with a
 recent extension of them, known as eXtended Cellular Automata (XCA),
 which are widely used for the modelling of physical extended systems.
 
-Informal Definition of Cellular Automata {#sec:CAInformaDef}
+Informal Definition of Cellular Automata
 ----------------------------------------
 
-A cellular automaton can be thought as a $d$-dimensional space, called
+A cellular automaton can be thought as a *d*-dimensional space, called
 *cellular space*, subdivided in regular cells of uniform shape and size.
 Each cell embeds a *finite automaton*, one of the most simple and well
 known computational models, which can assume a finite number of states.
-At time $t=0$, cells are in arbitrary states and the CA evolves step by
-step by changing the states of the cells at discrete time steps, by
-applying the same local rule of evolution, i.e. the cell’s *transition
+At time *t*â€„=â€„0, cells are in arbitrary states and the CA evolves step
+by step by changing the states of the cells at discrete time steps, by
+applying the same local rule of evolution, i.e. the cellâ€™s *transition
 function*, simultaneously (i.e. in parallel) to each cell of the CA.
 Input for the cell is given by the states of a predefined (small) set of
 neighboring cells, which is assumed constant in space and time. It is
 possible to identify an informal definition of cellular automaton by
 simply listing its main properties:
 
--   It is formed by a $d$-dimensional space (i.e. the *cellular space*),
+-   It is formed by a *d*-dimensional space (i.e. the *cellular space*),
     partitioned into cells of uniform shape and size (e.g. triangles,
     squares, hexagons, cubes, etc. - see Figure \[fig:cellularspaces\]);
 
--   The number of cell’s states is finite;
+-   The number of cellâ€™s states is finite;
 
 -   The evolution occurs through discrete steps;
 
 -   Each cell changes state simultaneously to each other (i.e. they
     change state concurrently, in parallel) thanks to the application of
-    the cell’s *transition function*;
+    the cellâ€™s *transition function*;
 
--   The cell’s state transition depends on the states of a set of
+-   The cellâ€™s state transition depends on the states of a set of
     neighboring cells;
 
 -   The evolving cell is called *central cell* and can belong to its
@@ -362,31 +354,17 @@ simply listing its main properties:
     time (see Figures \[fig:1Dneighborhood\] and \[fig:2Dneighborhood\]
     for examples of 1D and 2D neighborhoods, respectively).
 
-![Example of cellular spaces: (a) one-dimensional, (b) two-dimensional
-with square cells, (c) two-dimensional with hexagonal cells, (d)
-three-dimensional with cubic cells.<span
-data-label="fig:cellularspaces"></span>](./images/CellularAutomata/cellularspaces){width="12cm"}
+<img src="./images/CellularAutomata/cellularspaces" alt="Example of cellular spaces: (a) one-dimensional, (b) two-dimensional with square cells, (c) two-dimensional with hexagonal cells, (d) three-dimensional with cubic cells." width="453" />
 
-![Example of neighborood with radius (a) $r = 1$ and (b) $r
-      = 2$ for one-dimensional Cellular Automata. Central cell is
-represented in dark gray, while adjacent cells are in light gray. Note
-that the central cell can optionally belong to its own
-neighborhood.<span
-data-label="fig:1Dneighborhood"></span>](./images/CellularAutomata/onedimensional.pdf){width="12cm"}
+<embed src="./images/CellularAutomata/onedimensional.pdf" width="453" />
 
-![Examples of von Neumann (a) and Moore (b) neighboroods for
-two-dimensional CA with square cells. Examples of (Moore) neighborhoods
-are also shows for hexagonal CA, both for the cases of horizontal (c)
-and vertical (d) cells orientation. Central cell is represented in dark
-gray, while adjacent cells are in light gray. Note that the central cell
-can optionally belong to its own neighborhood.<span
-data-label="fig:2Dneighborhood"></span>](./images/CellularAutomata/2Dneighborhoods.png){width="12cm"}
+<img src="./images/CellularAutomata/2Dneighborhoods.png" alt="Examples of von Neumann (a) and Moore (b) neighboroods for two-dimensional CA with square cells. Examples of (Moore) neighborhoods are also shows for hexagonal CA, both for the cases of horizontal (c) and vertical (d) cells orientation. Central cell is represented in dark gray, while adjacent cells are in light gray. Note that the central cell can optionally belong to its own neighborhood." width="453" />
 
 Despite their simple definition, CA can exhibit very interesting complex
 global behaviors. Moreover, from a computational point of view, they are
 equivalent to Turing Machines. This means, in principle, that everything
 that can be computed can also be by means of a cellular automaton
-(Church–Turing thesis). Thanks to their *computational universality*, CA
+(Churchâ€“Turing thesis). Thanks to their *computational universality*, CA
 gained a great consideration inside the Scientific Community and were
 employed for solving a great variety of different complex problems.
 
@@ -395,26 +373,28 @@ Formal Definition of Cellular Automata
 
 Cellular Automata are formally defined as a quadruple:
 
-$$A = <R,X,Q,\sigma>$$
+*A*â€„=â€„&lt;*R*,â€†*X*,â€†*Q*,â€†*Ïƒ*&gt;
 
 where:
 
--   $R = \{i = (i_0,i_1,....,i_{d-1}) \; | \; i_k \in \mathbb{Z} \;\; \forall k =
-      0,1,...,d-1\}$ is the set of points, with integer coordinates,
-    which defines the $d$-dimensional cellular space;
+-   *R*â€„=â€„{*i*â€„=â€„(*i*<sub>0</sub>,â€†*i*<sub>1</sub>,â€†....,*i*<sub>*d*â€…âˆ’â€…1</sub>)â€…|â€…*i*<sub>*k*</sub>â€„âˆˆâ€„â„¤â€…â€…âˆ€*k*â€„=â€„0,â€†1,â€†...,â€†*d*â€…âˆ’â€…1}
+    is the set of points, with integer coordinates, which defines the
+    *d*-dimensional cellular space;
 
--   $X = \{\xi_0,\xi_1\,...\xi_{m-1}\}$ is the finite set of $m$
-    $d$-dimensional vectors
-    $$\xi_j = \{\xi_{j_0},\xi_{j_1},...\xi_{j_{d-1}}\}$$ that define the
-    set $$N(X,i) = \{i + \xi_0,i + \xi_1,...,i + \xi_{m-1}\}$$ of
-    coordinates of cells belonging the the central cell’s
-    neighborhood (i.e. the cell with coordinates $i =
-      (i_1,i_2,...i_d)$). In other words, $X$ represents the geometrical
-    pattern that specifies the neighbourhood relationship;
+-   *X*â€„=â€„{*Î¾*<sub>0</sub>,â€†*Î¾*<sub>1</sub>â€†...*Î¾*<sub>*m*â€…âˆ’â€…1</sub>} is
+    the finite set of *m* *d*-dimensional vectors
+    *Î¾*<sub>*j*</sub>â€„=â€„{*Î¾*<sub>*j*<sub>0</sub></sub>,â€†*Î¾*<sub>*j*<sub>1</sub></sub>,â€†...*Î¾*<sub>*j*<sub>*d*â€…âˆ’â€…1</sub></sub>}
+     that define the set
+    *N*(*X*,â€†*i*)={*i*â€…+â€…*Î¾*<sub>0</sub>,â€†*i*â€…+â€…*Î¾*<sub>1</sub>,â€†...,â€†*i*â€…+â€…*Î¾*<sub>*m*â€…âˆ’â€…1</sub>}
+     of coordinates of cells belonging the the central cellâ€™s
+    neighborhood (i.e. the cell with coordinates
+    *i*â€„=â€„(*i*<sub>1</sub>,â€†*i*<sub>2</sub>,â€†...*i*<sub>*d*</sub>)). In
+    other words, *X* represents the geometrical pattern that specifies
+    the neighbourhood relationship;
 
--   $Q$ is the finite set of states of the cell;
+-   *Q* is the finite set of states of the cell;
 
--   $\sigma : Q^m \rightarrow Q$ is the cell’s transition function.
+-   *Ïƒ*â€„:â€„*Q*<sup>*m*</sup>â€„â†’â€„*Q* is the cellâ€™s transition function.
 
 Some Applications of Cellular Automata
 --------------------------------------
@@ -462,23 +442,23 @@ eXtended Cellular Automata
 --------------------------
 
 As regards the modeling of natural complex phenomena, Prof. Gino
-‘Miracle Crisci’ and co-workers from University of Calabria (Italy)
+â€˜Miracle Crisciâ€™ and co-workers from University of Calabria (Italy)
 proposed a method based on an eXtended notion of CA (XCA), firstly
-applied to the simulation of basaltic lava flows in the 80’s[^6]. It was
+applied to the simulation of basaltic lava flows in the 80â€™s[6]. It was
 shown that the approach behind XCA can greatly make more straightforward
 the modeling of some complex systems.
 
 Informally, XCA, compared to classical CA, are different because of the
 following reasons:
 
--   The cell’s state is decomposed in *substates*, each of them
+-   The cellâ€™s state is decomposed in *substates*, each of them
     representing the set of admissible values of a given characteristic
     assumed to be relevant for the modeled system and its evolution
     (e.g., lava temperature, lava thickness, etc, in the case of ca lava
     flow model). The set of states for the cell is simply obtained as
     the Cartesian product of the considered substates.
 
--   As the cell’s state can be decomposed in substates, also the
+-   As the cellâ€™s state can be decomposed in substates, also the
     transition function can be split into *elementary processes*, each
     of them representing a particular aspect that rules the dynamic of
     the considered phenomenon. In turn, *elementary processes* can be
@@ -486,8 +466,8 @@ following reasons:
     interactions among substates of the cell with neighbor ones (e.g.,
     mass exchange with neighbours) and *internal transformations*,
     defined as the changes in the values of the substates due only to
-    interactions among substates inside the cell (e.g. the solidi¢cation
-    of the lava inside the cell due to the substate ‘lava temperature’).
+    interactions among substates inside the cell (e.g. the solidiÂ¢cation
+    of the lava inside the cell due to the substate â€˜lava temperatureâ€™).
 
 -   A set of *parameters*, commonly used to characterize the dynamic
     behaviors of the considered phenomenon, can be defined.
@@ -502,42 +482,43 @@ following reasons:
 
 Formally, a XCA is defined as a 7-tuple:
 
-$$A = <R,X,Q,P,\sigma,\Gamma,\gamma>$$
+*A*â€„=â€„&lt;*R*,â€†*X*,â€†*Q*,â€†*P*,â€†*Ïƒ*,â€†*Î“*,â€†*Î³*&gt;
 
 where:
 
--   $R$ is the $d$-dimensional cellular space.
+-   *R* is the *d*-dimensional cellular space.
 
--   $X$ is the geometrical pattern that specifies the neighbourhood
-    relationship; $m = |X|$ represent the number of elements in the set
-    $X$, i.e. the number of neighbors for the central cell.
+-   *X* is the geometrical pattern that specifies the neighbourhood
+    relationship; *m*â€„=â€„|*X*| represent the number of elements in the
+    set *X*, i.e. the number of neighbors for the central cell.
 
--   $Q = Q_0 \times Q_1 \times....\times Q_{n-1}$ is the set of cell’s
-    states, expressed as Cartesian product of the $n$ considered
-    *substates* $Q_0 \times Q_1 \times....\times Q_{n-1}$.
+-   *Q*â€„=â€„*Q*<sub>0</sub>â€…Ã—â€…*Q*<sub>1</sub>â€…Ã—â€…....Ã—*Q*<sub>*n*â€…âˆ’â€…1</sub>
+    is the set of cellâ€™s states, expressed as Cartesian product of the
+    *n* considered *substates*
+    *Q*<sub>0</sub>â€…Ã—â€…*Q*<sub>1</sub>â€…Ã—â€…....Ã—*Q*<sub>*n*â€…âˆ’â€…1</sub>.
 
--   $P = {p_0,p_1,....,p_{p-1}}$ is the set of CA *parameters*.They can
-    allow a fine tuning of the XCA model, with the purpose of
-    reproducing different dynamical behaviours of the phenomenon
-    of interest.
+-   *P*â€„=â€„*p*<sub>0</sub>,â€†*p*<sub>1</sub>,â€†....,*p*<sub>*p*â€…âˆ’â€…1</sub>
+    is the set of CA *parameters*.They can allow a fine tuning of the
+    XCA model, with the purpose of reproducing different dynamical
+    behaviours of the phenomenon of interest.
 
--   $\sigma : Q^m \rightarrow Q$ is the cell’s transition function. It
-    is splitted in $s$ *elementary processes*, $\sigma_0,\sigma_1, ...,
-      \sigma_{s-1}$, each one describing a particular aspect ruling the
-    dynamic of the considered system.
+-   *Ïƒ*â€„:â€„*Q*<sup>*m*</sup>â€„â†’â€„*Q* is the cellâ€™s transition function. It
+    is splitted in *s* *elementary processes*,
+    *Ïƒ*<sub>0</sub>,â€†*Ïƒ*<sub>1</sub>,â€†...,â€†*Ïƒ*<sub>*s*â€…âˆ’â€…1</sub>, each
+    one describing a particular aspect ruling the dynamic of the
+    considered system.
 
--   $\Gamma \subseteq R$ is the region over which the steering function
-    is applied.
+-   *Î“*â€„âŠ†â€„*R* is the region over which the steering function is applied.
 
--   $\gamma: Q^{|\Gamma|} \rightarrow Q^{|\Gamma|} \times
-      \mathbb{R}$ is the (global) steering functions.
+-   *Î³*â€„:â€„*Q*<sup>|*Î“*|</sup>â€„â†’â€„*Q*<sup>|*Î“*|</sup>â€…Ã—â€…â„ is the (global)
+    steering functions.
 
 In the next Chapters, some examples of XCA will be presented. Their
 implementations in OpenCAL will also be described, both in serial
 (Chapter \[ch:opencal\]) and in parallel (Chapters \[ch:opencal-omp\]
 and \[ch:opencal-cl\]).
 
-OpenCAL {#ch:opencal}
+OpenCAL
 =======
 
 With OpenCAL (without any suffix) we identify the sequential version of
@@ -550,22 +531,22 @@ unsafe operations can also be found in the OpenMP version, while they
 are not currently available in OpenCAL-CL.
 
 In the following sections, we will introduce OpenCAL by examples. In the
-first part of the Chapter, we will deal with the OpenCAL’s *safe mode*,
+first part of the Chapter, we will deal with the OpenCALâ€™s *safe mode*,
 while in the last one, we will go deep inside OpenCAL, discussing
 *unsafe mode* operations.
 
-Conway’s Game of Life {#sec:cal_life}
+Conwayâ€™s Game of Life
 ---------------------
 
 In order to introduce you to Cellular Automata development with OpenCAL,
-we start this section by implementing the Conway’s Game of Life. It
+we start this section by implementing the Conwayâ€™s Game of Life. It
 represents one of the most simple, yet powerful examples of Cellular
 Automata, devised by mathematician John Horton Conway in 1970.
 
 The Game of Life can be thought as an infinite two-dimensional
 orthogonal grid of square cells, each of which is in one of two possible
 states, *dead* or *alive*. Every cell interacts with the eight adjacent
-neighbors [^7] belonging to the Moore neighborhood. At each time step,
+neighbors [7] belonging to the Moore neighborhood. At each time step,
 one of the following transitions occur:
 
 1.  Any live cell with fewer than two alive neighbors dies, as if
@@ -581,7 +562,7 @@ one of the following transitions occur:
 
 The initial configuration of the system specifies the state (dead or
 alive) of each cell into the cellular space. The evolution of the system
-is thus obtained by applying the above rules (which define the cell’s
+is thus obtained by applying the above rules (which define the cellâ€™s
 transition function) simultaneously to every cell in the cellular space,
 so that each new configuration is function of the one at the previous
 step. The rules continue to be applied repeatedly to create further
@@ -589,61 +570,51 @@ generations. For more details on the Game of Life, please check
 Wikipedia at the URL
 <http://en.wikipedia.org/wiki/Conway's_Game_of_Life>.
 
-![OpenCAL’s 2D cellular space and Moore neighborhood. Cells are
-individuated by a couple of matrix-style integer coordinates $(i, j)$,
-where $i$ represents the row and $j$ the column. Cell (0,0) is the one
-located at the upper-left corner. Moore neighborhood is represented in
-gray scale, with the central cell highlighted in dark gray. Neighboring
-cells can also be indexed by the integer subscript shown within the
-cell. Cells indices are implicitly assigned by OpenCAL, both in the case
-of predefined and custom neighborhoods. In the first case, indices can
-not be modified, while in the second case, indices are assigned
-progressively in an automatic way each time a new neighbor is added to
-the CA by means of the `calAddNeighbor2D()` function.<span
-data-label="fig:LifeNeighborhood"></span>](./images/OpenCAL/LifeNeighborhood.png){width="5cm"}
+<img src="./images/OpenCAL/LifeNeighborhood.png" alt="OpenCALâ€™s 2D cellular space and Moore neighborhood. Cells are individuated by a couple of matrix-style integer coordinates (i, j), where i represents the row and j the column. Cell (0,0) is the one located at the upper-left corner. Moore neighborhood is represented in gray scale, with the central cell highlighted in dark gray. Neighboring cells can also be indexed by the integer subscript shown within the cell. Cells indices are implicitly assigned by OpenCAL, both in the case of predefined and custom neighborhoods. In the first case, indices can not be modified, while in the second case, indices are assigned progressively in an automatic way each time a new neighbor is added to the CA by means of the calAddNeighbor2D() function." width="188" />
 
 The formal definition of the Life CA is reported below.
 
-$$Life = < R, X, Q, \sigma >$$
+*L**i**f**e*â€„=â€„&lt;*R*,â€†*X*,â€†*Q*,â€†*Ïƒ*&gt;
 
 where:
 
--   $R$ is the set of points, with integer coordinates, which defines
-    the 2-dimensional cellular space. The generic cell in $R$ is
-    individuated by means of a couple of integer coordinates $(i, j)$,
-    where $0 \leq i < i_{max}$ and $0 \leq j < j_{max}$. The first
-    coordinate, $i$, represents the row, while the second, $j$,
-    the column. The cell at coordinates $(0,0)$ is located at the
-    top-left corner of the computational grid (cf.
-    Figure \[fig:LifeNeighborhood\]).
+-   *R* is the set of points, with integer coordinates, which defines
+    the 2-dimensional cellular space. The generic cell in *R* is
+    individuated by means of a couple of integer coordinates (*i*,â€†*j*),
+    where 0â€„â‰¤â€„*i*â€„&lt;â€„*i*<sub>*m**a**x*</sub> and
+    0â€„â‰¤â€„*j*â€„&lt;â€„*j*<sub>*m**a**x*</sub>. The first coordinate, *i*,
+    represents the row, while the second, *j*, the column. The cell at
+    coordinates (0,â€†0) is located at the top-left corner of the
+    computational grid (cf. Figure \[fig:LifeNeighborhood\]).
 
--   $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0), (-1,-1), (1,-1),
-      (1,1), (-1,1)\}$ is the Moore neighborhood relation, a geometrical
-    pattern which identifies the cells influencing the state transition
-    of the central cell. The neighborhood of the generic cell of
-    coordinate $(i, j)$ is given by $$N(X, (i, j)) =$$
-    $$= \{(i, j)+(0,0), (i, j)+(-1, 0), \dots, (i, j)+(-1,1)\} =$$
-    $$= \{(i, j), (i-1, j), \dots, (i-1,j+1)\}$$ Here, a subscript
-    operator can be used to index cells belonging to the neighbourhood.
-    Let $|X|$ be the number of elements in X, and $n \in
-      \mathbb{N}$, $0 \leq n < |X|$; the notation
+-   *X*â€„=â€„{(0,â€†0),(âˆ’1,â€†0),(0,â€†âˆ’1),(0,â€†1),(1,â€†0),(âˆ’1,â€†âˆ’1),(1,â€†âˆ’1),(1,â€†1),(âˆ’1,â€†1)}
+    is the Moore neighborhood relation, a geometrical pattern which
+    identifies the cells influencing the state transition of the
+    central cell. The neighborhood of the generic cell of coordinate
+    (*i*,â€†*j*) is given by
+    *N*(*X*,â€†(*i*,â€†*j*))=
+    ={(*i*,â€†*j*)+(0,â€†0),(*i*,â€†*j*)+(âˆ’1,â€†0),â€¦,(*i*,â€†*j*)+(âˆ’1,â€†1)}=
+    ={(*i*,â€†*j*),(*i*â€…âˆ’â€…1,â€†*j*),â€¦,(*i*â€…âˆ’â€…1,â€†*j*â€…+â€…1)}
+     Here, a subscript operator can be used to index cells belonging to
+    the neighbourhood. Let |*X*| be the number of elements in X, and
+    *n*â€„âˆˆâ€„â„•, 0â€„â‰¤â€„*n*â€„&lt;â€„|*X*|; the notation
 
-    $$N(X, (i, j), n)$$
+    *N*(*X*,â€†(*i*,â€†*j*),*n*)
 
-    represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby,
-    $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1)
-      = (i-1, j)$, i.e. the first neighbour, and so on (cf.
-    Figure \[fig:LifeNeighborhood\]).
+    represents the *n*<sup>*t**h*</sup> neighbourhood of the cell
+    (*i*,â€†*j*). Thereby, *N*(*X*,â€†(*i*,â€†*j*),0)=(*i*,â€†*j*), i.e. the
+    central cell, *N*(*X*,â€†(*i*,â€†*j*),1)=(*i*â€…âˆ’â€…1,â€†*j*), i.e. the first
+    neighbour, and so on (cf. Figure \[fig:LifeNeighborhood\]).
 
--   $Q = \{0, 1\}$ is the set of cell’s states.
+-   *Q*â€„=â€„{0,â€†1} is the set of cellâ€™s states.
 
--   $\sigma : Q^9 \rightarrow Q$ is the deterministic cell
+-   *Ïƒ*â€„:â€„*Q*<sup>9</sup>â€„â†’â€„*Q* is the deterministic cell
     transition function. It is composed by one elementary process, which
     implements the previously above mentioned transition rules.
 
 The program below shows a simple Game of Life sequential implementation
 in C with OpenCAL. As you can see, even if Listing \[lst:cal\_life\] is
-very short, it completely defines the Conway’s Game of Life CA and
+very short, it completely defines the Conwayâ€™s Game of Life CA and
 performs a simulation (actually, only one computational step in this
 example).
 
@@ -663,7 +634,7 @@ respectively), while the third parameter defines the neighbourhood
 pattern. Here, the predefined Moore neighborhood is selected (cf. Figure
 \[fig:LifeNeighborhood\]), among those provided by OpenCAL. See Listings
 \[lst:CALNeighborhood2D\] and \[lst:CALNeighborhood3D\] for a list of
-OpenCAL’s predefined 2D and 3D neighborhoods, respectively. Custom
+OpenCALâ€™s predefined 2D and 3D neighborhoods, respectively. Custom
 neighborhoods can also be defined by means of the `calAddNeighbor2D()`
 function. In both cases, indices are assigned progressively, starting
 from 0, each time a new cell is added to the neighborhood.
@@ -738,8 +709,8 @@ last simulation step, respectively. In this case, we just perform one
 step of computation, being both the first and last step set to 1. The
 last parameter allows you to specify the substate update policy. It can
 be implicit or explicit (Listing \[lst:CALUpdateMode\]). In the first
-case, OpenCAL does substates’ updates for you, while in the second case
-the substates’ updates is your responsibility. Note that, in case
+case, OpenCAL does substatesâ€™ updates for you, while in the second case
+the substatesâ€™ updates is your responsibility. Note that, in case
 implicit update policy is applyied, all the CA substates are updated
 after the execution of each elementary process composing the CA
 transition function. We will discuss update policies later in this
@@ -774,7 +745,7 @@ by a couple of integers, representing the coordinates of the generic
 cell in the CA space. This is the function prototype which is common to
 each elementary process. Note that, each elementary process is applyed
 by OpenCAL simultaneously to each cell of the cellular space in a
-computational step [^8]. However, this is completely transparent to the
+computational step [8]. However, this is completely transparent to the
 user, so that he/she can concentrate his/her effort on the definition of
 single cell behaviour.
 
@@ -783,10 +754,10 @@ its callback function, he/she can rely on a set of OpenCAL functions
 that allow to get the substates values of both the central and the
 neighbouring cells, and to update the substates values of the central
 cell. In the specific case of the Game of Life, we used the
-`calGet2Di()` function to get the central cell’s value of the substate
+`calGet2Di()` function to get the central cellâ€™s value of the substate
 `Q` (remember that the central cell is identified by the coordinates (i,
 j), coming from the callback parameters), the `calGetX2Di()` function to
-get the value of the n-th neighbour’s substate `Q`, and the
+get the value of the n-th neighbourâ€™s substate `Q`, and the
 `calSet2Di()` function to update the value of the substate `Q` for the
 central cell. In the Game of Life example, we defined just one
 elementary process, that therefore represents the whole cell transition
@@ -820,13 +791,9 @@ Figures \[fig:life\_0000\] and \[fig:life\_LAST\] show the initial and
 final configuration of Game of Life as implemented in Listing
 \[lst:cal\_life\], respectively.
 
-![Initial configuration of Game of Life, as implemented in Listing
-\[lst:cal\_life\].<span
-data-label="fig:life_0000"></span>](./images/OpenCAL/life_0000){width="7cm"}
+<img src="./images/OpenCAL/life_0000" alt="Initial configuration of Game of Life, as implemented in Listing [lst:cal_life]." width="264" />
 
-![Final configuration of Game of Life (actually, just one step of
-computation), as implemented in Listing \[lst:cal\_life\].<span
-data-label="fig:life_LAST"></span>](./images/OpenCAL/life_LAST){width="7cm"}
+<img src="./images/OpenCAL/life_LAST" alt="Final configuration of Game of Life (actually, just one step of computation), as implemented in Listing [lst:cal_life]." width="264" />
 
 OpenCAL statement convention
 ----------------------------
@@ -835,7 +802,7 @@ As you can easily see from a rapid sight to the source code, all the
 OpenCAL statements are characterized by a prefix and a suffix. All the
 data types have the `CAL` prefix, and an optional suffix that identifies
 the CA dimension (e.g. 2D for a two-dimensional model) and the basic
-type. For instance, in the case of the Life’s `Q` substate, the 2Di
+type. For instance, in the case of the Lifeâ€™s `Q` substate, the 2Di
 suffix of the `CALSubstate2Di` type specifies that it is a
 two-dimensional substate in which each element is of integer type.
 
@@ -864,7 +831,7 @@ keyword, and end with a suffix specifying the CA dimension and the basic
 datatype (e.g. the suffix `2Dr` is for a two-dimensionale real
 substate).
 
-Custom Neighbourhoods {#sec:CustomNeiughbourhoods}
+Custom Neighbourhoods
 ---------------------
 
 In the Game of Life example, we used the predefined Moore neighbourhood.
@@ -940,11 +907,11 @@ specifying the value `CAL_MOORE_NEIGHBORHOOD_2D` as parameter for the
 `calAddNeighbor2D()` as meny times the as the number of cells you want
 to add is.
 
-SciddicaT {#sec:sciddicaT}
+SciddicaT
 ---------
 
 In the previous section we illustrated an OpenCAL implementation of a
-simple cellular automaton, namely the Conway’s Game of Life. Here, we
+simple cellular automaton, namely the Conwayâ€™s Game of Life. Here, we
 will deal with a more complex example concerning the implementations of
 the SciddicaT Cellular Automata model for landslide simulation.
 Different versions will be presented, ranging from a naive to a fully
@@ -964,106 +931,115 @@ by means of the transition function, which takes as input the state of
 the cells belonging to the von Neumann neighborhood. It is formally
 defined as:
 
-$$SciddicaT = < R, X, Q , P, \sigma  >$$
+*S**c**i**d**d**i**c**a**T*â€„=â€„&lt;*R*,â€†*X*,â€†*Q*,â€†*P*,â€†*Ïƒ*&gt;
 
 where:
 
--   $R$ is the set of points, with integer coordinates, which defines
+-   *R* is the set of points, with integer coordinates, which defines
     the 2-dimensional cellular space over which the phenomenon evolves.
-    The generic cell in $R$ is individuated by means of a couple of
-    integer coordinates $(i, j)$, where $0 \leq i < i_{max}$ and
-    $0 \leq j < j_{max}$. The firt coordinate, $i$, represents the row,
-    while the second, $j$, the column. The cell at coodinates $(0,0)$ is
-    located at the top-left corner of the computational grid.
+    The generic cell in *R* is individuated by means of a couple of
+    integer coordinates (*i*,â€†*j*), where
+    0â€„â‰¤â€„*i*â€„&lt;â€„*i*<sub>*m**a**x*</sub> and
+    0â€„â‰¤â€„*j*â€„&lt;â€„*j*<sub>*m**a**x*</sub>. The firt coordinate, *i*,
+    represents the row, while the second, *j*, the column. The cell at
+    coodinates (0,â€†0) is located at the top-left corner of the
+    computational grid.
 
--   $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0)\}$ is the von Neumann
+-   *X*â€„=â€„{(0,â€†0),(âˆ’1,â€†0),(0,â€†âˆ’1),(0,â€†1),(1,â€†0)} is the von Neumann
     neighborhood relation (cf. Figure \[fig:2Dneighborhood\]), a
     geometrical pattern which identifies the cells influencing the state
     transition of the central cell. The neighborhood of the generic cell
-    of coordinate $(i, j)$ is given by $$N(X, (i, j)) =$$
-    $$= \{(i, j)+(0,0), (i, j)+(-1, 0), (i, j)+(0, -1),
-    (i, j)+(0, 1), (i, j)+(1, 0)\} =$$
-    $$= \{(i, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j)\}$$
+    of coordinate (*i*,â€†*j*) is given by
+    *N*(*X*,â€†(*i*,â€†*j*))=
+    ={(*i*,â€†*j*)+(0,â€†0),(*i*,â€†*j*)+(âˆ’1,â€†0),(*i*,â€†*j*)+(0,â€†âˆ’1),(*i*,â€†*j*)+(0,â€†1),(*i*,â€†*j*)+(1,â€†0)}=
+    ={(*i*,â€†*j*),(*i*â€…âˆ’â€…1,â€†*j*),(*i*,â€†*j*â€…âˆ’â€…1),(*i*,â€†*j*â€…+â€…1),(*i*â€…+â€…1,â€†*j*)}
 
     Here, a subscript operator can be used to index cells belonging to
-    the neighbourhood. Let $|X|$ be the number of elements in X, and
-    $n \in
-    \mathbb{N}$, $0 \leq n < |X|$; the notation
+    the neighbourhood. Let |*X*| be the number of elements in X, and
+    *n*â€„âˆˆâ€„â„•, 0â€„â‰¤â€„*n*â€„&lt;â€„|*X*|; the notation
 
-    $$N(X, (i, j), n)$$
+    *N*(*X*,â€†(*i*,â€†*j*),*n*)
 
-    represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby,
-    $N(X, (i, j), 0) = (i, j)$, i.e. the central cell,
-    $N(X, (i, j), 1) = (i-1, j)$, i.e. the first neighbour, and so on.
+    represents the *n*<sup>*t**h*</sup> neighbourhood of the cell
+    (*i*,â€†*j*). Thereby, *N*(*X*,â€†(*i*,â€†*j*),0)=(*i*,â€†*j*), i.e. the
+    central cell, *N*(*X*,â€†(*i*,â€†*j*),1)=(*i*â€…âˆ’â€…1,â€†*j*), i.e. the first
+    neighbour, and so on.
 
--   $Q$ is the set of cell states. It is subdivided in the following
+-   *Q* is the set of cell states. It is subdivided in the following
     substates:
 
-    -   $Q_z$ is the set of values representing the topographic
-        altitude (i.e. elevation);
+    -   *Q*<sub>*z*</sub> is the set of values representing the
+        topographic altitude (i.e. elevation);
 
-    -   $Q_h$ is the set of values representing the debris thickness;
+    -   *Q*<sub>*h*</sub> is the set of values representing the debris
+        thickness;
 
-    -   $Q_o^4$ are the sets of values representing the debris outflows
-        from the central cell to the neighboring ones.
+    -   *Q*<sub>*o*</sub><sup>4</sup> are the sets of values
+        representing the debris outflows from the central cell to the
+        neighboring ones.
 
     The Cartesian product of the substates defines the overall set of
-    state $Q$:
+    state *Q*:
 
-    $$Q = Q_z \times Q_h \times Q_o^4$$ so that the cell state is
-    specified by the following sixtuple:
+    *Q*â€„=â€„*Q*<sub>*z*</sub>â€…Ã—â€…*Q*<sub>*h*</sub>â€…Ã—â€…*Q*<sub>*o*</sub><sup>4</sup>
+     so that the cell state is specified by the following sixtuple:
 
-    $$q = (q_z, q_h, q_{o_0}, q_{o_1}, q_{o_2}, q_{o_3})$$ In
-    particular, $q_{o_0}$ represents the outflows from the central cell
-    towards the neighbour 1, $q_{o_1}$ the outflow towards the neighbour
-    2, and so on.
+    *q*â€„=â€„(*q*<sub>*z*</sub>,â€†*q*<sub>*h*</sub>,â€†*q*<sub>*o*<sub>0</sub></sub>,â€†*q*<sub>*o*<sub>1</sub></sub>,â€†*q*<sub>*o*<sub>2</sub></sub>,â€†*q*<sub>*o*<sub>3</sub></sub>)
+     In particular, *q*<sub>*o*<sub>0</sub></sub> represents the
+    outflows from the central cell towards the neighbour 1,
+    *q*<sub>*o*<sub>1</sub></sub> the outflow towards the neighbour 2,
+    and so on.
 
--   $P$ is set of parameters ruling the CA dynamics:
+-   *P* is set of parameters ruling the CA dynamics:
 
-    -   $p_\epsilon$ is the parameter which specifies the thickness of
-        the debris that cannot leave the cell due to the effect of
+    -   *p*<sub>*Ïµ*</sub> is the parameter which specifies the thickness
+        of the debris that cannot leave the cell due to the effect of
         adherence;
 
-    -   $p_r$ is the relaxation rate parameter, which affects the size
-        of outflows (cf. section above).
+    -   *p*<sub>*r*</sub> is the relaxation rate parameter, which
+        affects the size of outflows (cf. section above).
 
--   $\sigma : Q^5 \shortrightarrow Q$ is the deterministic cell
+-   $\\sigma : Q^5 \\shortrightarrow Q$ is the deterministic cell
     transition function. It is composed by two elementary processes,
     listed below in the same order they are applied:
 
-    -   $\sigma_1 : (Q_z \times Q_h)^5 \times p_\epsilon \times
-          p_r\shortrightarrow Q_o^4$ determines the outflows from the
+    -   $\\sigma\_1 : (Q\_z \\times Q\_h)^5 \\times p\_\\epsilon \\times
+          p\_r\\shortrightarrow Q\_o^4$ determines the outflows from the
         central cell to the neighboring ones by applying the
         *minimization algorithm of the differences*. In brief, a
         preliminary control avoids outflows computation for those cells
         in which the amount of debris is smaller or equal to
-        $p_\epsilon$, acting as a simplification of the
+        *p*<sub>*Ïµ*</sub>, acting as a simplification of the
         adherence effect. Thus, by means of the minimization algorithm,
-        outflows $q_o(0,m) \; (m=0,\ldots,3)$ from the central cell
-        towards its four adjecent cells are evaluated, and the $Q_o^4$
-        substates accordingly updated. Note that, $q_o(0,0)$ represents
-        the aoutflow from the central cell towards the neighbour 1,
-        $q_o(0,1)$ the aoutflow towards the neighbour 2, and so on. In
-        general, $q_o(0,m)$ represnets the outflows from the central
-        cell towards the $n=(m+1)^{th}$ neighbouring cell. Eventually, a
-        relaxation rate factor, $p_r \in \; ]0,1]$, is considered in
-        order to obtain the local equilibrium condition in more than one
-        CA step. This can significantly improve the realism of model as,
-        in general, more than one step may be needed to displace the
-        proper amount of debris from a cell towards the adjacent ones.
-        In this case, if $f(0,m) \; (i=0, \ldots, 3)$ represent the
-        outgoing flows towards the 4 adjacent cells, as computed by the
-        minimization algorithm, the resulting outflows are given by
-        $q_o(0,m)=f(0,m) \cdot p_r \; (i=0, \ldots, 3)$.
+        outflows *q*<sub>*o*</sub>(0,â€†*m*)â€…(*m*â€„=â€„0,â€†â€¦,â€†3) from the
+        central cell towards its four adjecent cells are evaluated, and
+        the *Q*<sub>*o*</sub><sup>4</sup> substates accordingly updated.
+        Note that, *q*<sub>*o*</sub>(0,â€†0) represents the aoutflow from
+        the central cell towards the neighbour 1,
+        *q*<sub>*o*</sub>(0,â€†1) the aoutflow towards the neighbour 2,
+        and so on. In general, *q*<sub>*o*</sub>(0,â€†*m*) represnets the
+        outflows from the central cell towards the
+        *n*â€„=â€„(*m*â€…+â€…1)<sup>*t**h*</sup> neighbouring cell. Eventually,
+        a relaxation rate factor, *p*<sub>*r*</sub>â€„âˆˆâ€„â€…\]0,â€†1\], is
+        considered in order to obtain the local equilibrium condition in
+        more than one CA step. This can significantly improve the
+        realism of model as, in general, more than one step may be
+        needed to displace the proper amount of debris from a cell
+        towards the adjacent ones. In this case, if
+        *f*(0,â€†*m*)â€…(*i*â€„=â€„0,â€†â€¦,â€†3) represent the outgoing flows towards
+        the 4 adjacent cells, as computed by the minimization algorithm,
+        the resulting outflows are given by
+        *q*<sub>*o*</sub>(0,â€†*m*)=*f*(0,â€†*m*)â‹…*p*<sub>*r*</sub>â€…(*i*â€„=â€„0,â€†â€¦,â€†3).
 
-    -   $\sigma_2: Q_h \times (Q_o^4)^4 \shortrightarrow Q_h$ determines
-        the value of debris thickness inside the cell by considering
-        mass exchange in the cell neighborhood:
-        $h'(0) = h(0) + \sum_{m=0}^3
-          (q_o(0,m) - q_o(m,0))$. Here, $h'(0)$ is the new debris
-        thickness inside the cell, while $q_o(m,0)$ represents the
-        inflow from the $n=(m+1)^{th}$ neighbouring cell. No parameters
-        are involved in this elementary process.
+    -   $\\sigma\_2: Q\_h \\times (Q\_o^4)^4 \\shortrightarrow Q\_h$
+        determines the value of debris thickness inside the cell by
+        considering mass exchange in the cell neighborhood:
+        $h'(0) = h(0) + \\sum\_{m=0}^3
+          (q\_o(0,m) - q\_o(m,0))$. Here, *h*â€²(0) is the new debris
+        thickness inside the cell, while *q*<sub>*o*</sub>(*m*,â€†0)
+        represents the inflow from the *n*â€„=â€„(*m*â€…+â€…1)<sup>*t**h*</sup>
+        neighbouring cell. No parameters are involved in this
+        elementary process.
 
 In the following Listing \[lst:cal\_sciddicaT\], an OpenCAL
 implementation of SciddicaT is shown.
@@ -1072,12 +1048,13 @@ As for the case of Game of Life, the CA model and the simulation objects
 are declared as global variables (lines 22 and 35, respectively), and
 defined later into the main function (lines 147 and 148, respevctively).
 As you can see, the 2D cellular space is a grid of `ROWS` rows times
-`COLS` columns cells, corresponding to $i_{max}$ and $j_{max}$ of the
-formal definition, respectively (cf. lines 10-11), while the von Neumann
-neighbourhood is adopted. The cellular space is still toroidal, as in
-Life, and no optimization is considered. Regarding the simulation
-object, a total of `STEPS` steps (i.e. 4000 steps - cf. line 14) are
-set, and implicit substates updating considered.
+`COLS` columns cells, corresponding to *i*<sub>*m**a**x*</sub> and
+*j*<sub>*m**a**x*</sub> of the formal definition, respectively (cf.
+lines 10-11), while the von Neumann neighbourhood is adopted. The
+cellular space is still toroidal, as in Life, and no optimization is
+considered. Regarding the simulation object, a total of `STEPS` steps
+(i.e. 4000 steps - cf. line 14) are set, and implicit substates updating
+considered.
 
 Substates and parameters are grouped into two different C structures
 (lines 24-28 and 30-33, respectively). Substates are therefore bound to
@@ -1102,13 +1079,13 @@ case of the SciddicaT model, the `sciddicaT_simulation_init()` function
 cell to its neighbours to zero, by means of the function
 `calInitSubstate2Dr()` (lines 110-113). Moreover, it sets the values of
 the P.r and P.epsilon parameters (lines 116-117) and initializes the
-debris flow source by simply subtracting the source’s debris thickness
+debris flow source by simply subtracting the sourceâ€™s debris thickness
 to the topographic altitude. For this purpose, a nested double for is
 executed to check the debris thickness in each cell of the cellular
 space. Here, the `sciddicaT->rows` and `sciddicaT->cols` members of the
-CA object are used, which represent the cellular spece’s numbers of rows
+CA object are used, which represent the cellular speceâ€™s numbers of rows
 and columns, respectively. Still, the `calGet2Dr()` and `calSet2Dr()`
-functions are here employed to read/update substates’ values inside the
+functions are here employed to read/update substatesâ€™ values inside the
 cells.
 
 Line 168 defines a *steering* callback by the
@@ -1127,27 +1104,18 @@ Eventually, the final debris flow path is saved to file by means of the
 `calSaveSubstate2Dr()` function (line 176) and previously allocated
 memery is released (lines 179-180).
 
-As regards the elementary processes, the first one, $\sigma_1$, is
-defined at lines 38-88, while the second, $\sigma_2$, at lines 91-101.
-In both cases, the `calGet2Dr()` `calGetX2Dr()` functions are employed
-to get substes’ values for the central cell and its neighbours,
+As regards the elementary processes, the first one, *Ïƒ*<sub>1</sub>, is
+defined at lines 38-88, while the second, *Ïƒ*<sub>2</sub>, at lines
+91-101. In both cases, the `calGet2Dr()` `calGetX2Dr()` functions are
+employed to get substesâ€™ values for the central cell and its neighbours,
 respectively. Moreover, the `calSet2Dr()` function, updates the central
-cell’s state.
+cellâ€™s state.
 
 Figure \[fig:sciddicaT\] shows the SciddicaT simulation of the 1992
 Tessina (Italy) landslide. Both the initial landslide source and the
 final flow path configruation are shown.
 
-![SciddicaT simulation of the 1992 Tessina (Italy) landslide.
-Topographic altitudes are represented in gray scale. Black represents
-the lower altitude, while the white color is used for the highest
-elevation in the study area. Debris thickness is represented with
-colours ranging from red (for lower values) to yellow (for higher
-values). (a) Initial configuration. (b) Final debris flow path. Note
-that the graphic output was generated by using the `cal_sciddicaT-glut`
-application, that implements the SciddicaT model and provides a minimal
-visualization system. You can find it in the examples directoy.<span
-data-label="fig:sciddicaT"></span>](./images/OpenCAL/sciddicaT){width="12cm"}
+<img src="./images/OpenCAL/sciddicaT" alt="SciddicaT simulation of the 1992 Tessina (Italy) landslide. Topographic altitudes are represented in gray scale. Black represents the lower altitude, while the white color is used for the highest elevation in the study area. Debris thickness is represented with colours ranging from red (for lower values) to yellow (for higher values). (a) Initial configuration. (b) Final debris flow path. Note that the graphic output was generated by using the cal_sciddicaT-glut application, that implements the SciddicaT model and provides a minimal visualization system. You can find it in the examples directoy." width="453" />
 
 As regards computational preformace, the simulation shown in Figure
 \[fig:sciddicaT\] was executed on a Intel Core i7-4702HQ CPU @ 2.20GHz
@@ -1158,7 +1126,7 @@ Figure \[fig:opencal\_main\_loop\] shows the OpenCAL main loop. Before
 entering the loop, if defined, the init function is executed.
 Afterwards, while the current step is lower or equal to the final step
 of computation (or this latter is set to `CAL_RUN_LOOP`), elementary
-processes are executed concurrently[^9]. In this cycle, substates are
+processes are executed concurrently[9]. In this cycle, substates are
 updated after each elementary process has been applyed, while just
 before the end of the computational step, if defined, the steering
 function is executed. At the end of the computational step, a stop
@@ -1167,10 +1135,9 @@ is reached. In order to define such a stop condition, the user can use
 the `stopCondition()` function, which registers a callback in which the
 stop condition can be defined.
 
-![OpenCAL main loop chart.<span
-data-label="fig:opencal_main_loop"></span>](./images/OpenCAL/opencal_main_loop){width="9.5cm"}
+<img src="./images/OpenCAL/opencal_main_loop" alt="OpenCAL main loop chart." width="359" />
 
-SciddicaT with active cells optimization {#sec:sciddicaT_active}
+SciddicaT with active cells optimization
 ----------------------------------------
 
 Here we present a computationally improved version of SciddicaT, which
@@ -1189,52 +1156,52 @@ source). Moreover, we can add to this set new cells or remove some ones
 from it. Specifically, if an outflow is computed from an active cell
 towards a neighbouring non-active cell, this latter can be added to the
 set of active cells and considered for state change by the remaining
-elementary processes in the current step of computation[^10] (if any),
-or by the next computational step. Similarly, if a given active cell
-looses a sufficient amount of debris, it can be eliminated from the set
-of active cells. In the case of SciddicaT, this appens when its
-thickness becomes lower than or equal to a given threshold (i.e.
-$p_\epsilon$).
+elementary processes in the current step of computation[10] (if any), or
+by the next computational step. Similarly, if a given active cell looses
+a sufficient amount of debris, it can be eliminated from the set of
+active cells. In the case of SciddicaT, this appens when its thickness
+becomes lower than or equal to a given threshold (i.e.
+*p*<sub>*Ïµ*</sub>).
 
 In order to account for these processes, we have to slightly revise the
 SciddicaT definition. In particular we have to add the set of active
 cells, A. The optimized SciddicaT model is now defined as
 
-$$SciddicaT = < R, A, X, Q , P, \sigma >$$ where $A \subseteq R$ is the
-set of active cells, while the other components are defned as before.
-The transition function is now defined as:
+*S**c**i**d**d**i**c**a**T*â€„=â€„&lt;*R*,â€†*A*,â€†*X*,â€†*Q*,â€†*P*,â€†*Ïƒ*&gt;
+ where *A*â€„âŠ†â€„*R* is the set of active cells, while the other components
+are defned as before. The transition function is now defined as:
 
-$$\sigma : A \times Q^5 \shortrightarrow Q \times A$$ denoting that it
-is applied to only the cells in $A$ and that it can add/remove active
-cells. More in detail, the $\sigma_1$ elementary process has to be
-modified, as it can activate new cell. Moreover, a new elementary
-process, $\sigma_3$, has to be added in order to remove cells that
-cannot produce outflows during the next computational step due to the
-fact that their debris thickness is negligible. The new sequence of
-elementary processes is listed below, in the same order they are
-applied.
+$$\\sigma : A \\times Q^5 \\shortrightarrow Q \\times A$$
+ denoting that it is applied to only the cells in *A* and that it can
+add/remove active cells. More in detail, the *Ïƒ*<sub>1</sub> elementary
+process has to be modified, as it can activate new cell. Moreover, a new
+elementary process, *Ïƒ*<sub>3</sub>, has to be added in order to remove
+cells that cannot produce outflows during the next computational step
+due to the fact that their debris thickness is negligible. The new
+sequence of elementary processes is listed below, in the same order they
+are applied.
 
--   $\sigma_1 : A \times (Q_z \times Q_h)^5 \times p_\epsilon \times p_r
-      \shortrightarrow Q_o^4 \times A$ determines the outflows from the
-    central cell to the neighboring ones, as before. In addition, each
-    time an outflow is computed, the neighbour receiving the flow is
-    added to the set of active cells.
+-   $\\sigma\_1 : A \\times (Q\_z \\times Q\_h)^5 \\times p\_\\epsilon \\times p\_r
+      \\shortrightarrow Q\_o^4 \\times A$ determines the outflows from
+    the central cell to the neighboring ones, as before. In addition,
+    each time an outflow is computed, the neighbour receiving the flow
+    is added to the set of active cells.
 
--   $\sigma_2: A \times Q_h \times (Q_o^4)^4 \shortrightarrow Q_h$
+-   $\\sigma\_2: A \\times Q\_h \\times (Q\_o^4)^4 \\shortrightarrow Q\_h$
     determines the value of debris thickness inside the cell by
     considering mass exchange in the cell neighborhood. This elementary
     process does not change with respect to the original version
     of SciddicaT.
 
--   $\sigma_3: A \times Q_h \times p_\epsilon \shortrightarrow A$
-    removes a cell from $A$ if its debris thickness is lower than or
-    equal to the $p_\epsilon$ threshold.
+-   $\\sigma\_3: A \\times Q\_h \\times p\_\\epsilon \\shortrightarrow A$
+    removes a cell from *A* if its debris thickness is lower than or
+    equal to the *p*<sub>*Ïµ*</sub> threshold.
 
 In order to implement the SciddicaT debris flows model in OpenCAL by
 exploiting the active cells optimization, we have to chage the
-definition of the CA objet, by also adding the third $\sigma_3$
-elementary process. Moreover, the $\sigma_1$ elementary process has to
-be changed. A complete implementation of the sactive cells optimized
+definition of the CA objet, by also adding the third *Ïƒ*<sub>3</sub>
+elementary process. Moreover, the *Ïƒ*<sub>1</sub> elementary process has
+to be changed. A complete implementation of the sactive cells optimized
 version of SciddicaT is shown in Listing
 \[lst:cal\_Sciddicat-activecells\] for the sake of completeness, even if
 only the differences with respect to the original implementation are
@@ -1245,12 +1212,13 @@ needed to add the active cells optimization to SciddicaT. In particular,
 the active cells optimization is enabled by means of the
 `CAL_OPT_ACTIVE_CELLS` parameter at line 159, while the third elementary
 process added at line 165. As regards the elementary processe
-$\sigma_1$, it is the same of the one of the basic SciddicaT version,
-with the exception that when an outflow is generated, the cell receiving
-the flow is added to the set A of the active cells (line 88). Moreover,
-an active cell is eliminated by the set A by means of the $\sigma_3$
-elementary process in the case its debris thickness becomes lower than
-or equal to the $p_\epsilon$ threshold parameter (lines 107-108).
+*Ïƒ*<sub>1</sub>, it is the same of the one of the basic SciddicaT
+version, with the exception that when an outflow is generated, the cell
+receiving the flow is added to the set A of the active cells (line 88).
+Moreover, an active cell is eliminated by the set A by means of the
+*Ïƒ*<sub>3</sub> elementary process in the case its debris thickness
+becomes lower than or equal to the *p*<sub>*Ïµ*</sub> threshold parameter
+(lines 107-108).
 
 Regarding the computational preformace, the same simulation shown in
 Figure \[fig:sciddicaT\] was executed using the new SciddicaT
@@ -1262,7 +1230,7 @@ This can be condidered a very good result you can easily obtain when
 your simulation involves only a limited subset of the computational
 domain.
 
-SciddicaT as eXtended CA {#sec:sciddicaT_extended}
+SciddicaT as eXtended CA
 ------------------------
 
 OpenCAL allows for further optimization of the SciddicaT debris flows
@@ -1285,115 +1253,118 @@ since updated values are written to the *next* computational plane. As a
 result, the *current* computational plane is not corrupted by the
 extended operation, and the *next* plane is used for progressively
 accounting mass variation inside the cells. By introducing such feature,
-ouflows don’t need to be saved (e.g. into additional substates) anymore,
+ouflows donâ€™t need to be saved (e.g. into additional substates) anymore,
 as they are used to account mass exchange directly during ouflows
 computation. As you can figure out, this can give rise to a further
 performace improvement for the application. The SciddicaT XCA model is
 formally defined as:
 
-$$SciddicaT = < R, A, X, Q , P, \sigma  >$$
+*S**c**i**d**d**i**c**a**T*â€„=â€„&lt;*R*,â€†*A*,â€†*X*,â€†*Q*,â€†*P*,â€†*Ïƒ*&gt;
 
 where:
 
--   $R$ is the set of points, with integer coordinates, which defines
+-   *R* is the set of points, with integer coordinates, which defines
     the 2-dimensional cellular space over which the phenomenon evolves.
-    The generic cell in $R$ is individuated by means of a couple of
-    integer coordinates $(i, j)$, where $0 \leq i < i_{max}$ and
-    $0 \leq j < j_{max}$. The firt coordinate, $i$, represents the row,
-    while the second, $j$, the column. The cell at coodinates $(0,0)$ is
-    located at the top-left corner of the computational grid.
+    The generic cell in *R* is individuated by means of a couple of
+    integer coordinates (*i*,â€†*j*), where
+    0â€„â‰¤â€„*i*â€„&lt;â€„*i*<sub>*m**a**x*</sub> and
+    0â€„â‰¤â€„*j*â€„&lt;â€„*j*<sub>*m**a**x*</sub>. The firt coordinate, *i*,
+    represents the row, while the second, *j*, the column. The cell at
+    coodinates (0,â€†0) is located at the top-left corner of the
+    computational grid.
 
--   $A \subseteq R$ is the set of active cells, i.e. those cells
-    actually involved in computation.
+-   *A*â€„âŠ†â€„*R* is the set of active cells, i.e. those cells actually
+    involved in computation.
 
--   $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0)\}$ is the von Neumann
+-   *X*â€„=â€„{(0,â€†0),(âˆ’1,â€†0),(0,â€†âˆ’1),(0,â€†1),(1,â€†0)} is the von Neumann
     neighborhood relation (cf. Figure \[fig:2Dneighborhood\]), a
     geometrical pattern which identifies the cells influencing the state
     transition of the central cell. The neighborhood of the generic cell
-    of coordinate $(i, j)$ is given by $$N(X, (i, j)) =$$
-    $$= \{(i, j)+(0,0), (i, j)+(-1, 0), (i, j)+(0, -1),
-    (i, j)+(0, 1), (i, j)+(1, 0)\} =$$
-    $$= \{(i, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j)\}$$
+    of coordinate (*i*,â€†*j*) is given by
+    *N*(*X*,â€†(*i*,â€†*j*))=
+    ={(*i*,â€†*j*)+(0,â€†0),(*i*,â€†*j*)+(âˆ’1,â€†0),(*i*,â€†*j*)+(0,â€†âˆ’1),(*i*,â€†*j*)+(0,â€†1),(*i*,â€†*j*)+(1,â€†0)}=
+    ={(*i*,â€†*j*),(*i*â€…âˆ’â€…1,â€†*j*),(*i*,â€†*j*â€…âˆ’â€…1),(*i*,â€†*j*â€…+â€…1),(*i*â€…+â€…1,â€†*j*)}
 
     Here, a subscript operator can be used to index cells belonging to
-    the neighbourhood. Let $|X|$ be the number of elements in X, and
-    $n \in
-    \mathbb{N}$, $0 \leq n < |X|$; the notation
+    the neighbourhood. Let |*X*| be the number of elements in X, and
+    *n*â€„âˆˆâ€„â„•, 0â€„â‰¤â€„*n*â€„&lt;â€„|*X*|; the notation
 
-    $$N(X, (i, j), n)$$
+    *N*(*X*,â€†(*i*,â€†*j*),*n*)
 
-    represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby,
-    $N(X, (i, j), 0) = (i, j)$, i.e. the central cell,
-    $N(X, (i, j), 1) =
-    (i-1, j)$, i.e. the first neighbour, and so on (cf.
-    Figure \[fig:LifeNeighborhood\]).
+    represents the *n*<sup>*t**h*</sup> neighbourhood of the cell
+    (*i*,â€†*j*). Thereby, *N*(*X*,â€†(*i*,â€†*j*),0)=(*i*,â€†*j*), i.e. the
+    central cell, *N*(*X*,â€†(*i*,â€†*j*),1)=(*i*â€…âˆ’â€…1,â€†*j*), i.e. the first
+    neighbour, and so on (cf. Figure \[fig:LifeNeighborhood\]).
 
--   $Q$ is the set of cell states; it is subdivided in the following
+-   *Q* is the set of cell states; it is subdivided in the following
     substates:
 
-    -   $Q_z$ is the set of values representing the topographic
-        altitude (i.e. elevation);
+    -   *Q*<sub>*z*</sub> is the set of values representing the
+        topographic altitude (i.e. elevation);
 
-    -   $Q_h$ is the set of values representing the debris thickness;
+    -   *Q*<sub>*h*</sub> is the set of values representing the debris
+        thickness;
 
     The Cartesian product of the substates defines the overall set of
-    state $Q$:
+    state *Q*:
 
-    $$Q = Q_z \times Q_h$$ so that the cell state is specified by:
+    *Q*â€„=â€„*Q*<sub>*z*</sub>â€…Ã—â€…*Q*<sub>*h*</sub>
+     so that the cell state is specified by:
 
-    $$q = (q_z, q_h)$$
+    *q*â€„=â€„(*q*<sub>*z*</sub>,â€†*q*<sub>*h*</sub>)
 
--   $P$ is set of parameters ruling the CA dynamics:
+-   *P* is set of parameters ruling the CA dynamics:
 
-    -   $p_\epsilon$ is the parameter which specifies the thickness of
-        the debris that cannot leave the cell due to the effect of
+    -   *p*<sub>*Ïµ*</sub> is the parameter which specifies the thickness
+        of the debris that cannot leave the cell due to the effect of
         adherence;
 
-    -   $p_r$ is the relaxation rate parameter, which affects the size
-        of outflows (cf. section above).
+    -   *p*<sub>*r*</sub> is the relaxation rate parameter, which
+        affects the size of outflows (cf. section above).
 
--   $\sigma : A \times Q^5 \shortrightarrow Q$ is the deterministic cell
-    transition function. It is composed by two elementary processes:
+-   $\\sigma : A \\times Q^5 \\shortrightarrow Q$ is the deterministic
+    cell transition function. It is composed by two elementary
+    processes:
 
-    -   $\sigma_1 : A \times (Q_z \times Q_h)^5 \times p_\epsilon \times
-          p_r\shortrightarrow (A \times Q_h)^5$ determines the outflows
-        from the central cell to the neighboring ones and updates debris
-        thickness inside the central cell and its
+    -   $\\sigma\_1 : A \\times (Q\_z \\times Q\_h)^5 \\times p\_\\epsilon \\times
+          p\_r\\shortrightarrow (A \\times Q\_h)^5$ determines the
+        outflows from the central cell to the neighboring ones and
+        updates debris thickness inside the central cell and its
         neighbours accordingly. It also adds the neighbouring cells
         receining a flow to the set A of the active cells.
 
-    -   $\sigma_2: A \times Q_h \times p_\epsilon \shortrightarrow A$
+    -   $\\sigma\_2: A \\times Q\_h \\times p\_\\epsilon \\shortrightarrow A$
         removes the cell from the set A of the active cells if the
         debris thickness inside the cell is lower than or equal to the
-        $p_\epsilon$ threshold.
+        *p*<sub>*Ïµ*</sub> threshold.
 
 Note that, only the topographic altitude and the debris thickness are
-now considered as model’s substates, as the four outflows substates are
+now considered as modelâ€™s substates, as the four outflows substates are
 no longer needed. Moreover, the number of elementary process now
 considered is two, instead of three for the previous versions of
 SciddicaT. The OpenCAL implementation of the further optimized SciddicaT
 debris flows model is shown in Listing \[lst:cal\_sciddicaT-unsafe\].
 
-As you can see, the definitions of CA and simulation objects doesn’t
+As you can see, the definitions of CA and simulation objects doesnâ€™t
 change from the previous implementation (lines 131-132), while only two
 elementary processes are considered (lines 135-136). In particular, the
 firt call to `calAddElementaryProcess2D()` registers the callbak
-function implementing the $\sigma_1$ elementary process. It computes
-outflows from the (active) central cell to its neighbours (line 83) and
-updates the debris tickness in both the central cell and the
+function implementing the *Ïƒ*<sub>1</sub> elementary process. It
+computes outflows from the (active) central cell to its neighbours (line
+83) and updates the debris tickness in both the central cell and the
 neighbouring cell receiving a flow (lines 84-85). Moreover, neighbouring
 cells receiving a flow are added to the set A of active cells (line 88)
 and therefore will be considered for elaboration by the subsuequent
-elementary process ($\sigma_2$) in the current step of computation[^11].
-In particular, the `calSetX2Dr()` *unsafe* function is used to update
-the derbis thickess of the neighbouring cells receiving a flow, while
-the `calAddActiveCellX2D()` function is used to add a neighbouring cells
-receiving a flow to the set $A$ of active cells. The $\sigma_2$
-elementary process, simply removes inactive cells from $A$ (lines
-95-86), as in the previous example.
+elementary process (*Ïƒ*<sub>2</sub>) in the current step of
+computation[11]. In particular, the `calSetX2Dr()` *unsafe* function is
+used to update the derbis thickess of the neighbouring cells receiving a
+flow, while the `calAddActiveCellX2D()` function is used to add a
+neighbouring cells receiving a flow to the set *A* of active cells. The
+*Ïƒ*<sub>2</sub> elementary process, simply removes inactive cells from
+*A* (lines 95-86), as in the previous example.
 
 Substates are added to the CA at lines 139-140. Here, the first
-substate, $Q_z$, is added by menas of the
+substate, *Q*<sub>*z*</sub>, is added by menas of the
 `calAddSingleLayerSubstate2Dr()` function. It is here considered to
 allocate memory only for the *current* computing plane. In fact,
 topographic altitutde only changes at the simulation initialization
@@ -1403,9 +1374,9 @@ This allows for memory space allocation optimization and possibly for
 computational performance improvements. Note that, at line 117 we used
 the `calSetCurrent2Dr()` function, instead of the usual `calSet2Dr()`.
 The `calSetCurrent2Dr()` function allows for updating the *current*
-computational plane (the only present in the $Q_z$ substate), while
-`calSet2Dr()` would update the *next* computational plane, by producing
-an access violation error.
+computational plane (the only present in the *Q*<sub>*z*</sub>
+substate), while `calSet2Dr()` would update the *next* computational
+plane, by producing an access violation error.
 
 Regarding the computational preformace, the same simulation shown in
 Figure \[fig:sciddicaT\] was executed by considering the XCA
@@ -1422,7 +1393,7 @@ SciddicaT with explicit simulation loop
 Even if results obtained so far can be considered more than satisfying,
 it is further possibile to improve computational performance of
 SciddicaT by avoiding unnecessary substates updating. In fact, in some
-cases, elementary processes don’t affect one or more model’s substates
+cases, elementary processes donâ€™t affect one or more modelâ€™s substates
 and therefore their updating becomes only a waste of time.
 
 As we stated above, when we use the implicit `calRun2D()` simulation
@@ -1431,11 +1402,11 @@ each elementary process. However, this behaviour can be modified by
 making the OpenCAL simulation loop explicit.
 
 In the specific case of the SciddicaT XCA model, the second elementary
-process, $\sigma_2$, just remove cells that became inactive from the set
-$A$ of active cells and doesn’t affect the mode’s substates[^12]. As a
-consequence, no substates updating is needed after the application of
-$\sigma_2$. Being substates udating a time comsuming operation, this can
-further speed up your simulation.
+process, *Ïƒ*<sub>2</sub>, just remove cells that became inactive from
+the set *A* of active cells and doesnâ€™t affect the modeâ€™s substates[12].
+As a consequence, no substates updating is needed after the application
+of *Ïƒ*<sub>2</sub>. Being substates udating a time comsuming operation,
+this can further speed up your simulation.
 
 A new OpenCAL implementation of SciddicaT is presented in Listing
 \[lst:cal\_sciddicaT-explicit\]. It is based on an explicit simulation
@@ -1454,12 +1425,12 @@ of OpenCAL), even if you are free to re-order the call sequence within
 the explicit transition function callback. In particular, the
 `sciddicaT_flows()` elementary process is applied to each (active) cell
 into the computational domain by means of the
-`calApplyElementaryProcess2D()` function. Then, the set $A$ of the
-active cells and the $Q_h$ substate are updated by means of the
-`calUpdateActiveCells2D()` and `calUpdateSubstate2Dr()`,
-respectively[^13]. Eventually, the `sciddicaT_remove_inactive_cells()`
+`calApplyElementaryProcess2D()` function. Then, the set *A* of the
+active cells and the *Q*<sub>*h*</sub> substate are updated by means of
+the `calUpdateActiveCells2D()` and `calUpdateSubstate2Dr()`,
+respectively[13]. Eventually, the `sciddicaT_remove_inactive_cells()`
 elementary process is applied, which only removes cells that became
-incative during the current computational step, and the set $A$ is
+incative during the current computational step, and the set *A* is
 accordingly updated.
 
 As regard the computational performance, this further optimized version
@@ -1469,75 +1440,99 @@ obtained sped up is here quite small (less than the 10%) with respect to
 the previous implementation of SciddicaT. However, SciddicaT is a very
 simplyfied model and higer speed up can certainly be obtained for more
 complex CA made up by more elementary processes, theese latter involving
-only a small set of model’s substates. Table \[tab:speedup\] resumes
+only a small set of modelâ€™s substates. Table \[tab:speedup\] resumes
 computational performace of all the above illustraed SciddicaT
 implementations.
 
-  CA model                         Elapsed time \[s\]   Speedup
-  ------------------------------- -------------------- ---------
-  SciddicaT                               240              1
-  SciddicaT with active cells              23            10.43
-  SciddicaT XCA (eXtended CA)              13            18.46
-  SciddicaT XCA explicit update            12             20
+<table>
+<caption>Computational performace of the four different implementations of the SciddicaT debris flows model.<span data-label="tab:speedup"></span></caption>
+<thead>
+<tr class="header">
+<th align="left">CA model</th>
+<th align="center">Elapsed time [s]</th>
+<th align="center">Speedup</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">SciddicaT</td>
+<td align="center">240</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="left">SciddicaT with active cells</td>
+<td align="center">23</td>
+<td align="center">10.43</td>
+</tr>
+<tr class="odd">
+<td align="left">SciddicaT XCA (eXtended CA)</td>
+<td align="center">13</td>
+<td align="center">18.46</td>
+</tr>
+<tr class="even">
+<td align="left">SciddicaT XCA explicit update</td>
+<td align="center">12</td>
+<td align="center">20</td>
+</tr>
+</tbody>
+</table>
 
-  : Computational performace of the four different implementations of
-  the SciddicaT debris flows model.<span
-  data-label="tab:speedup"></span>
-
-A three-dimensional example {#sec:mod2}
+A three-dimensional example
 ---------------------------
 
 In order to introduce you to development with of three-dimensional CA
 with OpenCAL, we start this section by implementing a simple 3D model,
 namely the *mod2* 3D CA. Cells can be in one of two differnt states, 0
 or 1, as in Game of Life. The cellular space is a parallelepiped made by
-cubic cells, while the cell’s neighbourhood is the 3D Moore one,
+cubic cells, while the cellâ€™s neighbourhood is the 3D Moore one,
 consisting of the central cell and its adjecent cells. The transition
-function simply evaluates the quantity $s$ as the number of neighbouring
+function simply evaluates the quantity *s* as the number of neighbouring
 cells which are in the state 1 and sets the new state for the central
-cell as $s\%2$ (i.e. the rest of $s$ divided by 2). This simple example
+cell as *s*%2 (i.e. the rest of *s* divided by 2). This simple example
 of 3D CA is formally defined as:
 
-$$mod2 = < R, X, Q, \sigma >$$
+*m**o**d*2â€„=â€„&lt;*R*,â€†*X*,â€†*Q*,â€†*Ïƒ*&gt;
 
 where:
 
--   $R$ is the set of points, with integer coordinates, which defines
-    the 3-dimensional cellular space. The generic cell in $R$ is
-    individuated by means of a triple of integer coordinates $(i, j,
-      k)$, where $0 \leq i < i_{max}$, $0 \leq j < j_{max}$, and
-    $0 \leq k
-      < k_{max}$. The firt coordinate, $i$, represents the row, the
-    second, $j$, the column, while the third coordinate represents
-    the slice. The cell at coodinates $(0,0,0)$ is located at the
-    top-left-far corner of the computational grid.
+-   *R* is the set of points, with integer coordinates, which defines
+    the 3-dimensional cellular space. The generic cell in *R* is
+    individuated by means of a triple of integer coordinates
+    (*i*,â€†*j*,â€†*k*), where 0â€„â‰¤â€„*i*â€„&lt;â€„*i*<sub>*m**a**x*</sub>,
+    0â€„â‰¤â€„*j*â€„&lt;â€„*j*<sub>*m**a**x*</sub>, and
+    0â€„â‰¤â€„*k*â€„&lt;â€„*k*<sub>*m**a**x*</sub>. The firt coordinate, *i*,
+    represents the row, the second, *j*, the column, while the third
+    coordinate represents the slice. The cell at coodinates (0,â€†0,â€†0) is
+    located at the top-left-far corner of the computational grid.
 
--   $X = \{(0,0,0), \dots, (-1,1,0), (0,0,-1), \dots, (-1,1,-1),
-      (0,0,1), \dots, (-1,1,1)\}$ is the Moore neighborhood relation, a
-    geometrical pattern which identifies the cells influencing the state
-    transition of the central cell. The neighborhood of the generic cell
-    of coordinate $(i, j)$ is given by $$N(X, (i, j, k)) =$$
-    $$= \{(i, j, k)+(0,0,0), \dots, (i, j, k)+(-1,1,-1)\} =$$
-    $$= \{(i, j, k), \dots, (i-1,j+1,k-1)\}$$ Here, a subscript operator
-    can be used to index cells belonging to the neighbourhood. Let $|X|$
-    be the number of elements in X, and $n \in
-      \mathbb{N}$, $0 \leq n < |X|$; the notation
+-   *X*â€„=â€„{(0,â€†0,â€†0),â€¦,(âˆ’1,â€†1,â€†0),(0,â€†0,â€†âˆ’1),â€¦,(âˆ’1,â€†1,â€†âˆ’1),(0,â€†0,â€†1),â€¦,(âˆ’1,â€†1,â€†1)}
+    is the Moore neighborhood relation, a geometrical pattern which
+    identifies the cells influencing the state transition of the
+    central cell. The neighborhood of the generic cell of coordinate
+    (*i*,â€†*j*) is given by
+    *N*(*X*,â€†(*i*,â€†*j*,â€†*k*))=
+    ={(*i*,â€†*j*,â€†*k*)+(0,â€†0,â€†0),â€¦,(*i*,â€†*j*,â€†*k*)+(âˆ’1,â€†1,â€†âˆ’1)}=
+    ={(*i*,â€†*j*,â€†*k*),â€¦,(*i*â€…âˆ’â€…1,â€†*j*â€…+â€…1,â€†*k*â€…âˆ’â€…1)}
+     Here, a subscript operator can be used to index cells belonging to
+    the neighbourhood. Let |*X*| be the number of elements in X, and
+    *n*â€„âˆˆâ€„â„•, 0â€„â‰¤â€„*n*â€„&lt;â€„|*X*|; the notation
 
-    $$N(X, (i, j, k), n)$$
+    *N*(*X*,â€†(*i*,â€†*j*,â€†*k*),*n*)
 
-    represents the $n^{th}$ neighbourhood of the cell $(i,j,k)$.
-    Thereby, $N(X, (i, j, k), 0) = (i, j, k)$, i.e. the central cell,
-    $N(X, (i, j, k), 1)
-      = (i-1, j, k)$, i.e. the first neighbour, and so on.
+    represents the *n*<sup>*t**h*</sup> neighbourhood of the cell
+    (*i*,â€†*j*,â€†*k*). Thereby,
+    *N*(*X*,â€†(*i*,â€†*j*,â€†*k*),0)=(*i*,â€†*j*,â€†*k*), i.e. the central cell,
+    *N*(*X*,â€†(*i*,â€†*j*,â€†*k*),1)=(*i*â€…âˆ’â€…1,â€†*j*,â€†*k*), i.e. the first
+    neighbour, and so on.
 
--   $Q = \{0, 1\}$ is the set of cell states.
+-   *Q*â€„=â€„{0,â€†1} is the set of cell states.
 
--   $\sigma : Q^{27} \shortrightarrow Q$ is the deterministic cell
+-   $\\sigma : Q^{27} \\shortrightarrow Q$ is the deterministic cell
     transition function. It is composed by one elementary process, which
     implements the previously descripted transition rules.
 
 As you can imagine, the OpenCAL implementation of the *mod2* 3D CA is
-very simple, as the Conway’s game of Life is. The complete source code
+very simple, as the Conwayâ€™s game of Life is. The complete source code
 is shown in Listing \[lst:cal\_mod2CA3D\].
 
 As you can see, even if Listing \[lst:cal\_life\] is very short, it
@@ -1550,41 +1545,32 @@ having `ROWS` rows, `COLS` columns and `SLICES` slices (cf. lines 7-9).
 Moreover, the 3D Moore neighbourhood is here set as well as cyclic
 conditions at boundaries. Eventually, no optimizations are considered.
 Line 31 defines the simulation object by setting just one step of
-computation and implicit substate’s update. Finally, the only substate,
-$Q$, is defined at line 34. Note that, since it was defined by means of
-the `calInitSubstate3Db()` function, each element $q \in Q$ results to
-be of the CALbyte type. Line 37 registers the only CA’s elementary
+computation and implicit substateâ€™s update. Finally, the only substate,
+*Q*, is defined at line 34. Note that, since it was defined by means of
+the `calInitSubstate3Db()` function, each element *q*â€„âˆˆâ€„*Q* results to
+be of the CALbyte type. Line 37 registers the only CAâ€™s elementary
 process, namely the `mod2_transition_function()` function, which is then
-implemnented at lines 17-25. Line 43 initializes the cell’s substated
-$Q$ at coordinates (2, 3, 1) to the state 1. The obtained initial
+implemnented at lines 17-25. Line 43 initializes the cellâ€™s substated
+*Q* at coordinates (2, 3, 1) to the state 1. The obtained initial
 configuration is then saved to disk at line 46, and the simulation ran
 at line 49. The final configuration is therefore saved to disk at line
 52 and, eventually, memory previously and implicitly allocated is
 released at lines 55-56. Note that, diffrently to the previous examples,
 almost all the OpenCAL functions come in the 3D flower. For instace,
 this is the case of the `alGetX3Db()` and `calSet3Db()` functions at
-lines 22 and 24, respectively, which take `k` as third cell’s
-coordinate, identifying the cellular space’s slice.
+lines 22 and 24, respectively, which take `k` as third cellâ€™s
+coordinate, identifying the cellular spaceâ€™s slice.
 
 Figures \[fig:mod2\_0000\] and \[fig:mod2\_LAST\] show the initial and
 final configuration of *mod2* 3D CA as implemented in Listing
 \[lst:cal\_mod2CA3D\], respectively. A graphical representation after 77
 computational step is shown in Figure \[fig:cal\_mod2CA3D\].
 
-![Initial configuration of mod2 3D CA, as implemented in Listing
-\[lst:cal\_mod2CA3D\].<span
-data-label="fig:mod2_0000"></span>](./images/OpenCAL/mod2_0000){width="3.5cm"}
+<img src="./images/OpenCAL/mod2_0000" alt="Initial configuration of mod2 3D CA, as implemented in Listing [lst:cal_mod2CA3D]." width="132" />
 
-![Final configuration of mod2 3D CA (actually, just one step of
-computation), as implemented in Listing \[lst:cal\_mod2CA3D\].<span
-data-label="fig:mod2_LAST"></span>](./images/OpenCAL/mod2_LAST){width="3.5cm"}
+<img src="./images/OpenCAL/mod2_LAST" alt="Final configuration of mod2 3D CA (actually, just one step of computation), as implemented in Listing [lst:cal_mod2CA3D]." width="132" />
 
-![Graphical representation of the mod2 3D CA after 77 computational
-steps, as implemented in Listing \[lst:cal\_mod2CA3D\]. CA dimensions
-were set to (rows, cols, slices) = (65, 65, 65), while the initial seed
-located at coordinates (12, 12, 12). Cells in black are in the state 0,
-cell in white are in the state 1.<span
-data-label="fig:cal_mod2CA3D"></span>](./images/OpenCAL/mod23DCA-glut){width="12cm"}
+<img src="./images/OpenCAL/mod23DCA-glut" alt="Graphical representation of the mod2 3D CA after 77 computational steps, as implemented in Listing [lst:cal_mod2CA3D]. CA dimensions were set to (rows, cols, slices) = (65, 65, 65), while the initial seed located at coordinates (12, 12, 12). Cells in black are in the state 0, cell in white are in the state 1." width="453" />
 
 Combining OpenCAL and OpenCAL-GL
 --------------------------------
@@ -1606,9 +1592,7 @@ visualization system based on OpenCAL-GL. The complete implementation is
 shown for the sake of completeness in Listing \[lst:calgl\_sciddicaT\].
 A screenshot is shown in Figure \[fig:calgl\_sciddicaT1\].
 
-![Screenshot of the SciddicaT debris flow model with a multi-view 2D and
-3D visualization system based on OpenCAL-GL.<span
-data-label="fig:calgl_sciddicaT1"></span>](./images/OpenCAL/calgl_sciddicaT1){width="12cm"}
+<img src="./images/OpenCAL/calgl_sciddicaT1" alt="Screenshot of the SciddicaT debris flow model with a multi-view 2D and 3D visualization system based on OpenCAL-GL." width="453" />
 
 As you can see,
 
@@ -1625,9 +1609,9 @@ functions. The proper use of global functions is your own
 responsibility.
 
 In ordert to use global functions in your application, simply include
-the XXXXXX. Table YYYYYY lists the OpenCALì’s global functions.
+the XXXXXX. Table YYYYYY lists the OpenCALÃ¬â€™s global functions.
 
-OpenCAL OpenMP version {#ch:opencal-omp}
+OpenCAL OpenMP version
 ======================
 
 Nowadays, parallel computing is the most effective solution to overcome
@@ -1653,13 +1637,13 @@ the write operation is executed first.
 In the following sections we will introduce OpenCAL-OMP by examples,
 highlighting source code the differences with respect to the serial
 implementations shown in Chapter \[ch:opencal\]. In the first part of
-the Chapter, we will deal with the OpenCAL’s *safe mode*, while in the
+the Chapter, we will deal with the OpenCALâ€™s *safe mode*, while in the
 last one, we will discuss unsafe operations.
 
-Conway’s Game of Life in OpenCAL-OMP
+Conwayâ€™s Game of Life in OpenCAL-OMP
 ------------------------------------
 
-In Section \[sec:cal\_life\], we described Conway’s Game of Life and
+In Section \[sec:cal\_life\], we described Conwayâ€™s Game of Life and
 shown a possible implementation using the `OpenCAL` serial library.
 Here, we present a `OpenCAL-OMP` implementation of the same cellular
 automaton (Listing \[lst:calomp\_life\]), by discussing the differences
@@ -1670,17 +1654,17 @@ safe operations, is almost identical to the serial one thanks to the
 seamless parallelization adopted by the library. The only differences
 can be found at lines 3-5 where, instead of including the OpenCAL header
 files, you can find the OpenCAL-OMP headers. All the remaining source
-code is unchanged. Note that also the OpenCAL-OMP statements’ prefix
-does not change with respect to the OpenCAL’s one (i.e. `cal` for the
+code is unchanged. Note that also the OpenCAL-OMP statementsâ€™ prefix
+does not change with respect to the OpenCALâ€™s one (i.e. `cal` for the
 functions, `CAL` for the data types, and `CAL_` for the constants). In
 practice, if you only use OpenCAL-OMP in safe mode, besides including
 the proper OpenCAL-OMP header files instead of the OpenCAL ones, minimal
 changes are required to the serial code.
 
-SciddicaT {#sciddicat}
+SciddicaT
 ---------
 
-As for the case of Conway’s Game of Life, even the OpenCAL-OMP
+As for the case of Conwayâ€™s Game of Life, even the OpenCAL-OMP
 implementation of the SciddicaT cellular automaton, shown in Lsting
 \[lst:calomp\_sciddicaT\], does not significantly differ from the serial
 implementation that you can find in the Section \[sec:sciddicaT\],
@@ -1690,7 +1674,7 @@ cellular automaton, due to the fact we used only OpenCAL-OMP safe
 operations, mimimal code change is required, besides including the
 proper OpenCAL-OMP header files instead of the OpenCAL ones.
 
-SciddicaT with active cells optimization {#sciddicat-with-active-cells-optimization}
+SciddicaT with active cells optimization
 ----------------------------------------
 
 Here we present an OpenCAL-OMP implemenation of SciddicaT, which takes
@@ -1705,11 +1689,11 @@ With respect to the Sciddica implementation shown in Listing
 OpenCAL-OMP operations, the active cells management as implemented here
 requires an unsafe operations. Such unsafe operations are performed by
 means of the `calAddActiveCellX2D()` function (line 87), which adds a
-cell belonging to the neighbourhood to the set $A$ of active cells. As
+cell belonging to the neighbourhood to the set *A* of active cells. As
 evident, such an operation is considered unsafe because it can give rise
 to race condition. In fact, if more threads try to add the same cell to
-the set $A$ at the same time, being this a non-atomic operation,
-threads’ operations can interleave and the outcome be wrong. In order to
+the set *A* at the same time, being this a non-atomic operation,
+threadsâ€™ operations can interleave and the outcome be wrong. In order to
 avoid this possible error, OpenCAL-OMP is able to *lock* the memory
 locations involved in the operations so that each thread can entirely
 perform its own task without the risk that other threads interfere. In
@@ -1717,7 +1701,7 @@ order to do this, it is sufficient to place OpenCAL-OMP in *unsafe*
 state by calling the `calSetUnsafe2D()`, as done at line 163. No other
 modifications to the serial source code are required.
 
-SciddicaT as eXtended CA {#sciddicat-as-extended-ca}
+SciddicaT as eXtended CA
 ------------------------
 
 Here we present an OpenCAL-OMP implementation of SciddicaT, which takes
@@ -1730,7 +1714,7 @@ serial implementation can be found in Section
 
 First of all - from a XCA modeling point of view - note that only the
 topographic altitude and the debris thickness are now considered as
-model’s substates (lines 25-28, 147-148), as the four outflows substates
+modelâ€™s substates (lines 25-28, 147-148), as the four outflows substates
 are no longer needed. Moreover, the number of elementary process now
 considered is two (lines 143-144), instead of three for the previous
 versions of SciddicaT.
@@ -1738,7 +1722,7 @@ versions of SciddicaT.
 The call to the `calSetUnsafe2D()` function (line 139) places
 OpenCAL-OMP in unsafe mode, allowing to lock memory locations (i.e.
 cells) that can be simultaneously accessed by more threads. In order
-properly exploit the OpenCAL-OMP’s built in lock feature, you have to
+properly exploit the OpenCAL-OMPâ€™s built in lock feature, you have to
 use specific functions, which are provided by the
 `OpenCAL-OMP/cal2DUnsafe.h` header file (line 6). In the specific case,
 besides the already discussed `calAddActiveCellX2D()` function, the
@@ -1748,21 +1732,21 @@ the corresponding serial implementation (Listing
 \[lst:cal\_sciddicaT-unsafe\], lines 84-85). In fact, consider the
 source code snippet in Listing \[lst:get-set\] (checked out by Listing
 \[lst:cal\_sciddicaT-unsafe\]). As you can see, for each not-eliminated
-cell, the algorithm computes a flow, $f$ (line 5) and then subtracts it
+cell, the algorithm computes a flow, *f* (line 5) and then subtracts it
 from the central cell (line 6), adding it to the corresponding neighbour
 (line 7), in order to accomplish mass balance. In both cases (flow
 subtraction and adding), a flavor of `calGet` function is called to read
-the current value of the $Q_h$ substate from the next working plane.
-Subsequently, a flavor of the `calSet` function is used to update the
-previously read value. When a single thread is used to perform such
-operations, no race conditions can obviously occur. At the contrary,
-even in the case of two concurrent threads, different undesirable
-situations can take place, which give rise to a race condition and
-therefore to a wrong result. For instance, let’s suppose both threads
-read the value first, and then write their updated values; in this case,
-the resulting value will correspond to the one written by the thread
-that writes the value for last, and the contribution of the other thread
-will be lost.
+the current value of the *Q*<sub>*h*</sub> substate from the next
+working plane. Subsequently, a flavor of the `calSet` function is used
+to update the previously read value. When a single thread is used to
+perform such operations, no race conditions can obviously occur. At the
+contrary, even in the case of two concurrent threads, different
+undesirable situations can take place, which give rise to a race
+condition and therefore to a wrong result. For instance, letâ€™s suppose
+both threads read the value first, and then write their updated values;
+in this case, the resulting value will correspond to the one written by
+the thread that writes the value for last, and the contribution of the
+other thread will be lost.
 
       // <snip>
       for (n=1; n<sciddicaT->sizeof_X; n++)
@@ -1795,7 +1779,7 @@ simulation loop updates all the defined substates at the end of each
 elementary process. However, in the specific case of the SciddicaT XCA
 model, no substates updating should be executed after the application of
 the second elementary process, as this just removes inactive cells from
-the set $A$.
+the set *A*.
 
 A new OpenCAL implementation of SciddicaT is presented in Listing
 \[lst:calomp\_sciddicaT-explicit\]. It is based on an explicit global
@@ -1823,16 +1807,58 @@ described in Chapter \[ch:opencal\]. Results are provided both in terms
 of elapsed time and speed up with respect to the corresponding serial
 version. Elapsed times of the serial simulations are also reported.
 
-  T version        Serial \[s\]      1thr          2thr          4thr          6thr          8thr
-  --------------- -------------- ------------- ------------- ------------- ------------- ------------
-  naive                240s       0.82 (293s)   1.22 (196s)   1.53 (157s)   1.64 (146s)   1.6 (150s)
-  active cells         23s        0.77 (30s)    1.36 (17s)    1.77 (13s)    2.09 (11s)    2.3 (10s)
-  eXtended CA          13s        0.77 (17s)     1.86 (7s)     2.6 (5s)      2.17 (6s)     2.6 (5s)
-  explicit loop        12s        0.75 (16s)     1.2 (10s)     2.4 (5s)      2.4 (5s)      3.0 (4s)
-
-  : Speedup of the four different implementations of the SciddicaS3hex
-  debris flows model accelerated by OpenMP.<span
-  data-label="tab:speedup"></span>
+<table>
+<caption>Speedup of the four different implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.<span data-label="tab:speedup"></span></caption>
+<thead>
+<tr class="header">
+<th align="left">T version</th>
+<th align="center">Serial [s]</th>
+<th align="center">1thr</th>
+<th align="center">2thr</th>
+<th align="center">4thr</th>
+<th align="center">6thr</th>
+<th align="center">8thr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">naive</td>
+<td align="center">240s</td>
+<td align="center">0.82 (293s)</td>
+<td align="center">1.22 (196s)</td>
+<td align="center">1.53 (157s)</td>
+<td align="center">1.64 (146s)</td>
+<td align="center">1.6 (150s)</td>
+</tr>
+<tr class="even">
+<td align="left">active cells</td>
+<td align="center">23s</td>
+<td align="center">0.77 (30s)</td>
+<td align="center">1.36 (17s)</td>
+<td align="center">1.77 (13s)</td>
+<td align="center">2.09 (11s)</td>
+<td align="center">2.3 (10s)</td>
+</tr>
+<tr class="odd">
+<td align="left">eXtended CA</td>
+<td align="center">13s</td>
+<td align="center">0.77 (17s)</td>
+<td align="center">1.86 (7s)</td>
+<td align="center">2.6 (5s)</td>
+<td align="center">2.17 (6s)</td>
+<td align="center">2.6 (5s)</td>
+</tr>
+<tr class="even">
+<td align="left">explicit loop</td>
+<td align="center">12s</td>
+<td align="center">0.75 (16s)</td>
+<td align="center">1.2 (10s)</td>
+<td align="center">2.4 (5s)</td>
+<td align="center">2.4 (5s)</td>
+<td align="center">3.0 (4s)</td>
+</tr>
+</tbody>
+</table>
 
 As you can see, results are quite good. In particular, the better
 results in terms of speed up were obtained for the fully optimized
@@ -1851,7 +1877,7 @@ seconds, corresponding to a speed up value of 80, i.e. the fully
 optimized parallel version runs 80 times faster than the serial naive
 implementation.
 
-A three-dimensional example {#a-three-dimensional-example}
+A three-dimensional example
 ---------------------------
 
 In Section \[sec:mod2\], we described the *mod2* 3D CA and shown a
@@ -1867,7 +1893,7 @@ the Game of Life CA, the only differences can be found at lines 3-5
 where, instead of including the OpenCAL header files, we included the
 OpenCAL-OMP headers. All the remaining source code is unchanged.
 
-OpenCAL OpenCL version {#ch:opencal-cl}
+OpenCAL OpenCL version
 ======================
 
 This chapter introduces OpenCAL-CL, a porting of OpenCAL in OpenCL.
@@ -1879,18 +1905,18 @@ heterogeneous processors like Central Processing Units (CPUs), Graphics
 Processing Units (GPUs), Digital Signal Processors (DSPs), and
 Field-Programmable Gate Arrays (FPGAs).
 
-OpenCAL-CL inherits many OpenCAL’s features, by also adding parallel
+OpenCAL-CL inherits many OpenCALâ€™s features, by also adding parallel
 computation capability thanks to the adoption of OpenCL. The application
 is now subdivided in two parts: the *host program*, running on the CPU,
 and the *device program*, running on a compliant computational device
 (e.g. an Nvidia or AMD GPU). The CA object is still defined host-side,
 as in OpenCAL, while elementary processes (and possibly other functions)
 are defined device-side. Belonging to the device program, CA elementary
-processes must be defined as OpenCL’s *kernels* and therefore the
+processes must be defined as OpenCLâ€™s *kernels* and therefore the
 programmer has to be able to write some minimal OpenCL code to implement
 them. Fortunately, OpenCAL-CL hides lots of parallel aspects to the user
 (e.g. the simulation loop is internally managed by the library) and also
-simplifies data exchange between host and device. The user’s OpenCL
+simplifies data exchange between host and device. The userâ€™s OpenCL
 parallel programming background can be therefore limited or even null.
 In the latter case, the user can learn some basic elements of OpenCL
 kernel programming thanks to this guide.
@@ -1899,7 +1925,7 @@ This chapter is divided into two parts: the first part is a very brief
 overview of OpenCL, while the second one introduces OpenCAL-CL by
 examples.
 
-OpenCL framework {#sec:openclstructure}
+OpenCL framework
 ----------------
 
 OpenCL enables parallel programming that assigns computational tasks to
@@ -1913,15 +1939,14 @@ structure called *context*, needed to manage data exchange and
 computation on the compliant devices.
 
 In particular, host application links kernels into one or more programs.
-In the host application, the user can select the kernel’s functions to
+In the host application, the user can select the kernelâ€™s functions to
 insert inside a container called *program*. The program connects the
 kernel with argument data and dispatches it to a structure called
 *command queue*. The command queue is a structure that allows the host
 to decide what the devices have to do and, when a kernel is enqueued,
 the device will execute the relative function.
 
-![General structure of a OpenCL program<span
-data-label="fig:GeneralStructure"></span>](./images/OpenCAL-CL/kernelDistribution){width="12cm"}
+<img src="./images/OpenCAL-CL/kernelDistribution" alt="General structure of a OpenCL program" width="453" />
 
 As we can see from the picture above, the context contains all the
 devices, all the command queues and all the kernels. More in detail, for
@@ -1939,7 +1964,7 @@ host program manages the kernels and dispatches the data of the mode
 (e.g., CA substates, the type of neighbourhood, size of the cellular
 space, etc) to the computation units. The host program manages the
 execution loop and which computation unit has to execute the transition
-functions.\
+functions.  
 The host program is typically divided in the following sections:
 
 -   definition of the model (Chapter \[ch:opencal\])
@@ -1967,7 +1992,7 @@ user to manage all available platforms and devices. This structure
 simplifies the access to the devices compared with the native API of
 OpenCL. The library supplies other functions to know which platforms and
 devices are available on the system and to have information about
-these.\
+these.  
 Below you can see a simple program that explains how the CALOpenCL
 structure can be used.
 
@@ -1993,15 +2018,15 @@ Thus, to choose which one we can use for the computation, it is
 necessary to specify the index of platform and the index of the device.
 For example, at lines 12, we chose the platform number 0 and the device
 number 0. If we have a system with 3 NVIDIA GPUs and 3 AMD GPUs, the
-library will have a $2 \times 3$ size matrix, where 2 are the vendors
-(i.e., the platforms NVIDIA and AMD) and 3 are the GPUs for each
-platforms. If we want to run the program using the third AMD GPU, we can
-specify 1 and 2 as indices. If we don’t know how the system identifies
-the platforms and devices, the library supplies us a function called
+library will have a 2â€…Ã—â€…3 size matrix, where 2 are the vendors (i.e.,
+the platforms NVIDIA and AMD) and 3 are the GPUs for each platforms. If
+we want to run the program using the third AMD GPU, we can specify 1 and
+2 as indices. If we donâ€™t know how the system identifies the platforms
+and devices, the library supplies us a function called
 `calclGetPlatformsAndDeviceFromStandardInput` that allows us to know the
 available platforms and devices. First it prints the information on
 standard output and then we can insert the indexes directly from
-standard input.\
+standard input.  
 After the device is chosen, the user must specify the path where the
 kernels and relative headers are. Through the function
 `calclLoadProgramLib(2D/3D)` the library reads automatically the kernels
@@ -2013,9 +2038,9 @@ and compiles them.
 
 ### Allocation of kernels
 
-The library doesn’t know which kernels are related to the CA elementary
+The library doesnâ€™t know which kernels are related to the CA elementary
 processes, nor their execution order on the available devices. Thus, to
-create and allocate a kernel it’s necessary to call the function
+create and allocate a kernel itâ€™s necessary to call the function
 `calclGetKernelFromProgram` that retrieves an OpenCL kernel given a
 compiled OpenCL program.
 
@@ -2055,8 +2080,8 @@ shown in the following code snippet.
 The enumerative `CALCLOptimization` allows the user to choose if she/he
 wants to use the library without optimization `(CALCL_NO_OPT)` or with
 active cells optimization `(CALCL_OPT_ACTIVE_CELLS)`. The structure
-`CALCLToolkit(2D/3D)` doesn’t contain only the buffers to transfer data
-but also the kernels belonging to the execution loop.\
+`CALCLToolkit(2D/3D)` doesnâ€™t contain only the buffers to transfer data
+but also the kernels belonging to the execution loop.  
 To add a new kernel to the execution loop, the user has to call the
 function `calclAddElementaryProcessKernel(2D/3D)` that adds the chosen
 kernel to the list of CA elementary processes; moreover, it sends to the
@@ -2084,7 +2109,7 @@ To create a kernel function in OpenCL, user must place the keyword
 `__kernel` before the returning the type of the function. In OpenCAL-CL
 every time a kernel function, the keyword `MODEL_DEFINITION2D` must be
 specified as first parameter and the function `initThreads2D()` called
-as first instruction.\
+as first instruction.  
 The code below shows how to declare a new kernel.
 
     __kernel void kernel(MODEL_DEFINITION2D){ initThreads2D(); ...  ...
@@ -2100,19 +2125,19 @@ specific cell we need to use the function `calGet2Dr`.
 
     	double a = calGet2Dr(MODEL2D, 0, i, j);
 
-The function returns the value of the cell (i, j) of the substate 0.\
+The function returns the value of the cell (i, j) of the substate 0.  
 Since inside OpenCAL-CL one can use all OpenCL features, all memory
 levels such as global memory, local memory, private memory (XXXcitazione
 libroXXX) can be exploited. In order to use these memory levels,
 variables must be declared using this specific syntax respectively
 `__global`, `__local`, `__private`.
 
-Conway’s Game of Life with OpenCAL-CL
+Conwayâ€™s Game of Life with OpenCAL-CL
 -------------------------------------
 
 As already reported in \[sec:cal\_life\], to introduce how to develop a
 Cellular Automata model with OpenCAL-CL we can start by implementing
-Conway’s Game of Life and specifically its host application part. In
+Conwayâ€™s Game of Life and specifically its host application part. In
 order to use OpenCAL-CL, some header files are included (lines 3-8) and,
 in particular, the OpenCAL library and the OpenCAL-CL library. The
 OpenCAL library inclusion inside the host application is necessary to
@@ -2147,7 +2172,7 @@ elementary processes is quite different. As known, our elementary
 processes are implemented on GPU side through kernels, so we need to
 manage the transfer of memory between host and device sides and to
 decide which and when run the kernels. In a classical OpenCL
-application, it’s not trivial to handle all these issues. For this
+application, itâ€™s not trivial to handle all these issues. For this
 reason, in OpenCAL-CL we decided to introduce an intermediate object
 (`CALCLToolkit`) that hides to the user the memory management and
 handles the compiled chosen kernels. The user must only initialize the
@@ -2159,9 +2184,9 @@ user must only call the function `calclAddElementaryProcessKernel2D`
 `CALCLToolkit` structure. Finally, to run the simulation the user must
 call the function `calclRun2D` specifying the initial and final step.
 
-Below is reported the device side code of Conway’s Game of Life. In this
+Below is reported the device side code of Conwayâ€™s Game of Life. In this
 application, we have only one elementary process, defined as a kernel
-called `life_transition_function`.\
+called `life_transition_function`.  
 The OpenCAL-CL library will launch exactly a number of threads equal to
 the entire cellular space, structured like a matrix. In this way, every
 cell can perform in parallel its own computation. To access to the
@@ -2169,82 +2194,79 @@ indexes of the cell the user must call the function `getRow` and
 `getCol` line(14-15). Furthermore, the user can use the function
 `get_columns` and `get_rows` (line 17-18) to retrieve the dimensions of
 the cellular space. In the specific case of the Game of Life, we used
-the `calGet2Di` function to get the central cell’s value of the sub-
+the `calGet2Di` function to get the central cellâ€™s value of the sub-
 state Q (remember that the central cell is identified by the coordinates
 (i, j)), the `calGetX2Di` function to retrieve the value of the n-th
-neighbour’s substate Q, and the `calSet2Di` function to update the value
+neighbourâ€™s substate Q, and the `calSet2Di` function to update the value
 of the substate Q for the central cell.
 
 OpenCAL OpenGL version
 ======================
 
-[^1]: Indeed, even 1D CA can be defined oas a degenerate case of 2D, or
-    even 3D, CA.
+[1] Indeed, even 1D CA can be defined oas a degenerate case of 2D, or
+even 3D, CA.
 
-[^2]: The clang C compiler can also be used, taking in mind that it
-    still does not fully support Open-MP natively.
+[2] The clang C compiler can also be used, taking in mind that it still
+does not fully support Open-MP natively.
 
-[^3]: For a list of OpenMP compliant compilers see the following link:
-    <http://openmp.org/wp/openmp-compilers/>.
+[3] For a list of OpenMP compliant compilers see the following link:
+<http://openmp.org/wp/openmp-compilers/>.
 
-[^4]: OpenCAL-CL was tested on the NVIDIA OpenCL implementation. You can
-    find the NVIDIA’s OpenCL implementation, shipped with the CUDA
-    platform, at the following url:
-    <http://docs.nvidia.com/cuda/#installation-guides>
+[4] OpenCAL-CL was tested on the NVIDIA OpenCL implementation. You can
+find the NVIDIAâ€™s OpenCL implementation, shipped with the CUDA platform,
+at the following url: <http://docs.nvidia.com/cuda/#installation-guides>
 
-[^5]: For example `freeglut-devel` or `freeglut3-dev` packages on
-    `yum/dnf`- and `apt`-based systems, respectively.
+[5] For example `freeglut-devel` or `freeglut3-dev` packages on
+`yum/dnf`- and `apt`-based systems, respectively.
 
-[^6]: XCA are also known as Complex Cellular Automata (CCA), Macroscopic
-    Cellular Automata (MCA), and Multicomponent Cellular Automata (MCA)
+[6] XCA are also known as Complex Cellular Automata (CCA), Macroscopic
+Cellular Automata (MCA), and Multicomponent Cellular Automata (MCA)
 
-[^7]: Note that, in the case of the Game of Life CA, the central cell
-    does not belong to its own neighborhood.
+[7] Note that, in the case of the Game of Life CA, the central cell does
+not belong to its own neighborhood.
 
-[^8]: This characteristic is colled *implicit parallelism* and is
-    obtained in OpenCAL by considering two different working planes for
-    each registered substate, namely *current* and *next* working
-    planes. However, behind the scene, cells are updated sequentially,
-    being OpenCAL a serial software. The *current* working plane is used
-    to read current values for the cells, while the *next* working plane
-    is used to write updated values. The *implicit parallelism* is also
-    used in the parallel versions of OpenCAL, with the difference that
-    more than one cell can be processed and updated concurrently by
-    exploiting mre than one processing unit.
+[8] This characteristic is colled *implicit parallelism* and is obtained
+in OpenCAL by considering two different working planes for each
+registered substate, namely *current* and *next* working planes.
+However, behind the scene, cells are updated sequentially, being OpenCAL
+a serial software. The *current* working plane is used to read current
+values for the cells, while the *next* working plane is used to write
+updated values. The *implicit parallelism* is also used in the parallel
+versions of OpenCAL, with the difference that more than one cell can be
+processed and updated concurrently by exploiting mre than one processing
+unit.
 
-[^9]: On the serial version of OpenCAL, implicit parallelism is obtained
-    by exploiting the two different computing planes built into
-    OpenCAL’s substates. The first one, that we will call *current*, is
-    used to read substates’s values for the central cell and its
-    neighbours, while the second, that we will call *next*, is used to
-    update the new state for the central cell. When all the cells have
-    been processed and the new state values updated, computing planes
-    are switched, i.e. the *next* plane is assumed as *current* and the
-    *current* as *next*, and the process is reiterated. In this manner,
-    the *current* computing plane is not *corrupted* during a
-    computational step, being new values written to the *next* plane.
-    Note that, even in the case more processing units are used to
-    compute the next CA state and more cells are updated simltaneously,
-    which is the case of OpenCAL-OMP and OpenCAL-CL, the two computing
-    planes are manteined.
+[9] On the serial version of OpenCAL, implicit parallelism is obtained
+by exploiting the two different computing planes built into OpenCALâ€™s
+substates. The first one, that we will call *current*, is used to read
+substatesâ€™s values for the central cell and its neighbours, while the
+second, that we will call *next*, is used to update the new state for
+the central cell. When all the cells have been processed and the new
+state values updated, computing planes are switched, i.e. the *next*
+plane is assumed as *current* and the *current* as *next*, and the
+process is reiterated. In this manner, the *current* computing plane is
+not *corrupted* during a computational step, being new values written to
+the *next* plane. Note that, even in the case more processing units are
+used to compute the next CA state and more cells are updated
+simltaneously, which is the case of OpenCAL-OMP and OpenCAL-CL, the two
+computing planes are manteined.
 
-[^10]: Remember that, by default, substates are updated after the
-    application of each alementary process.
+[10] Remember that, by default, substates are updated after the
+application of each alementary process.
 
-[^11]: This is due to the fact that a substates’ update is performed
-    after the first elementary process has been applied to all the
-    (active) cells of the cellular space. This behaviour is set by menas
-    of the `CAL_UPDATE_IMPLICIT` parameter used in the definition of the
-    simulation object at line 132 of Listing
-    \[lst:cal\_sciddicaT-unsafe\].
+[11] This is due to the fact that a substatesâ€™ update is performed after
+the first elementary process has been applied to all the (active) cells
+of the cellular space. This behaviour is set by menas of the
+`CAL_UPDATE_IMPLICIT` parameter used in the definition of the simulation
+object at line 132 of Listing \[lst:cal\_sciddicaT-unsafe\].
 
-[^12]: Actually, only $Q.h$ can be update by the transition function,
-    since $Q.z$ is a single-lyered substate.
+[12] Actually, only *Q*.*h* can be update by the transition function,
+since *Q*.*z* is a single-lyered substate.
 
-[^13]: Note that active cells are updated first otherwise the subsequent
-    substate update could neglect some cells that have become active
-    during the current step. For instance, inactive cells can receive a
-    flow and become active at he current step of computation. If the set
-    of active cells is not updated before any other substates, those new
-    cells will still be considered inactive during the current step and
-    their value will not be updated, by losing debris flow mass.
+[13] Note that active cells are updated first otherwise the subsequent
+substate update could neglect some cells that have become active during
+the current step. For instance, inactive cells can receive a flow and
+become active at he current step of computation. If the set of active
+cells is not updated before any other substates, those new cells will
+still be considered inactive during the current step and their value
+will not be updated, by losing debris flow mass.
