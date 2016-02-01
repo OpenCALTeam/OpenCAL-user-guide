@@ -1,3 +1,67 @@
+-   [Acknowledgements](#acknowledgements)
+-   [Introduction](#introduction)
+-   [Quick Start](#quick-start)
+-   [Installation](#ch:installation)
+    -   [Requirements and dependencies](#requirements-and-dependencies)
+    -   [Obtaining OpenCAL](#obtaining-opencal)
+    -   [Structure of the Distribution
+        Directory](#structure-of-the-distribution-directory)
+        -   [Generating makfiles](#generating-makfiles)
+    -   [Build and Install/Uninstall](#build-and-installuninstall)
+    -   [Web Page and Bug Reporting](#web-page-and-bug-reporting)
+-   [Cellular Automata](#ch:CA)
+    -   [Informal Definition of Cellular Automata](#sec:CAInformaDef)
+    -   [Formal Definition of Cellular
+        Automata](#formal-definition-of-cellular-automata)
+    -   [Some Applications of Cellular
+        Automata](#some-applications-of-cellular-automata)
+    -   [eXtended Cellular Automata](#extended-cellular-automata)
+        -   [Formal Definition of eXtended Cellular
+            Automata](#formal-definition-of-extended-cellular-automata)
+-   [OpenCAL](#ch:opencal)
+    -   [Conway’s Game of Life](#sec:cal_life)
+    -   [OpenCAL statement convention](#opencal-statement-convention)
+    -   [Custom Neighbourhoods](#sec:CustomNeiughbourhoods)
+    -   [SciddicaT](#sec:sciddicaT)
+    -   [SciddicaT with active cells
+        optimization](#sec:sciddicaT_active)
+    -   [SciddicaT as eXtended CA](#sec:sciddicaT_extended)
+    -   [SciddicaT with explicit simulation
+        loop](#sciddicat-with-explicit-simulation-loop)
+    -   [A three-dimensional example](#sec:mod2)
+    -   [Combining OpenCAL and
+        OpenCAL-GL](#combining-opencal-and-opencal-gl)
+        -   [Implementing SciddicaT in OpenCAL and
+            OpenCAL-GL](#implementing-sciddicat-in-opencal-and-opencal-gl)
+        -   [Implementing the *mod2* CA in OpenCAL and
+            OpenCAL-GL](#implementing-the-mod2-ca-in-opencal-and-opencal-gl)
+    -   [OpenCAL Global Functions](#opencal-global-functions)
+-   [OpenCAL OpenMP version](#ch:opencal-omp)
+    -   [Conway’s Game of Life in
+        OpenCAL-OMP](#conways-game-of-life-in-opencal-omp)
+    -   [SciddicaT](#sciddicat)
+    -   [SciddicaT with active cells
+        optimization](#sciddicat-with-active-cells-optimization)
+    -   [SciddicaT as eXtended CA](#sciddicat-as-extended-ca)
+    -   [SciddicaT with explicit simulation
+        loop](#sciddicat-with-explicit-simulation-loop-1)
+    -   [SciddicaT computational
+        performance](#sciddicat-computational-performance)
+    -   [A three-dimensional example](#a-three-dimensional-example)
+-   [OpenCAL OpenCL version](#ch:opencal-cl)
+    -   [OpenCL framework](#sec:openclstructure)
+    -   [The structure of OpenCAL-CL](#the-structure-of-opencal-cl)
+    -   [Host programming](#host-programming)
+        -   [Definition of the model](#definition-of-the-model)
+        -   [Manage of the devices](#manage-of-the-devices)
+        -   [Allocation of kernels](#allocation-of-kernels)
+        -   [Send data from the model to
+            devices](#send-data-from-the-model-to-devices)
+        -   [Start execution loop](#start-execution-loop)
+    -   [Kernel programming](#kernel-programming)
+    -   [Conway’s Game of Life with
+        OpenCAL-CL](#conways-game-of-life-with-opencal-cl)
+
   
 
   
