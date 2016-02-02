@@ -55,6 +55,18 @@ Raw  buttondown.css
    Only appears if one of those three are in the document.
 */
 
+div#TOC {
+  position: fixed;
+  margin: 1em;
+  padding: 1em;
+  right: 2px;
+  top: 2px;
+  width: 500px; 
+  height: 200px; 
+  overflow: scroll;
+  background-color: #EEEEEE;
+  border: 1px solid black; }
+
 div#header, header
     {
     /* Put border on bottom. Separates it from TOC or body that comes after it. */
