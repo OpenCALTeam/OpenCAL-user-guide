@@ -1298,13 +1298,13 @@ and final configuration of \emph{mod2} 3D CA as implemented in Listing
 \end{figure}
 
 
-\section{Combining OpenCAL and  OpenCAL-GL}
+\section{Combining OpenCAL and OpenCAL-GL}
 
 In this section, we will show how you can combine the OpenCAL and
 OpenCAL-GL libraries to have an immediate graphic output of your
 simulation. At this purpose, here we re-propose two of the examples
 presented above, namely the SciddicaT debris flow model and the
-\emph{mod2} CA, by adding them an OpenGL-based visualizer in a
+\emph{mod2} CA, by adding them an OpenGL-based viewer in a
 straightforward manner. The visualization system provided by
 OpenCAL-GL is however rather simplyfied and therefore, if you need a
 more sophisticated graphic system you have to develop an alternative
@@ -1332,7 +1332,40 @@ implementation is shown for the sake of completeness in Listing
   implementation of the sciddicaT 3D CA with openCAL-GL graphic
   output.]{../opencal/OpenCAL-GL/examples/calgl_sciddicaT/source/sciddicaT.c}
 
-As you can see, 
+As you can see, two visualization objects of type
+\verb'CALDrawModel2D' are declared into the \verb'main()'
+function. Each of them allows to define a particular view of the CA
+inside a graphic windows.
+
+The \verb'calglDefDrawModel2D()' function is used to initialize
+graphic objcts (it acts as a constructor). The first parameter
+specifies the type of drawing to be considered and can assume the
+values listed in Table \ref{tab:draw_modes}. The second parameter
+represents the title to label the portion of the graphic window
+containing the view. The third parameter is a pointer to the CA object
+to be visualized, while the last one is a pounter to the corresponding
+simulation object.
+
+To build a specifig view for the CA, we use the
+\verb'calglAddToDrawModel2Dr()' function. It adds a node into a tree representation, where each node is linked to a CA substate and specifies how this substate have to be considered for representation. In particular, a susbstate can be used as vertex data, normal data and color data. 
+
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|l}
+    \hline
+    Drawing type & Meaning \\
+    \hline
+    \hline
+    \verb'CALGL_DRAW_MODE_FLAT'    & Each cell is interpreted as an element of a matrix\\
+    \verb'CALGL_DRAW_MODE_SURFACE' & Each cell is assumed to belong to a topographic surface\\
+    \hline
+  \end{tabular}
+  \caption{Possible OpenCAL-GL drawing types.}
+  \label{tab:draw_modes}
+\end{table} 
+
+
 
 \subsection{Implementing the \emph{mod2} CA in OpenCAL and OpenCAL-GL}
 
