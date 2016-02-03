@@ -1298,7 +1298,7 @@ and final configuration of \emph{mod2} 3D CA as implemented in Listing
 \end{figure}
 
 
-\section{Combining OpenCAL and OpenCAL-GL}
+\section{Combining OpenCAL and OpenCAL-GL}\label{sec:combining_gl}
 
 In this section, we will show how you can combine the OpenCAL and
 OpenCAL-GL libraries to have an immediate graphic output of your
@@ -1515,15 +1515,101 @@ row indices belonging to the interval [100, 150] from vialualization.
 
 \subsection{Implementing the \emph{mod2} CA in OpenCAL and OpenCAL-GL}
 
+As for the previous example in which we re-proposed the SciddicaT CA
+application enriched by a 3D viever, here we re-propose the
+\emph{mod2} CA application to which we added an OpenCAL-GL viewer. The
+complete source code is shown in Listing \ref{lst:calgl_mod2}, for the
+sake of completeness, while Figure \ref{fig:calgl_mod2} shows a
+screenshot of the application.
 
-\section{OpenCAL Global Functions}
+\lstinputlisting[label=lst:calgl_mod2, caption=An OpenCAL
+  implementation of the mod2 3D CA with openCAL-GL graphic
+  output.]{../opencal/OpenCAL-GL/examples/calgl_mod2CA3D/source/mod2CA.c}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{./images/OpenCAL/calgl_mod2}
+    \caption{Screenshot of the \emph{mod2} 3D CA viewer based on
+      OpenCAL-GL.}
+    \label{fig:calgl_mod2}
+  \end{center}
+\end{figure}
+
+As you can see, here we consider the 3D implementation of
+OpenCAL-GL. In fact, the \verb'OpenCAL-GL/calgl3D.h' and
+\verb'OpenCAL-GL/calgl3DWindow.h' headers are included and the
+OpenCAL-GL functions, already seen in the 2D version into the previous
+section, are present in the 3D form (see, e.g., the
+\verb'calglAddToDrawModel3Db()' function at line 80). They are
+completely equivalents to the 2D version.  Eventually, note that lines
+86-91 are commented. If you remove the comment, you will cut down some
+parts of the cellular space form visualization.
+
+
+\section{OpenCAL Global Functions}\label{sec:redution}
 
 OpenCAL comes with some functions you can use to perform global
-operation over the cellular space. They essentially are reduction
+operations over the cellular space. They essentially are reduction
 function. Note that such functions should not used within elementary
 processes, but only in the initialization, steering and stop condition
-functions. The proper use of global functions is your own
+callback functions. The proper use of global functions is your own
 responsibility.
 
 In ordert to use global functions in your application, simply include
-the XXXXXX. Table YYYYYY lists the OpenCALì's global functions.
+the \verb'cal2DReduction.h' header file for 2D CA, or
+\verb'cal3DReduction.h' for 3D CA. Table \ref{tab:reductions} lists
+the OpenCAL's global functions. All of theese functions accepts a
+pointer to a CA object as first paramenter, a pointer to a substate
+over which execute the global operation as second parameter and return
+the value corresponding to the executed reduction. For instance, if
+you want to know the maximum value of the substate \verb'Q.h' of the
+SciddicaT CA, you can write something like the code in Listing
+\ref{lst:reduction_example}.
+
+
+
+\begin{table}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|l}
+    \hline
+    Reduction Functions & Meaning \\
+    \hline
+    \hline
+    \verb'calReductionComputeMax2Dr()'       & Return the maximum value\\
+    \verb'calReductionComputeMin2Dr()'       & Return the minimun value\\
+    \verb'calReductionComputeSum2Dr()'       & Return the sum of all substate's elements\\
+    \verb'calReductionComputeProd2Dr()'      & Return the product of all substate's elements\\
+    \verb'calReductionComputeLogicalAnd2Dr'  & Return the logical AND of all substate's elements\\
+    \verb'calReductionComputeBinaryAnd2Dr()' & Return the binary AND of all substate's elements\\
+    \verb'calReductionComputeLogicalOr2Dr()' & Return the logical OR of all substate's elements\\
+    \verb'calReductionComputeBinaryOr2Dr()'  & Return the binary OR of all substate's elements\\
+    \verb'alReductionComputeLogicalXor2Dr()' & Return the logical AND of all substate's elements\\
+    \verb'calReductionComputeBinaryXor2Dr()' & Return the binary AND of all substate's elements\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL's global reduction functions for 2D CA and
+    substates containing floating point values. In order to obtain the
+    corresponding functions for 3D CA, you need to change 2D in 3D
+    into the functions' suffix, while to obtain the equivalent
+    versions for the other supported basic data types, change the last
+    suffix character from r to b or i, for CALbyte- or CALint-based
+    substates, respectively.}
+  \label{tab:reductions}
+\end{table} 
+
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:reduction_example, caption=An example of global reduction operation., numbers=none]
+  // ...
+  #include <cal2DReduction.h>
+  
+  // ...
+  void sciddicaTSteering(struct CALModel2D* sciddicaT)
+  {
+    CALreal max_width;
+    max_width = calReductionComputeMax2Dr(sciddicaT, Q.h);
+    //...
+  }
+
+  // ...
+\end{lstlisting}
