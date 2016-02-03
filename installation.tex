@@ -193,11 +193,11 @@ value will be assumed (cf. Table \ref{ch:installation:cmakeoptions}).
     \texttt{BUILD\_OPENCAL\_OMP} &  Build the OpenCAL-OMP OpenMP parallel version (OpenMP required)    & OFF \\ \hline
     %% \texttt{BUILD\_OPENCAL\_OMP\_PARALLEL} &  Controls if OpenCAL-OMP is compiled agaist libomp. If OFF, the OPENMP version uses only one processor! Turn it ON if you want parallelism  &  ON  \\ \hline
     \texttt{BUILD\_OPENCAL\_CL} &  Build the OpenCAL-CL OpenCL parallel version (OpenCL required)     &OFF\\ \hline
-    \texttt{BUILD\_OPENCAL\_GL} & Build the OpenCAL-GL visualization library (OpenGL and GLUT required)      &OFF \\ \hline                          
+    \texttt{BUILD\_OPENCAL\_GL} & Build the OpenCAL-GL visualization library (OpenGL and GLUT required)      &OFF \\ \hline
     \texttt{BUILD\_EXAMPLES} & Build the examples for each OpenCAL version      &\\ \hline
     %% \texttt{BUILD\_OPENCAL\_PP} &  Build the OpenCAL-C++ version (C++11 compliant compiler Required)    &  OFF\\ \hline
     \texttt{BUILD\_DOCUMENTATION}  &  Build the HTML based API documentation (Doxygen and Graphviz required)  & OFF   \\ \hline
-    \texttt{ENABLE\_SHARED} &  Controls whether the library should be compiles as shared object (.so). If OFF, static objects (.a) will be produced & OFF\\ \hline                        
+    \texttt{ENABLE\_SHARED} &  Controls whether the library should be compiles as shared object (.so). If OFF, static objects (.a) will be produced & OFF\\ \hline
   \end{tabularx}
 \end{table}
 
@@ -217,7 +217,7 @@ enabled during the CMake configuration), headers and API documentation
 in the appropriate folders using the following command:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:install}]
-  user@machine:-$ sudo - 
+  user@machine:-$ sudo -
   root@machine:-$ make install
 \end{lstlisting}
 
@@ -227,8 +227,30 @@ or equivalently, if your user is in the \texttt{sudoers} list
   user@machine:-$ sudo make install
 \end{lstlisting}
 
-By default, files are installed in ... For instance, under Debian,
-file are installed in... If you want to change the default settings...
+By default, files are installed in \texttt{/usr/local/}folder on \textit{UNIX} and  \texttt{c:/Program Files} on \textit{Windows}.
+Installation folder can be configured using the \textit{CMAKE} variable  \texttt{-DCMAKE\_INSTALL\_PREFIX:PATH=\{DIRECTORY\}}.
+The followings are the necessary steps for compiling \verb'OpenCAL' and \verb'OpenCAL-OMP' and their examples
+in the \texttt{/home/user/libraries}
+
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
+  user@machine:-$ cd ${OPENCAL_ROOT}
+  user@machine:-$ mkdir -p build && cd build
+  user@machine:-$ cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/user/libraries/ -DBUILD_EXAMPLES=ON -DBUILD_OPENCAL_OMP=ON ..
+  user@machine:-$ [sudo] make install
+\end{lstlisting}
+The following is a sample of the installation output that shows that the installation root is now \texttt{/home/user/libraries/}.
+\begin{mdframed}
+{\small
+\begin{verbatim}
+Installing: /home/knotman/libraries/lib/libopencal.a
+Installing: /home/knotman/libraries/include/OpenCAL/cal2D.h
+
+...
+
+Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
+\end{verbatim}
+}
+\end{mdframed}
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
   <QUI BISOGNA SPIEGARE COSA SI DEVE FARE PER CAMBIARE IL TARGET PER IL
