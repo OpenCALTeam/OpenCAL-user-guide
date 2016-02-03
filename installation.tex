@@ -252,25 +252,7 @@ Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
 }
 \end{mdframed}
 
-\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
-  user@machine:-$ cd ${OPENCAL_ROOT}
-  user@machine:-$ mkdir -p build && cd build
-  user@machine:-$ cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/user/libraries/ -DBUILD_EXAMPLES=ON -DBUILD_OPENCAL_OMP=ON ..
-  user@machine:-$ [sudo] make install
-\end{lstlisting}
-The following is a sample of the installation output that shows that the installation root is now \texttt{/home/user/libraries/}.
-\begin{mdframed}
-{\small
-\begin{verbatim}
-Installing: /home/knotman/libraries/lib/libopencal.a
-Installing: /home/knotman/libraries/include/OpenCAL/cal2D.h
 
-...
-
-Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
-\end{verbatim}
-}
-\end{mdframed}
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
 
@@ -279,7 +261,7 @@ Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
 If you want to uninstall OpenCAL for some reason, you can simply enter the build directory and call make with the uninstall target, as in the following:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudouninstall}]
-  user@machine:-$ sudo make uninstall
+  user@machine:-$ [sudo] make uninstall
 \end{lstlisting}
 
 \section{Web Page and Bug Reporting}
