@@ -31,3 +31,5 @@ do
 	cp $i .
 done
 cp ../github-pandoc.css .
+rm -rf *.original
+google-chrome toc.html
