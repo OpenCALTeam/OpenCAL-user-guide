@@ -1302,22 +1302,25 @@ and final configuration of \emph{mod2} 3D CA as implemented in Listing
 
 In this section, we will show how you can combine the OpenCAL and
 OpenCAL-GL libraries to have an immediate graphic output of your
-simulation. At this purpose, here we re-propose two of the examples
+simulation. For this purpose, here we re-propose two of the examples
 presented above, namely the SciddicaT debris flow model and the
 \emph{mod2} CA, by adding them an OpenGL-based viewer in a
 straightforward manner. The visualization system provided by
 OpenCAL-GL is however rather simplyfied and therefore, if you need a
 more sophisticated graphic system you have to develop an alternative
-by yourself.
+by yourself. Indeed, this is what we have done before. In fact, the
+images above, about graphic output of SciddicaT and \emph{mod2} CA,
+have been obtained by means of \emph{ad hoc} GLUT applications. You
+can find such GLUT-based \emph{ad hoc} applications in the OpenCAL's
+examples, specifically those which end with the \verb'-glut' suffix.
 
 \subsection{Implementing SciddicaT in OpenCAL and OpenCAL-GL}
 
 A new implementation of SciddicaT is presented in Listing
 \ref{lst:calgl_sciddicaT}, which integrates a simple multi-view 2D and
 3D visualization system based on OpenCAL-GL. The complete
-implementation is shown for the sake of completeness in Listing
-\ref{lst:calgl_sciddicaT}. A screenshot is shown in Figure
-\ref{fig:calgl_sciddicaT1}.
+implementation is shown for the sake of completeness. A screenshot is
+shown in Figure \ref{fig:calgl_sciddicaT1}.
 
 \begin{figure}
   \begin{center}
@@ -1332,26 +1335,25 @@ implementation is shown for the sake of completeness in Listing
   implementation of the sciddicaT 3D CA with openCAL-GL graphic
   output.]{../opencal/OpenCAL-GL/examples/calgl_sciddicaT/source/sciddicaT.c}
 
-As you can see, two visualization objects of type
-\verb'CALDrawModel2D' are declared into the \verb'main()'
-function. Each of them allows to define a particular view of the CA
-inside a graphic windows.
+As you can see, the \verb'OpenCAL-GL/calgl2D.h' and
+\verb'OpenCAL-GL/calgl2DWindow.h' headers are included to use
+OpenCAL-GL (lines 7-8), and two visualization objects of type
+\verb'CALDrawModel2D' are declared into the \verb'main()' function
+(lines 170-171). Each of them allows to define a particular view of
+the CA inside a graphic windows.
 
-The \verb'calglDefDrawModel2D()' function is used to initialize
-graphic objcts (it acts as a constructor). The first parameter
-specifies the type of drawing to be considered and can assume the
-values listed in Table \ref{tab:draw_modes}. The second parameter
-represents the title to label the portion of the graphic window
-containing the view. The third parameter is a pointer to the CA object
-to be visualized, while the last one is a pounter to the corresponding
-simulation object.
-
-To build a specifig view for the CA, we use the
-\verb'calglAddToDrawModel2Dr()' function. It adds a node into a tree representation, where each node is linked to a CA substate and specifies how this substate have to be considered for representation. In particular, a susbstate can be used as vertex data, normal data and color data. 
-
+The \verb'calglDefDrawModel2D()' function (lines 200, 218) is used to
+initialize graphic objcts (it acts as a constructor). The first
+parameter specifies the type of drawing to be considered and can
+assume the values listed in Table \ref{tab:draw_modes}. The second
+parameter represents the title to label the portion of the graphic
+window containing the view. The third parameter is a pointer to the CA
+object to be visualized, while the last one is a pointer to the
+corresponding simulation object.
 
 \begin{table}
   \centering
+  \footnotesize
   \begin{tabular}{l|l}
     \hline
     Drawing type & Meaning \\
@@ -1365,7 +1367,151 @@ To build a specifig view for the CA, we use the
   \label{tab:draw_modes}
 \end{table} 
 
+To obtain a specifig view, we use the \verb'calglAddToDrawModel2Dr()'
+function (lines 204-208). It adds a node into a tree-based
+representation of the CA, where each node is linked to a substate and
+specifies how it have to be considered for representation. The first
+paramenter is a pointer to a visualization object, while the second
+and third parameters are pointers to the father and the new node,
+respectively. The fourth parameter specifies how substate's data have
+to be interpreted, if as vertices, normal vectors\footnote{Normal
+  vectors are obtained by scalar values representing vertices by means
+  of cross product and nomralization operations. They are only used
+  for light calculation and are not displayed.}, or colors (Table
+\ref{tab:substate_type_info}). Similarly, the fifth parameter
+specifies color settings to be used. Possible values are listed in
+Table \ref{tab:substate_color_info}. Eventually, the last parameter
+specifies if the substate is static (i.e. it is not updated during the
+simulation) or dynamic (i.e. values are modified by the
+simulation). Visualization of static substates is more efficient with
+respect to dynamic substates. Table \ref{tab:substate_updating_type}
+lists possible values for the last parameter of the
+\verb'calglAddToDrawModel2Dr()' function.
 
+\begin{table}
+  \centering
+  \small
+  \begin{tabular}{l|l}
+    \hline
+    Substate's data interpretation & Meaning \\
+    \hline
+    \hline
+    \verb'CALGL_TYPE_INFO_VERTEX_DATA' & Vertex data\\
+    \verb'CALGL_TYPE_INFO_NORMAL_DATA'  & Normal data\\
+    \verb'CALGL_TYPE_INFO_COLOR_DATA' & Color data\\
+    \hline
+  \end{tabular}
+  \caption{Possible OpenCAL-GL graphic interpretation for substate's data.}
+  \label{tab:substate_type_info}
+\end{table} 
+
+\begin{table}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|l}
+    \hline
+    Substate's color specification & Meaning \\
+    \hline
+    \hline
+    \verb'CALGL_TYPE_INFO_USE_DEFAULT'     & Current color set by the \verb'calglColor2D()' function ???\\
+    \verb'CALGL_TYPE_INFO_USE_CONST_VALUE' & Current color set by the \verb'calglColor2D()' function ???\\
+    \verb'CALGL_TYPE_INFO_USE_GRAY_SCALE'  & Gray gradient: white for ???, black for ???\\
+    \verb'CALGL_TYPE_INFO_USE_RED_SCALE '  & Red gradient: red for ???, black for ???\\
+    \verb'CALGL_TYPE_INFO_USE_GREEN_SCALE' & Green gradient: green for ???, black for ???\\
+    \verb'CALGL_TYPE_INFO_USE_BLUE_SCALE'  & Blue gradient: blue for ???, black for ???\\
+    \verb'CALGL_TYPE_INFO_USE_ALL_COLOR'   & ???\\
+    \hline
+  \end{tabular}
+  \caption{Possible OpenCAL-GL substate's color settings.}
+  \label{tab:substate_color_info}
+\end{table} 
+
+\begin{table}
+  \centering
+  \small
+  \begin{tabular}{l|l}
+    \hline
+    Substate's updating type & Meaning \\
+    \hline
+    \hline
+    \verb'CALGL_DATA_TYPE_DYNAMIC' & Dynamic data\\
+    \verb'CALGL_DATA_TYPE_STATIC'  & Static data\\
+    \hline
+  \end{tabular}
+  \caption{Possible substate's data updating type.}
+  \label{tab:substate_updating_type}
+\end{table} 
+
+In the considered example (Listing \ref{lst:calgl_sciddicaT}), the
+\verb'draw_model3D' object defines a 3D view of the CA, since the
+first parameter of the \verb'calglDefDrawModel2D()' function is set to
+\verb'CALGL_DRAW_MODE_SURFACE' and, therefore, the substate is
+interpreted as a topographic surface in which each cell contains an
+altitude (line 200). The tree view abstract model is initialized at
+line 202, where the \verb'Q.z' substate is set to be the root
+node. This is done by simply setting its father node to
+\verb'NULL'. Lines 204-206 attach \emph{information nodes} to the root
+by specifying again the \verb'Q.z' substate for information
+retrival. In particular, line 204 says that the color to be considered
+for representing the root node has to be the one previously defined at
+line 203, while line 205 specifies that data within \verb'Q.z' have to
+be used for evaluating the normal vectors for light
+calculation. Moreover, line 206 specifies that data in \verb'Q.z' must
+be considered again, in this case to construct a mesh representation
+of the substate. Lines 207-208 defines another node for the tree based
+on the \verb'Q.h' substate, together color and normal information. In
+this way, the sybstate \verb'Q.h' is represented above \verb'Q.z'.
+
+The function \verb'calglInfoBar2Dr()' defines a legend for the
+view. The first parameter is a pointer to the view onject, while the
+second a pointer to the substate to be considered for defining the
+legend. The third parameter is a caption, while the forth specifies
+the color scheme to be used, that must be set accordingly to the one
+used for the substate representation. The last four parameters specify
+the position (in $x$ and $y$ coordinates with respect to the
+lower-left corner of the graphic view within the window) and extention
+for the legend (in pixels). In the considered example, a legend for
+the \verb'Q.h' substate is defined and attached to the
+\verb'draw_model3D' object at line 211.
+
+Lines 220-222 of Listing \ref{lst:calgl_sciddicaT} define a frther
+view for the same CA. In particular, the first parameter of the
+\verb'calglDefDrawModel2D()' function, which is set to
+\verb'CALGL_DRAW_MODE_FLAT', specifies a 2D (i.e. flat)
+representation, while the other view specifications are inherited form
+the previously defined \verb'draw_model3D' object. A legend is also defined at line 222.
+
+Lines 224-225 set how the defined view have to be aranged within the
+window, by means of the \verb'calglSetLayoutOrientation2D()' function. In this case ???
+
+Lines 227 enters the graphic main loop thanks to the
+\verb'calglMainLoop2D()' function, which corresponds to the GLUT main
+loop. As a consequence, the application's execution flow never return
+to the \verb'main()' function and therefore, to manage memory
+deallocation and other needs, we defined an \verb'atexit()' callback
+function (line 173), namely the \verb'exitFunction()' (lines
+157-165)).
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{./images/OpenCAL/calgl_sciddicaT3}
+    \caption{Screenshot of the SciddicaT debris flow model with a
+      multi-view 2D and 3D visualization system based on
+      OpenCAL-GL. First view is obtained by cutting off some rows and
+      columns of the cellular space from representation.}
+    \label{fig:calgl_sciddicaT3}
+  \end{center}
+\end{figure}
+
+Eventually, if you remove the comments at lines 214-216, you will
+obtain a partial view for the CA which, for instance, can be used to
+represent cross sections. In the specific case, you will obtain the
+result shown in Figure \ref{fig:calgl_sciddicaT3}. Calls at lines
+214-215 only set the column index $j$ to vary from 300 and the number
+of columns of the CA model by firstly removing all the indices form
+visualization (line 214) and then adding the interval [300,
+  \verb'draw_model3D->calModel->columns']. Similarly, line 2016 hides
+row indices belonging to the interval [100, 150] from vialualization.
 
 \subsection{Implementing the \emph{mod2} CA in OpenCAL and OpenCAL-GL}
 
