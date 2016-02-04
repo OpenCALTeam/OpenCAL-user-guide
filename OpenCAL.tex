@@ -32,7 +32,7 @@ step, one of the following transitions occur:
 
 \begin{enumerate}
     \item Any live cell with fewer than two alive neighbors dies, as
-      if by lonelinessx.
+      if by loneliness.
     \item Any live cell with more than three alive neighbors dies, as
       if by overcrowding.
     \item Any live cell with two or three alive neighbors lives,
@@ -42,7 +42,7 @@ step, one of the following transitions occur:
 \end{enumerate}
 
 The initial configuration of the system specifies the state (dead or
-alive) of each cell into the cellular space. The evolution of the
+alive) of each cell in the cellular space. The evolution of the
 system is thus obtained by applying the above rules (which define the
 cell's transition function) simultaneously to every cell in the
 cellular space, so that each new configuration is function of the one
@@ -147,8 +147,7 @@ a new cell is added to the neighborhood.
 The fourth parameter specifies the boundary conditions. In this case,
 the CA cellular space is considered as a torus, with cyclic conditions
 at boundaries. The last parameter allows you to specify if your model
-has to use the so called \emph{active cells optimization}, that is
-able to restrict the computation to only \emph{non-stationary
+has to use the so called \emph{active cells optimization}, that permit to restrict the computation to only \emph{non-stationary
   cells}. In this case, no optimization is considered.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
@@ -226,11 +225,11 @@ CA object (\verb'life' in our case), while the second and third
 parameters specify the initial and last simulation step,
 respectively. In this case, we just perform one step of computation,
 being both the first and last step set to 1. The last parameter allows
-you to specify the substate update policy. It can be implicit or
+you to specify the substate update policy and can be implicit or
 explicit (Listing \ref{lst:CALUpdateMode}). In the first case, OpenCAL
-does substates' updates for you, while in the second case the
-substates' updates is your responsibility. Note that, in case implicit
-update policy is applyied, all the CA substates are updated after the
+performs substates' updates automatically, while in the second case which
+substates' updates are executed can be chosen by the user. Note that, in case implicit
+update policy is applied, all the CA substates are updated after the
 execution of each elementary process composing the CA transition
 function. We will discuss update policies later in this Chapter. The
 complete definition of \verb'calRunDef2D()' is provided in Listing
@@ -258,19 +257,19 @@ Line 33 allocates memory and registers the \verb'Q' substate to the
 transition function. The \verb'calAddSubstate2Di()' function is very
 simple and self-explanatory. At the contrary,
 \verb'calAddElementaryProcess2D()' must be discussed more in
-detail. It takes the handle to the CA model to which the elementary
+detail. In particular, it takes the handle to the CA model to which the elementary
 process must be attached and a pointer to a callback function, that
 defines the elementary process itself. In our example, we specified
 \verb'life_transition_function' as second parameter, being it the name
-of a developer-defined function that you can find at lines 14-24. As
+of a developer-defined function found at lines 14-24. As
 you can see, the elementary process callback returns
 \verb'void'. Moreover, it takes a pointer to a CA object as first
-parameter, followeb by a couple of integers, representing the
+parameter, followed by a couple of integers, representing the
 coordinates of the generic cell in the CA space. This is the function
 prototype which is common to each elementary process. Note that, each
-elementary process is applyed by OpenCAL simultaneously to each cell
+elementary process is applied by OpenCAL simultaneously to each cell
 of the cellular space in a computational step \footnote{This
-  characteristic is colled \emph{implicit parallelism} and is obtained
+  characteristic is called \emph{implicit parallelism} and is obtained
   in OpenCAL by considering two different working planes for each
   registered substate, namely \emph{current} and \emph{next} working
   planes. However, behind the scene, cells are updated sequentially,
@@ -279,12 +278,12 @@ of the cellular space in a computational step \footnote{This
   working plane is used to write updated values. The \emph{implicit
     parallelism} is also used in the parallel versions of OpenCAL,
   with the difference that more than one cell can be processed and
-  updated concurrently by exploiting mre than one processing
+  updated concurrently by exploiting more than one processing
   unit.}. However, this is completely transparent to the user, so that
 he/she can concentrate his/her effort on the definition of single cell
 behaviour.
 
-When the user is going to implement an elementary process, by defining
+When the user implements an elementary process, by defining
 its callback function, he/she can rely on a set of OpenCAL functions that
 allow to get the substates values of both the central and the
 neighbouring cells, and to update the substates values of the central
@@ -299,17 +298,17 @@ Life example, we defined just one elementary process, that therefore
 represents the whole cell transition function. However, as we will see
 later, many elementary processes can be defined in OpenCAL by simply
 calling the \verb'calAddElementaryProcess2D()' function many times. If
-you define more than one elementary process, they will be executed in
-the order they are added to the CA.
+one defines more than an elementary process, these will be executed in
+the same order they are added to the CA.
 
 The \verb'calInitSubstate2Di()' function at line 39 sets the whole
 substate \verb'Q' to the value 0, i.e. the value of the substate
 \verb'Q' is set to 0 in each cell of the cellular space. The following
 lines, from 42 to 46, set the value of the substate \verb'Q' for some
-cells to 1, in order to define a well known \emph{glider} pattern. In
+cells to 1, in order to define the well known \emph{glider} pattern. In
 this case, we provided the cells coordinates as the third and fourth
 parameters. In this way, we define the initial condition of the system
-direcly inside the \verb'main' function. However, as we will see later
+directly inside the \verb'main' function. However, as we will see later
 in this Chapter, such kind of initialization can be performed by means
 of a specific function.
 
@@ -341,12 +340,12 @@ Figures \ref{fig:life_0000} and \ref{fig:life_LAST} show the initial and final c
   \end{center}
 \end{figure}
 
-\section{OpenCAL statement convention}\label{sec:Conventions}
-As you can easily see from a rapid sight to the source code, all the
-OpenCAL statements are characterized by a prefix and a suffix. All the
+\section{OpenCAL statement conventions}\label{sec:Conventions}
+As noted from a rapid view to the source code, all  
+OpenCAL statements are characterized by a prefix and a suffix. In particular, all 
 data types have the \verb'CAL' prefix, and an optional suffix that
 identifies the CA dimension (e.g. 2D for a two-dimensional model) and
-the basic type. For instance, in the case of the Life's \verb'Q'
+the basic type. For instance, in the case of Life's \verb'Q'
 substate, the 2Di suffix of the \verb'CALSubstate2Di' type specifies
 that it is a two-dimensional substate in which each element is of
 integer type.
@@ -365,16 +364,16 @@ while the possible substates types are:
 \item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate.
 \end{itemize}
 Also the OpenCAL constants have a prefix, namely the \verb'CAL_' one,
-followd by at least one uppercase keyword. In case of more kewords,
-they are separated by the \verb'_' character. Eventually, all the
+followed by at least one uppercase keyword. In case of more keywords,
+these are separated by the \verb'_' character. Eventually, all the
 OpenCAL functions start with the \verb'cal' suffix, followed by at
 least one capitalized keyword, and end with a suffix specifying the CA
 dimension and the basic datatype (e.g. the suffix \verb'2Dr' is for a
-two-dimensionale real substate).
+two-dimensional real substate).
 
 \section{Custom Neighbourhoods}\label{sec:CustomNeiughbourhoods}
 In the Game of Life example, we used the predefined Moore
-neighbourhood. As you already know, OpenCAL also provides other 2D and
+neighbourhood. As already reported, OpenCAL also provides other 2D and
 3D predefined neighbourhoods. Furthermore, it allows for the
 definition of custom neighbourhood patterns (cf. Listings
 \ref{lst:CALNeighborhood2D} and \ref{lst:CALNeighborhood3D}).
@@ -400,8 +399,8 @@ In order to define a custom neighbourhood pattern, you need to specify
 \verb'CAL_CUSTOM_NEIGHBORHOOD_2D' (or
 \verb'CAL_CUSTOM_NEIGHBORHOOD_3D' in case of a 3D CA) as the third
 parameter of the \verb'calCADef2D()' function (\verb'calCADef3D()' for
-a 3D CA) (cf. Listing \ref{lst:calAddNeighbor2D-3D}). Doing this, you
-will start with an empty neighbouring pattern. Then call the
+a 3D CA) (cf. Listing \ref{lst:calAddNeighbor2D-3D}). By doing this, you
+will start with an empty neighbouring pattern and can subsequently call the
 \verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D CA)
 function to add a cell to the pattern.
 
@@ -434,7 +433,7 @@ above. In particular, the Moore neighburhood is built by using a
 sequence of nine calls to the \verb'calAddNeighbor2D()' function. The
 first time the function is called, it adds the relative coordinates
 (0,0) to the neighbouring pattern. This first set of coordinates
-recerives the subscript identifier 0 and therefore can be used later
+receives the subscript identifier 0 and therefore can be used later
 to refer the central cell. For instance, when you call
 \verb'calSet2Di(life,Q,i,j,0);' (see e.g. line 23, Listing
 \ref{lst:cal_life}), the relative coordinates of the neighbor 0
@@ -447,12 +446,12 @@ further couples of coordinates to the neighbouring pattern, by
 progressively assigning an integer subscript identifier to each of
 them.
 
-Eventually, note that you are free to start from a predefined
-neighbourhood. For instance, let still consider the above Game of Life
+Eventually, note that you can define custom neighbourhoods starting from a predefined
+one. For instance, let's still consider the above Game of Life
 example; you can enrich the Moore neighbourhood pattern by simply
 specifying the value \verb'CAL_MOORE_NEIGHBORHOOD_2D' as parameter for
 the \verb'calCADef2D' function) and then add further neighbours by
-calling \verb'calAddNeighbor2D()' as meny times the as the number of
+calling \verb'calAddNeighbor2D()' as many times the as the number of
 cells you want to add is.
 
 \section{SciddicaT}\label{sec:sciddicaT}
@@ -466,8 +465,8 @@ to a fully optimized implementation.
 Sciddica is a family of two-dimensional XCA (eXtended Cellular
 Automata - see Chapter \ref{ch:CA}) debris flow models, successfully
 applied to the simulation of many real cases, such as the 1988
-Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy) disaster. An
-oversimplified toy-version of Sciddica (SciddicaT in the following)
+Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy) disaster. A
+simplified toy-version of Sciddica (SciddicaT in the following)
 was here considered to be implemented in \verb"OpenCAL", and its
 application to the 1992 Tessina (Italy) landslide shown.
 
@@ -488,7 +487,7 @@ where:
   evolves. The generic cell in $R$ is individuated by means of a
   couple of integer coordinates $(i, j)$, where $0 \leq i < i_{max}$
   and $0 \leq j < j_{max}$. The firt coordinate, $i$, represents the
-  row, while the second, $j$, the column. The cell at coodinates
+  row, while the second, $j$, the column. The cell at coordinates
   $(0,0)$ is located at the top-left corner of the computational grid.
 
 \item $X = \{(0,0), (-1, 0), (0, -1), (0, 1), (1, 0)\}$ is the von
@@ -593,6 +592,8 @@ cellular space is still toroidal, as in Life, and no optimization is
 considered. Regarding the simulation object, a total of \verb'STEPS'
 steps (i.e. 4000 steps - cf. line 14) are set, and implicit substates
 updating considered.
+
+XXXXXXXXXXXX
 
 Substates and parameters are grouped into two different C structures
 (lines 24-28 and 30-33, respectively). Substates are therefore bound to
