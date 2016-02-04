@@ -32,7 +32,7 @@ step, one of the following transitions occur:
 
 \begin{enumerate}
     \item Any live cell with fewer than two alive neighbors dies, as
-      if by loneliness.
+      if by lonelinessx.
     \item Any live cell with more than three alive neighbors dies, as
       if by overcrowding.
     \item Any live cell with two or three alive neighbors lives,
@@ -1474,17 +1474,17 @@ for the legend (in pixels). In the considered example, a legend for
 the \verb'Q.h' substate is defined and attached to the
 \verb'draw_model3D' object at line 211.
 
-Lines 220-222 of Listing \ref{lst:calgl_sciddicaT} define a frther
+Lines 218-220 of Listing \ref{lst:calgl_sciddicaT} define a frther
 view for the same CA. In particular, the first parameter of the
 \verb'calglDefDrawModel2D()' function, which is set to
 \verb'CALGL_DRAW_MODE_FLAT', specifies a 2D (i.e. flat)
 representation, while the other view specifications are inherited form
-the previously defined \verb'draw_model3D' object. A legend is also defined at line 222.
+the previously defined \verb'draw_model3D' object. A legend is also defined at line 220.
 
-Lines 224-225 set how the defined view have to be aranged within the
+Lines 222-223 set how the defined view have to be aranged within the
 window, by means of the \verb'calglSetLayoutOrientation2D()' function. In this case ???
 
-Lines 227 enters the graphic main loop thanks to the
+Lines 225 enters the graphic main loop thanks to the
 \verb'calglMainLoop2D()' function, which corresponds to the GLUT main
 loop. As a consequence, the application's execution flow never return
 to the \verb'main()' function and therefore, to manage memory
@@ -1510,7 +1510,7 @@ result shown in Figure \ref{fig:calgl_sciddicaT3}. Calls at lines
 214-215 only set the column index $j$ to vary from 300 and the number
 of columns of the CA model by firstly removing all the indices form
 visualization (line 214) and then adding the interval [300,
-  \verb'draw_model3D->calModel->columns']. Similarly, line 2016 hides
+  \verb'draw_model3D->calModel->columns']. Similarly, line 216 hides
 row indices belonging to the interval [100, 150] from vialualization.
 
 \subsection{Implementing the \emph{mod2} CA in OpenCAL and OpenCAL-GL}
