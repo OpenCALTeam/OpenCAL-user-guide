@@ -1,20 +1,22 @@
 \chapter{OpenCAL OpenMP version}\label{ch:opencal-omp}
 
-Nowadays, parallel computing is the most effective solution to overcome temporal limits of sequential computation. 
-With the name OpenCAL-OMP, we identify the OpenMP implementation of
-the software library, that can run on all cores for your CPU. If
-you are lucky and have a shared memory multiptocessor system,
-OpenCAL-OMP can also exploit all the cores of all your CPUs.
+Nowadays, parallel computing is the most effective solution to
+overcome temporal limits of sequential computation.  With the name
+OpenCAL-OMP, we identify the OpenMP implementation of the software
+library, that can run on all cores for your CPU. If you are lucky and
+have a shared memory multiptocessor system, OpenCAL-OMP can also
+exploit all the cores of all your CPUs.
 
 Similarly to the serial version, OpenCAL-OMP allows for some
 \emph{unsafe operations}, which can significantly speed up your
 application. However, when you use OpenCAL-OMP in \emph{unsafe mode}
-you must give the utmost attention to avoid\textsl{ race condition} issues. For
-instance, when many threads perform concurrent operations on the same
-memory locations and such operations are made by more than one atomic
-machine instruction, it can happen that they can interleave, giving rise to
-wrong (i.e., non consistent) results. Furthermore, even in the case of atomic operations, the
-logic order of execution could not be respected. Thus, for instance, a
+you must give the utmost attention to avoid\textsl{ race condition}
+issues. For instance, when many threads perform concurrent operations
+on the same memory locations and such operations are made by more than
+one atomic machine instruction, it can happen that they can
+interleave, giving rise to wrong (i.e., non consistent)
+results. Furthermore, even in the case of atomic operations, the logic
+order of execution could not be respected. Thus, for instance, a
 read-write logic sequence of atomic operations can actually become a
 write-read (wrong) sequence due to the fact that the thread performing
 the write operation is executed first.
@@ -37,16 +39,26 @@ the differences with respect its serial implementation (Listing
 \lstinputlisting[float,floatplacement=H, label=lst:calomp_life, caption=An OpenCAL-OMP implementation of the Conway's game of Life.]{../opencal/OpenCAL-OMP/examples/calomp_life/source/life.c}
 
 As you can see, the OpenMP-based implementation of Life, which uses
-only safe operations, is almost identical to the serial one thanks to the seamless parallelization adopted by the library. 
-The only differences can be found at lines 3-5 where, instead of including the
+only safe operations, is almost identical to the serial one thanks to
+the seamless parallelization adopted by the library.  The only
+differences can be found at lines 3-5 where, instead of including the
 OpenCAL header files, you can find the OpenCAL-OMP headers. All the
-remaining source code is unchanged. Note that also the OpenCAL-OMP
-statements' prefix does not change with respect to the OpenCAL's one
-(i.e. \verb'cal' for the functions, \verb'CAL' for the data types, and
-\verb'CAL_' for the constants). In practice, if you only use
+remaining source code is unchanged. In practice, if you only use
 OpenCAL-OMP in safe mode, besides including the proper OpenCAL-OMP
-header files instead of the OpenCAL ones, minimal changes are required to the
-serial code.
+header files instead of the OpenCAL ones, minimal changes are required
+to the serial code.
+
+\section{OpenCAL-OMP statement convention and Custom Neighbourhoods}
+
+The OpenCAL-OMP statements' prefix does not change with respect to the
+OpenCAL's one (i.e. \verb'cal' for the functions, \verb'CAL' for the
+data types, and \verb'CAL_' for the constants). Please, refer to
+Section \ref{sec:Conventions} for further details.
+
+Similarly to OpenCAL, OpenCAL-OMP allows to define custom
+neighbourhoods. Since there are no differences whith respect to
+OpenCAL, please refer to Section \ref{sec:CustomNeiughbourhoods} for
+further details.
 
 \section{SciddicaT}
 
@@ -55,9 +67,11 @@ implementation of the SciddicaT cellular automaton, shown in Lsting
 \ref{lst:calomp_sciddicaT}, does not significantly differ from the
 serial implementation that you can find in the Section
 \ref{sec:sciddicaT}, Listing \ref{lst:cal_sciddicaT}. As before, the
-only differences regard the included headers (lines 3-5). Even in this case, as for the Life cellular automaton, due to the fact we
-used only OpenCAL-OMP safe operations, mimimal code change is required, besides including the proper
-OpenCAL-OMP header files instead of the OpenCAL ones.
+only differences regard the included headers (lines 3-5). Even in this
+case, as for the Life cellular automaton, due to the fact we used only
+OpenCAL-OMP safe operations, mimimal code change is required, besides
+including the proper OpenCAL-OMP header files instead of the OpenCAL
+ones.
 
 \lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT/source/sciddicaT.c}
 
@@ -78,15 +92,15 @@ OpenCAL-OMP operations, the active cells management as implemented
 here requires an unsafe operations. Such unsafe operations are
 performed by means of the \verb'calAddActiveCellX2D()' function (line
 87), which adds a cell belonging to the neighbourhood to the set $A$
-of active cells. As evident, such an operation is considered unsafe because it can
-give rise to race condition. In fact, if more threads try to add the
-same cell to the set $A$ at the same time, being this a non-atomic
-operation, threads' operations can interleave and the outcome be
-wrong. In order to avoid this possible error, OpenCAL-OMP is able to
-\emph{lock} the memory locations involved in the operations so that
-each thread can entirely perform its own task without the risk that other
-threads interfere. In order to do this, it is sufficient to place
-OpenCAL-OMP in \emph{unsafe} state by calling the
+of active cells. As evident, such an operation is considered unsafe
+because it can give rise to race condition. In fact, if more threads
+try to add the same cell to the set $A$ at the same time, being this a
+non-atomic operation, threads' operations can interleave and the
+outcome be wrong. In order to avoid this possible error, OpenCAL-OMP
+is able to \emph{lock} the memory locations involved in the operations
+so that each thread can entirely perform its own task without the risk
+that other threads interfere. In order to do this, it is sufficient to
+place OpenCAL-OMP in \emph{unsafe} state by calling the
 \verb'calSetUnsafe2D()', as done at line 163. No other modifications
 to the serial source code are required.
 
@@ -102,12 +116,12 @@ Listing \ref{lst:cal_sciddicaT-unsafe}.
 
 \lstinputlisting[label=lst:calomp_SciddicaT-unsafe, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows eXtended CA simulation model with unsafe optimization.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-unsafe/source/sciddicaT.c}
 
-First of all - from a XCA modeling point of view - note that only the topographic altitude and the debris
-thickness are now considered as model's substates (lines 25-28,
-147-148), as the four outflows substates are no longer
-needed. Moreover, the number of elementary process now considered is
-two (lines 143-144), instead of three for the previous versions of
-SciddicaT.
+First of all - from a XCA modeling point of view - note that only the
+topographic altitude and the debris thickness are now considered as
+model's substates (lines 25-28, 147-148), as the four outflows
+substates are no longer needed. Moreover, the number of elementary
+process now considered is two (lines 143-144), instead of three for
+the previous versions of SciddicaT.
 
 The call to the \verb'calSetUnsafe2D()' function (line 139) places
 OpenCAL-OMP in unsafe mode, allowing to lock memory locations
@@ -120,11 +134,11 @@ function, the \verb'calAddNext2Dr()' and \verb'calAddNextX2Dr()'
 functions are employed (lines 88-89), in place of the combination of
 get-set operations, as done in the corresponding serial implementation
 (Listing \ref{lst:cal_sciddicaT-unsafe}, lines 84-85). In fact,
-consider the source code snippet in Listing \ref{lst:get-set}
-(checked out by Listing \ref{lst:cal_sciddicaT-unsafe}). As you can
-see, for each not-eliminated cell, the algorithm computes a flow, $f$
-(line 5) and then subtracts it from the central cell (line 6), adding
-it to the corresponding neighbour (line 7), in order to accomplish mass
+consider the source code snippet in Listing \ref{lst:get-set} (checked
+out by Listing \ref{lst:cal_sciddicaT-unsafe}). As you can see, for
+each not-eliminated cell, the algorithm computes a flow, $f$ (line 5)
+and then subtracts it from the central cell (line 6), adding it to the
+corresponding neighbour (line 7), in order to accomplish mass
 balance. In both cases (flow subtraction and adding), a flavor of
 \verb'calGet' function is called to read the current value of the
 $Q_h$ substate from the next working plane. Subsequently, a flavor of
@@ -133,11 +147,10 @@ value. When a single thread is used to perform such operations, no
 race conditions can obviously occur. At the contrary, even in the case
 of two concurrent threads, different undesirable situations can take
 place, which give rise to a race condition and therefore to a wrong
-result. For instance, let's suppose both threads read the value
-first, and then write their updated values; in this case, the
-resulting value will correspond to the one written by the thread that
-writes the value for last, and the contribution of the other thread
-will be lost.
+result. For instance, let's suppose both threads read the value first,
+and then write their updated values; in this case, the resulting value
+will correspond to the one written by the thread that writes the value
+for last, and the contribution of the other thread will be lost.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:get-set, caption=Example of non atomic operation made of a combination of get-set calls.]
   // <snip>
@@ -158,15 +171,15 @@ threads, the above mentioned \verb'calAddNext2Dr()' and
 and then perform the get-set operations without the risk other threads
 can interfere. In this way, no race conditions can be
 triggered. Obviously, there is a side-effect in terms of computational
-performance. In fact, as expected, locks can slow down
-threads execution and therefore the entire simulation.
+performance. In fact, as expected, locks can slow down threads
+execution and therefore the entire simulation.
 
 
 \section{SciddicaT with explicit simulation loop}
 
-As for the serial version, also for the OpenMP based release of OpenCAL it is
-further possible to improve computational performance of SciddicaT by
-avoiding unnecessary substates updating.
+As for the serial version, also for the OpenMP based release of
+OpenCAL it is further possible to improve computational performance of
+SciddicaT by avoiding unnecessary substates updating.
 
 As already reported, the \verb'calRun2D()' function used so far to
 run the simulation loop updates all the defined substates at the end
@@ -188,7 +201,10 @@ makes explicit the simulation loop and defines a stopping criterion for
 the simulation termination.
 
 
-\lstinputlisting[label=lst:calomp_sciddicaT-explicit, caption=An OpenCAL-OMP implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-unsafe-explicit/source/sciddicaT.c}
+\lstinputlisting[label=lst:calomp_sciddicaT-explicit, caption=An
+  OpenCAL-OMP implementation of the SciddicaT XCA debris flows
+  simulation model with explicit simulation
+  loop.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 \section{SciddicaT computational performance}
 
@@ -295,28 +311,29 @@ implementation.
 \section{A three-dimensional example}
 In Section \ref{sec:mod2}, we described the \emph{mod2} 3D CA and
 shown a possible implementation using the \verb'OpenCAL' serial
-library. Here, we briefly present a \verb'OpenCAL-OMP' implementation of the
-same cellular automaton (Listing \ref{lst:calomp_life}), by discussing
-the differences with respect the corresponding serial implementation
-(Listing \ref{lst:cal_life}).
+library. Here, we briefly present a \verb'OpenCAL-OMP' implementation
+of the same cellular automaton (Listing \ref{lst:calomp_life}), by
+discussing the differences with respect the corresponding serial
+implementation (Listing \ref{lst:cal_life}).
 
-\lstinputlisting[float,floatplacement=H, label=lst:calomp_mod2, caption=An OpenCAL-OMP implementation of the mod2 CA.]{../opencal/OpenCAL-OMP/examples/calomp_mod2CA3D/source/mod2CA3D.c}
+\lstinputlisting[float,floatplacement=H, label=lst:calomp_mod2,
+  caption=An OpenCAL-OMP implementation of the mod2
+  CA.]{../opencal/OpenCAL-OMP/examples/calomp_mod2CA3D/source/mod2CA3D.c}
 
-As you can see, the OpenMP-based implementation, which uses
-only safe operations, is almost identical to the serial one. As for the case of the Game of Life CA, the only
-differences can be found at lines 3-5 where, instead of including the
-OpenCAL header files, we included the OpenCAL-OMP headers. All the
-remaining source code is unchanged.
+As you can see, the OpenMP-based implementation, which uses only safe
+operations, is almost identical to the serial one. As for the case of
+the Game of Life CA, the only differences can be found at lines 3-5
+where, instead of including the OpenCAL header files, we included the
+OpenCAL-OMP headers. All the remaining source code is unchanged.
 
-\section{Combining OpenCAL-OMP and OpenCAL-GL and  Global Functions}
+\section{Combining OpenCAL-OMP and OpenCAL-GL and Global Functions}
 
 As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
 visualization system by adding few lines of code to your
 application. Combining OpenCAL-OMP and OpenCAL-GL does not differ from
 what we have done in Section \ref{sec:combining_gl} for OpenCAL and
-OpenCAL-GL. Therefore, we remand you to that section for majour
-details.
+OpenCAL-GL. Therefore, please refer to that section for major details.
 
-Similarly, you can use the same global reduction functions
-described in Section \ref{sec:redution} also in OpenCAL-OMP.  Plese
-refer to that section for further details.
+Similarly, you can also use the same global reduction functions
+described in Section \ref{sec:redution} in OpenCAL-OMP. Plese refer to
+that section for further details.
