@@ -2,10 +2,10 @@
 
 mkdir -p html 
 
-pandoc --mathjax=https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML  --filter pandoc-crossref -s --toc --chapters -c github-pandoc.css  --default-image-extension=png -f latex -t html opencal-userguide.tex -o opencal-userguide_FULL.html
+pandoc  --mathjax=https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML  --filter pandoc-crossref -s --toc --chapters -c github-pandoc.css  --default-image-extension=png -f latex -t html opencal-userguide.tex -o opencal-userguide_FULL.html
 
 
-htmldoc -t htmlsep -v -d html opencal-userguide_FULL.html
+htmldoc -t htmlsep -v -d html opencal-userguide_FULL.html 
 
 mkdir -p html_sanitized
 #fix utf8
@@ -24,5 +24,12 @@ do
 done
 
 cd ../html_sanitized
-cp -r ../images/ .
+#mv all images
+IMGS=`find ../images/ -name "*.png"`
+for i in $IMGS
+do
+	cp $i .
+done
 cp ../github-pandoc.css .
+rm -rf *.original
+google-chrome toc.html
