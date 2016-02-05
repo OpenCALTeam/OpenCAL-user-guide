@@ -147,7 +147,8 @@ a new cell is added to the neighborhood.
 The fourth parameter specifies the boundary conditions. In this case,
 the CA cellular space is considered as a torus, with cyclic conditions
 at boundaries. The last parameter allows you to specify if your model
-has to use the so called \emph{active cells optimization}, that permit to restrict the computation to only \emph{non-stationary
+has to use the so called \emph{active cells optimization}, that
+permits to restrict the computation to only \emph{non-stationary
   cells}. In this case, no optimization is considered.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
@@ -227,14 +228,15 @@ respectively. In this case, we just perform one step of computation,
 being both the first and last step set to 1. The last parameter allows
 you to specify the substate update policy and can be implicit or
 explicit (Listing \ref{lst:CALUpdateMode}). In the first case, OpenCAL
-performs substates' updates automatically, while in the second case which
-substates' updates are executed can be chosen by the user. Note that, in case implicit
-update policy is applied, all the CA substates are updated after the
-execution of each elementary process composing the CA transition
-function. We will discuss update policies later in this Chapter. The
-complete definition of \verb'calRunDef2D()' is provided in Listing
-\ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type (Listing
-\ref{lst:CALUpdateMode}) enumerates possible update policies.
+performs substates' updates automatically, while in the second case
+which substates' updates are executed can be chosen by the user. Note
+that, in case implicit update policy is applied, all the CA substates
+are updated after the execution of each elementary process composing
+the CA transition function. We will discuss update policies later in
+this Chapter. The complete definition of \verb'calRunDef2D()' is
+provided in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode'
+type (Listing \ref{lst:CALUpdateMode}) enumerates possible update
+policies.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calRunDef2D(), caption=Definition of the calRunDef2D() function., numbers=none]
   struct CALRun2D* calRunDef2D (
@@ -257,12 +259,12 @@ Line 33 allocates memory and registers the \verb'Q' substate to the
 transition function. The \verb'calAddSubstate2Di()' function is very
 simple and self-explanatory. At the contrary,
 \verb'calAddElementaryProcess2D()' must be discussed more in
-detail. In particular, it takes the handle to the CA model to which the elementary
-process must be attached and a pointer to a callback function, that
-defines the elementary process itself. In our example, we specified
-\verb'life_transition_function' as second parameter, being it the name
-of a developer-defined function found at lines 14-24. As
-you can see, the elementary process callback returns
+detail. In particular, it takes the handle to the CA model to which
+the elementary process must be attached and a pointer to a callback
+function, that defines the elementary process itself. In our example,
+we specified \verb'life_transition_function' as second parameter,
+being it the name of a developer-defined function found at lines
+14-24. As you can see, the elementary process callback returns
 \verb'void'. Moreover, it takes a pointer to a CA object as first
 parameter, followed by a couple of integers, representing the
 coordinates of the generic cell in the CA space. This is the function
@@ -283,8 +285,8 @@ of the cellular space in a computational step \footnote{This
 he/she can concentrate his/her effort on the definition of single cell
 behaviour.
 
-When the user implements an elementary process, by defining
-its callback function, he/she can rely on a set of OpenCAL functions that
+When the user implements an elementary process, by defining its
+callback function, he/she can rely on a set of OpenCAL functions that
 allow to get the substates values of both the central and the
 neighbouring cells, and to update the substates values of the central
 cell. In the specific case of the Game of Life, we used the
@@ -319,8 +321,8 @@ this example), and returns to the \verb'main' function when the
 simulation is complete. The \verb'calSaveSubstate2Di()' is thus called
 again at line 55 to save the new (last) configuration of the CA
 (represented by the only defined substate \verb'Q') to file, while the
-last two functions at lines 58 and 59 release previously allocated memory. The
-\verb'return' statement at line 61 ends our first example.
+last two functions at lines 58 and 59 release previously allocated
+memory. The \verb'return' statement at line 61 ends our first example.
 
 Figures \ref{fig:life_0000} and \ref{fig:life_LAST} show the initial and final configuration of Game of Life as implemented in Listing \ref{lst:cal_life}, respectively.
 
@@ -399,10 +401,10 @@ In order to define a custom neighbourhood pattern, you need to specify
 \verb'CAL_CUSTOM_NEIGHBORHOOD_2D' (or
 \verb'CAL_CUSTOM_NEIGHBORHOOD_3D' in case of a 3D CA) as the third
 parameter of the \verb'calCADef2D()' function (\verb'calCADef3D()' for
-a 3D CA) (cf. Listing \ref{lst:calAddNeighbor2D-3D}). By doing this, you
-will start with an empty neighbouring pattern and can subsequently call the
-\verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D CA)
-function to add a cell to the pattern.
+a 3D CA) (cf. Listing \ref{lst:calAddNeighbor2D-3D}). By doing this,
+you will start with an empty neighbouring pattern and can subsequently
+call the \verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D
+CA) function to add a cell to the pattern.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CustomMooreExample, caption=Example of custom neighbourhood pattern; the sequence of calls to the calAddNeighbor2D() function defines the Moore neighbourhood for the Game of Life CA., numbers=none]
   // ...
@@ -433,26 +435,26 @@ above. In particular, the Moore neighburhood is built by using a
 sequence of nine calls to the \verb'calAddNeighbor2D()' function. The
 first time the function is called, it adds the relative coordinates
 (0,0) to the neighbouring pattern. This first set of coordinates
-receives the subscript identifier 0 and therefore can be used later
-to refer the central cell. For instance, when you call
+receives the subscript identifier 0 and therefore can be used later to
+refer the central cell. For instance, when you call
 \verb'calSet2Di(life,Q,i,j,0);' (see e.g. line 23, Listing
 \ref{lst:cal_life}), the relative coordinates of the neighbor 0
 (specified as last parameters), i.e. (0,0), are added to the
 coordinates of the cells the elementary process is applying to,
-i.e. (i,j) (cf. second and third to last parameters), by obtaining
-the cell (i,j) itself, which correspond to the central cell by
+i.e. (i,j) (cf. second and third to last parameters), by obtaining the
+cell (i,j) itself, which correspond to the central cell by
 definition. The subsequent calls to \verb'calAddNeighbor2D()' add
 further couples of coordinates to the neighbouring pattern, by
 progressively assigning an integer subscript identifier to each of
 them.
 
-Eventually, note that you can define custom neighbourhoods starting from a predefined
-one. For instance, let's still consider the above Game of Life
-example; you can enrich the Moore neighbourhood pattern by simply
-specifying the value \verb'CAL_MOORE_NEIGHBORHOOD_2D' as parameter for
-the \verb'calCADef2D' function) and then add further neighbours by
-calling \verb'calAddNeighbor2D()' as many times the as the number of
-cells you want to add is.
+Eventually, note that you can define custom neighbourhoods starting
+from a predefined one. For instance, let's still consider the above
+Game of Life example; you can enrich the Moore neighbourhood pattern
+by simply specifying the value \verb'CAL_MOORE_NEIGHBORHOOD_2D' as
+parameter for the \verb'calCADef2D' function) and then add further
+neighbours by calling \verb'calAddNeighbor2D()' as many times the as
+the number of cells you want to add is.
 
 \section{SciddicaT}\label{sec:sciddicaT}
 In the previous section we illustrated an OpenCAL implementation of a
@@ -466,8 +468,8 @@ Sciddica is a family of two-dimensional XCA (eXtended Cellular
 Automata - see Chapter \ref{ch:CA}) debris flow models, successfully
 applied to the simulation of many real cases, such as the 1988
 Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy) disaster. A
-simplified toy-version of Sciddica (SciddicaT in the following)
-was here considered to be implemented in \verb"OpenCAL", and its
+simplified toy-version of Sciddica (SciddicaT in the following) was
+here considered to be implemented in \verb"OpenCAL", and its
 application to the 1992 Tessina (Italy) landslide shown.
 
 SciddicaT considers the surface over which the phenomenon evolves as
@@ -1081,9 +1083,9 @@ Figure \ref{fig:sciddicaT} was executed by considering the XCA
 implementation of SciddicaT on a single core of the same
 processor. The simulation lasted a total of 11 seconds, versus 22
 seconds obtained for the active cells optimized version and 172
-seconds for the basic (non-optimized) version. The XCA implementation resulted 2 times
-faster than the active cells optimized version and about 16 times faster with
-than the basic one.
+seconds for the basic (non-optimized) version. The XCA implementation
+resulted 2 times faster than the active cells optimized version and
+about 16 times faster with than the basic one.
 
 
 
@@ -1118,8 +1120,8 @@ sake of completeness.
 \lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 
-As noted, the \verb'calRunAddGlobalTransitionFunc2D()' function
-is called to register a custom transition function callback (line
+As noted, the \verb'calRunAddGlobalTransitionFunc2D()' function is
+called to register a custom transition function callback (line
 177). In the specific case of SciddicaT, the
 \verb'sciddicaTransitionFunction()' callback (lines 132-143) is used
 to make the elementary processes application and the substates update
@@ -1146,14 +1148,15 @@ applied, which only removes cells that became inactive during the
 current computational step, and the set $A$ is accordingly updated.
 
 
-As regards the computational performance, execution time of this further optimized
-version lasted 12 seconds to complete the 4000 steps required by the
-simulation on a single core of the same Intel Core i7 processor used
-before. The obtained speed up can seem quite small (less than the 10\%)
-with respect to the previous implementation of SciddicaT. However,
-it must be noted that SciddicaT is a very simplified model and higher speed ups can certainly
-be obtained for more complex CA made up by more elementary processes,
-these latter involving here only a small set of model's substates. Table
+As regards the computational performance, execution time of this
+further optimized version lasted 12 seconds to complete the 4000 steps
+required by the simulation on a single core of the same Intel Core i7
+processor used before. The obtained speed up can seem quite small
+(less than the 10\%) with respect to the previous implementation of
+SciddicaT. However, it must be noted that SciddicaT is a very
+simplified model and higher speed ups can certainly be obtained for
+more complex CA made up by more elementary processes, these latter
+involving here only a small set of model's substates. Table
 \ref{tab:speedup} resumes computational performance of all the above
 illustrated SciddicaT implementations.
 
@@ -1178,16 +1181,17 @@ illustrated SciddicaT implementations.
 
 \section{A three-dimensional example}\label{sec:mod2}
 
-In order to introduce you to three-dimensional CA development
-with OpenCAL, this section describes the implementation of a simple 3D model,
-namely the \emph{mod2} 3D CA. In this model, cells can be in one of two different
-states, 0 or 1, as in Game of Life. The cellular space is a
-parallelepiped made by cubic cells, while the cell's neighbourhood is
-the 3D Moore one, consisting of the central cell and its adjacent
-cells. The transition function simply evaluates the quantity $s$ as
-the number of neighbouring cells which are in the state 1 and sets the
-new state for the central cell as $s\%2$ (i.e. the remainder of $s$ divided
-by 2). This simple example of 3D CA is formally defined as:
+In order to introduce you to three-dimensional CA development with
+OpenCAL, this section describes the implementation of a simple 3D
+model, namely the \emph{mod2} 3D CA. In this model, cells can be in
+one of two different states, 0 or 1, as in Game of Life. The cellular
+space is a parallelepiped made by cubic cells, while the cell's
+neighbourhood is the 3D Moore one, consisting of the central cell and
+its adjacent cells. The transition function simply evaluates the
+quantity $s$ as the number of neighbouring cells which are in the
+state 1 and sets the new state for the central cell as $s\%2$
+(i.e. the remainder of $s$ divided by 2). This simple example of 3D CA
+is formally defined as:
 
 $$mod2 = < R, X, Q, \sigma >$$
 
