@@ -96,79 +96,93 @@ XXX
 
 \subsection{Manage of the devices}
 
-After the model creation, the user must choose the device for the
-kernel computation.  Inside the library, a structure called CALOpenCL
-allows the user to manage all available platforms and devices.  This
-structure simplifies the access to the devices compared with the
-native API of OpenCL. The library supplies other functions to know
-which platforms and devices are available on the system and to have
-information about these.\\ Below you can see a simple program that
-explains how the CALOpenCL structure can be used.
+After model definition, the user must choose the device for kernel
+execution. An OpenCAL-CL structure called \verb'CALOpenCL' allows the
+user to manage all available platforms and devices. This structure
+simplifies the access to the devices compared with the native API of
+OpenCL. The library supplies other functions to know which platforms
+and devices are available on the system and to have information about
+these. Below you can see a simple program showing how the
+\verb'CALOpenCL' structure can be used (Listing \ref{lst:CALOpenCL}).
 
 
-\begin{lstlisting}
-#include <calCL2D .h>
+\begin{lstlisting}[float,floatplacement=H, label=lst:CALOpenCL, caption=Access to platform and devices.]
+  #include <calCL2D .h>
 
- int main (){
+  int main ()
+  {
+    // get all available  platforms
+    CALOpenCL * calOpenCL = calclCreateCALOpenCL ();
+    // get all available devices
+    calclInitializePlatforms ( calOpenCL );
 
- CALOpenCL * calOpenCL = calclCreateCALOpenCL (); // get all available
- platforms calclInitializePlatforms ( calOpenCL ); // get all
- available devices calclInitializeDevices ( calOpenCL );
+    // Initialize the devices
+    calclInitializeDevices ( calOpenCL );
 
- // get the first device on the first platform CALCLdevice device =
- calclGetDevice ( calOpenCL , 0, 0);
+    // get the first device on the first platform
+    CALCLdevice device = calclGetDevice ( calOpenCL , 0, 0 );
 
- // create a context CALCLcontext context = calclcreateContext (&
- device , 1);
+    // create a context
+    CALCLcontext context = calclcreateContext ( &device , 1 );
 
- return 0; }
+    return 0;
+  }
 \end{lstlisting}
 
-Inside the library, the platforms and the devices are stored in a
-matrix where rows represent the platforms and columns represent the
-devices. Thus, to choose which one we can use for the computation,
-it is necessary to specify the index of platform and the index of the
-device. For example, at lines 12, we chose the platform number 0 and
-the device number 0. If we have a system with 3 NVIDIA GPUs and 3 AMD
-GPUs, the library will have a $2 \times 3$ size matrix, where 2 are the vendors
-(i.e., the platforms NVIDIA and AMD) and 3 are the GPUs for each
-platforms. If we want to run the program using the third AMD GPU, we can
-specify 1 and 2 as indices. If we don't know how the system identifies
-the platforms and devices, the library supplies us a function called
+In OpenCAL-CL platforms and devices are stored in a matrix where rows
+represent platforms and columns devices. Thus, to choose which
+platform and device to use for the computation, it is necessary to
+specify their indeces within the matrix. For example, at lines 14, we
+chose the platform number 0 and the device number 0. If we have a
+system with 3 NVIDIA GPUs and 3 AMD GPUs, the library will have a $2
+\times 3$ size matrix, where 2 are the vendors (i.e., the platforms
+NVIDIA and AMD) and 3 are the GPUs for each platforms. If we want to
+run the program using the third AMD GPU, we can specify 1 and 2 as
+indices. If we don't know how the system identifies the platforms and
+devices, the library supplies us a function called
 \verb'calclGetPlatformsAndDeviceFromStandardInput' that allows us to
-know the available platforms and devices. First it prints the information on
-standard output and then we can insert the indexes directly from
-standard input.\\ After the device is chosen, the user must specify the
-path where the kernels and relative headers are. Through the function
-\verb'calclLoadProgramLib(2D/3D)' the library reads automatically the
+know the available platforms and devices. First it prints the
+information on standard output and then we can insert the indices
+directly from standard input.
+
+After the device is chosen, the user must specify the path where the
+kernels and relative headers are located (cf. Listing
+\ref{lst:calclLoadProgramLib}). Through the function
+\verb'calclLoadProgramLib(2D/3D)' the library automatically reads
 kernels and compiles them.
 
-\begin{lstlisting}
-CALCLprogram calclLoadProgramLib(2D|3D) ( CALCLcontext context ,
-CALCLdevice device , char * path_user_kernel , char *
-path_user_include )
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgramLib, caption=The calclLoadProgramLib function., numbers=none]
+  CALCLprogram calclLoadProgramLib(2D|3D) (
+                  CALCLcontext context ,
+                  CALCLdevice device ,
+                  char * path_user_kernel ,
+                  char * path_user_include
+  )
 \end{lstlisting}
 
-\subsection{Allocation of kernels}
+\subsection{Kernels allocation}
 
-The library doesn't know which kernels are related to the CA elementary
-processes, nor their execution order on the available devices.  Thus, to create and allocate a kernel it's necessary
-to call the function \verb'calclGetKernelFromProgram' that retrieves an
-OpenCL kernel given a compiled OpenCL program.
+The library doesn't know which kernels are related to the CA
+elementary processes, nor their execution order on the available
+devices. Thus, to create and allocate a kernel it Is necessary to call
+the \verb'calclGetKernelFromProgram' function (see Listing
+\ref{lst:calclGetKernelFromProgram}), that retrieves an OpenCL kernel
+given a compiled OpenCL program.
 
-\begin{lstlisting}
-cl_kernel elementaryProcess = calclGetKernelFromProgram(&program,
-KERNEL_NAME);
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetKernelFromProgram, caption=The calclGetKernelFromProgram function., numbers=none]
+  cl_kernel elementaryProcess = calclGetKernelFromProgram(
+                                &program,
+                                KERNEL_NAME);
 \end{lstlisting}
 
+\subsection{Send data from the CA model to devices}
 
-\subsection{Send data from the model to devices}
+To transfer data from host side to kernel side, the user must define
+the structure called \verb'CALCLToolkit(2D/3D)' containing all the
+buffers (data) of the CA model.  By default, the library sends to all
+the kernels the data associated to the model. Such data are listed
+below:
 
-To transfer the data from host side to kernel side, the user must
-define the structure called \verb'CALCLToolkit(2D/3D)' containing all
-the buffers (data) of the model.  By default, the library sends to all
-the kernels the data associated to the model. The following list shows
-the data which is sent:
 \begin{itemize}
 	\item the dimension of cellular space
 	\item the number of substate for every type (i.e., byte, int, real)
@@ -179,30 +193,40 @@ the data which is sent:
 	\item the border condition
 \end{itemize}
 
+First, the user must create an instance of the structure
+\verb'CALCLToolkit(2D/3D)' by calling the function
+\verb'calclCreateToolkit' as shown in the following code snippet.
 
- First, the user must create an instance of the structure
- \verb'CALCLToolkit(2D/3D)' by calling the function
- \verb'calclCreateToolkit' as shown in the following code snippet.
-
-\begin{lstlisting}
-CALCLToolkit2D * calclCreateToolkit (2D|3D)(struct CALModel (2D|3D)
-*model ,CALCLcontext context ,CALCLprogram program ,CALCLdevice device
-,CALCLOptimization opt)
+\begin{lstlisting}[numbers=none]
+  CALCLToolkit2D * calclCreateToolkit (2D|3D)(
+                   struct CALModel (2D|3D) *model,
+                   CALCLcontext context,
+                   CALCLprogram program,
+                   CALCLdevice device,
+                   CALCLOptimization opt
+  )
 \end{lstlisting}
 
-The enumerative \verb'CALCLOptimization' allows the user to choose if
-she/he wants to use the library without optimization \verb|(CALCL_NO_OPT)|
-or with active cells optimization \verb|(CALCL_OPT_ACTIVE_CELLS)|. The
-structure \verb'CALCLToolkit(2D/3D)' doesn't contain only the buffers
-to transfer data but also the kernels belonging to the execution
-loop. \\ To add a new kernel to the execution loop, the user has to
-call the function \verb'calclAddElementaryProcessKernel(2D/3D)' that
-adds the chosen kernel to the list of CA elementary processes; moreover, it
-sends to the device all the necessary data to execute the kernel.
+The \verb'CALCLOptimization' enumerative allows the user to choose if
+she/he wants to use the library without optimization
+\verb|(CALCL_NO_OPT)| or with active cells optimization
+\verb|(CALCL_OPT_ACTIVE_CELLS)|. The structure
+\verb'CALCLToolkit(2D/3D)' doesn't contain only the buffers to
+transfer data but also the kernels belonging to the execution
+loop.
 
-\begin{lstlisting}
-void calclAddElementaryProcessKernel2D(CALCLToolkit2D * toolkit2d,
-struct CALModel2D *model, CALCLkernel * elemProcKernel);
+To add a new kernel to the execution loop, the user has to
+call the function \verb'calclAddElementaryProcessKernel(2D/3D)' that
+adds the chosen kernel to the list of CA elementary processes;
+moreover, it sends to the device all the necessary data to execute the
+kernel.
+
+\begin{lstlisting}[numbers=none]
+  void calclAddElementaryProcessKernel2D(
+               CALCLToolkit2D * toolkit2d,
+               struct CALModel2D *model,
+               CALCLkernel * elemProcKernel
+  );
 \end{lstlisting}
 
 
@@ -212,26 +236,35 @@ To start the execution loop, the user has to call the function
 \verb'calclRun(2D/3D)'. This function executes all the elementary
 processes previously declared on the specified device.
 
-\begin{lstlisting}
-void calclRun2D(CALCLToolkit2D* toolkit2d, struct CALModel2D * model,
-unsigned int initialStep, unsigned maxStep);
+\begin{lstlisting}[numbers=none]
+  void calclRun2D(CALCLToolkit2D* toolkit2d,
+                  struct CALModel2D * model,
+                  unsigned int initialStep,
+                  unsigned maxStep
+  );
 \end{lstlisting}
 
 
-\section{Kernel programming} 
+\section{Kernel programming}
 
-In order to program kernels in OpenCAL, the user needs to include some header files.
-Specifically, cal2D.h or cal3D.h permit to use some simple
-functions to interact with the data structures belonging to the model.
-To create a kernel function in OpenCL, user must place the keyword
-\verb'__kernel' before the returning the type of the function. In
-OpenCAL-CL every time a kernel function, the keyword \verb'MODEL_DEFINITION2D' must be specified as first parameter and the
-function \verb'initThreads2D()' called as first instruction.\\ The code below
-shows how to declare a new kernel.
+In order to program kernels in OpenCAL, the user needs to include some
+header files.  Specifically, \verb'cal2D.h' or \verb'cal3D.h' permit
+to use some simple functions to interact with the data structures
+belonging to the model. To create a kernel function in OpenCL, user
+must place the keyword \verb'__kernel' before the returning the type
+of the function. In OpenCAL-CL every time a kernel function, the
+keyword \verb'MODEL_DEFINITION2D' must be specified as first parameter
+and the function \verb'initThreads2D()' called as first
+instruction.\\ The code below shows how to declare a new kernel.
 
 \begin{lstlisting} 
-__kernel void kernel(MODEL_DEFINITION2D){ initThreads2D(); ...  ...
-    ...  }
+  __kernel void kernel(MODEL_DEFINITION2D)
+  {
+    initThreads2D();
+    //...
+    //...
+    //...
+  }
 \end{lstlisting}
 
 When the user implements an elementary process - by defining
@@ -243,40 +276,44 @@ as first parameter. For instance, if we
 want to retrieve the value of a specific cell we need to use the function
 \verb'calGet2Dr'.
 
-\begin{lstlisting} 
+\begin{lstlisting}[numbers=none] 
 	double a = calGet2Dr(MODEL2D, 0, i, j);
 \end{lstlisting}
 
-The function returns the value of the cell (i, j) of the substate 0.\\ Since inside OpenCAL-CL one can use all OpenCL features, all memory levels such as global memory, local memory, private
-memory (XXXcitazione libroXXX) can be exploited. In order to use these memory levels, variables must be declared using this specific syntax respectively
-\verb'__global', \verb'__local', \verb'__private'.
+The function returns the value of the cell (i, j) of the substate
+0. Since inside OpenCAL-CL one can use all OpenCL features, all
+memory levels such as global memory, local memory, private memory
+(XXXcitazione libroXXX) can be exploited. In order to use these memory
+levels, variables must be declared using this specific syntax
+respectively \verb'__global', \verb'__local', \verb'__private'.
 
 \section{Conway's Game of Life with OpenCAL-CL}
  
-As already reported in \ref{sec:cal_life}, to introduce how to develop a
-Cellular Automata model with OpenCAL-CL we can start by implementing Conway’s
-Game of Life and specifically its host application part. In order to use OpenCAL-CL, some
-header files are included (lines 3-8) and, in particular, the OpenCAL library and
-the OpenCAL-CL library. The OpenCAL library
-inclusion inside the host application is necessary to define the CA object
-(line 46) and the related substates (line 49). The cal2DIO.h header
-file (line 4) provides some basic input/output functions for
-reading/writing substates from/to file. To run the application with
-OpenCAL-CL, all the necessary objects have to be declared (line
-27-31): specifically, the
-\verb'CALOpenCL' structure (line 27), the \verb'CALCLcontext', the
-\verb'CALCLdevice', the \verb'CALCLprogram' and the
-\verb'CALCLToolkit2D'.  To create and initialize these variables we
-need to call the function \verb'calclCreateCALOpenCL' that creates the
-CALOpenCL structure, the functions \verb|calclInitializePlatforms| and
+As already reported in \ref{sec:cal_life}, to introduce how to develop
+a CA model with OpenCAL-CL we can start by implementing Conway’s Game
+of Life and specifically its host application part, which is shown in
+Listing \ref{lst:calcl_life}. In order to use OpenCAL-CL, some header
+files are included (lines 3-8) and, in particular, the OpenCAL library
+and the OpenCAL-CL library. The OpenCAL library inclusion is necessary
+to define the CA object (line 46) and the related substates (line
+49). The \verb'cal2DIO.h' header file (line 4) provides some basic
+input/output functions for reading/writing substates from/to file. To
+run the application with OpenCAL-CL, all the necessary objects have to
+be declared (line 27-31): specifically, the \verb'CALOpenCL' structure
+(line 27), the \verb'CALCLcontext', the \verb'CALCLdevice', the
+\verb'CALCLprogram' and the \verb'CALCLToolkit2D'. To create and
+initialize these variables we need to call the function
+\verb'calclCreateCALOpenCL' that creates the CALOpenCL structure, the
+functions \verb|calclInitializePlatforms| and
 \verb|calclInitializeDevices| that initialize all the platforms and
-devices on the available machine and the \verb'calclGetDevice()' function, which
-will return the device where elementary process are computed by
-choosing the \verb'platformNum' and \verb'deviceNum' integers(line
-24-25).  Moreover, two important functions are here considered: \verb'calclcreateContext'
-and \verb'calclLoadProgramLib2D'. The first returns the context
-\ref{sec:openclstructure}, while the second builds all kernels inside the
-path specified by \verb'kernelSrc'(line 15) including the files
+devices on the available machine and the \verb'calclGetDevice()'
+function, which will return the device where elementary process are
+computed by choosing the \verb'platformNum' and \verb'deviceNum'
+integers(line 24-25). Moreover, two important functions are here
+considered: \verb'calclcreateContext' and
+\verb'calclLoadProgramLib2D'. The first returns the context
+\ref{sec:openclstructure}, while the second builds all kernels inside
+the path specified by \verb'kernelSrc'(line 15) including the files
 specified by \verb'kernelInc'(line 16), and returns a program
 containing all the compiled kernels.
 
@@ -285,48 +322,48 @@ that we discussed in \ref{sec:cal_life}, and includes all the information
 to create the model, to create and initialize substates (line 49-52) and 
 to set a initial configuration (line 55-59).
 
-\lstinputlisting[label=lst:cal_sciddicaT, caption=An OpenCAL-CL
+\lstinputlisting[label=lst:calcl_life, caption=An OpenCAL-CL
   implementation of the Conway's game of
   Life.]{../opencal/OpenCAL-CL/examples/calcl_life/source/life.c}
 	
 Although the OpenCAL-CL library uses the same functions of the OpenCAL
 library to create the model and the substates, the execution of the
 elementary processes is quite different. As known, our elementary
-processes are implemented on GPU side through kernels, so we need to manage the
-transfer of memory between host and device sides and to decide which and
-when run the kernels. In a classical OpenCL application, it's not
-trivial to handle all these issues. For this reason,
-in OpenCAL-CL we decided to introduce an intermediate object
-(\verb'CALCLToolkit') that hides to the user the memory management and handles the
-compiled chosen kernels. The user must only initialize the
+processes are implemented on GPU side through kernels, so we need to
+manage the transfer of memory between host and device sides and to
+decide which and when run the kernels. In a classical OpenCL
+application, it's not trivial to handle all these issues. For this
+reason, in OpenCAL-CL we decided to introduce an intermediate object
+(\verb'CALCLToolkit') that hides to the user the memory management and
+handles the compiled chosen kernels. The user must only initialize the
 \verb'CALCLToolkit' structure(line 62) and choose which kernel he/she
 wants to execute by the function \verb'calclGetKernelFromProgram'
-specifying the program and kernel names. Once kernels are chosen to be executed,
-the user must only call the function
+specifying the program and kernel names. Once kernels are chosen to be
+executed, the user must only call the function
 \verb'calclAddElementaryProcessKernel2D' (line 71) that adds the
 specific kernel elementary process inside the \verb'CALCLToolkit'
-structure. Finally, to run the simulation the user must call the function
-\verb'calclRun2D' specifying the initial and final step.
+structure. Finally, to run the simulation the user must call the
+function \verb'calclRun2D' specifying the initial and final step.
 
-Below is reported the device side code of Conway's Game of
-Life.  In this application, we have only one elementary process, defined as a kernel called
-\verb'life_transition_function'.\\ The OpenCAL-CL library will launch
-exactly a number of threads equal to the entire cellular space,
-structured like a matrix. In this way, every cell can perform in parallel
-its own computation. To access to the indexes of the cell the user
-must call the function \verb'getRow' and \verb'getCol'
+Below is reported the device side code of Conway's Game of Life.  In
+this application, we have only one elementary process, defined as a
+kernel called \verb'life_transition_function'. The OpenCAL-CL library
+will launch exactly a number of threads equal to the entire cellular
+space, structured like a matrix. In this way, every cell can perform
+in parallel its own computation. To access to the indexes of the cell
+the user must call the function \verb'getRow' and \verb'getCol'
 line(14-15). Furthermore, the user can use the function
 \verb'get_columns' and \verb'get_rows' (line 17-18) to retrieve the
 dimensions of the cellular space.  In the specific case of the Game of
-Life, we used the \verb'calGet2Di' function to get the central cell’s value of the sub-
-state Q (remember that the central cell is identified by the coordinates (i, j)), the \verb'calGetX2Di' function to retrieve the value
-of the n-th neighbour’s substate Q, and the \verb'calSet2Di' function to update the
-value of the substate Q for the central cell. 
+Life, we used the \verb'calGet2Di' function to get the central cell’s
+value of the substate Q (remember that the central cell is identified
+by the coordinates (i, j)), the \verb'calGetX2Di' function to retrieve
+the value of the n-th neighbour’s substate Q, and the \verb'calSet2Di'
+function to update the value of the substate Q for the central cell.
 
 \lstinputlisting[label=lst:calcl_life, caption=An OpenCAL-CL kernel
   to implement the Conway's game of Life elementary
   process.]{../opencal/OpenCAL-CL/examples/calcl_life/kernel/source/life.cl}
-
 
 
 \section{Combining OpenCAL-OMP and OpenCAL-GL and  Global Functions}
