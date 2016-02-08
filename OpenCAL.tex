@@ -1535,17 +1535,17 @@ window in a matrix layout.
   \label{tab:calgl_layouts}
 \end{table} 
 
-Line 224 enters the application main loop thanks to the call to the
-\verb'calglMainLoop2D()' function. It corresponds to the GLUT main
-loop and executes both the simulation steps and the graphic
-rendering. As a result, the application's execution flow never return
-to the \verb'main()' function and therefore, to manage memory
-deallocation and other possible operations, we defined a callback
-function to be executed just before program termination, namely
-\verb'exitFunction()' (lines 157-165). It was registered at line 173
-through the \verb'atexit()' function. Note that, if you do not want
-visualize all the computational steps, you can call the XXX function
-to specify a refreshing interval in steps.
+The \verb'calglMainLoop2D()' function (line 226) enters the
+application main loop. It corresponds to the GLUT main loop and
+executes both the simulation steps and the graphic rendering. As a
+result, the application's execution flow never return to the
+\verb'main()' function and therefore, to manage memory deallocation
+and other possible operations, we defined a callback function to be
+executed just before program termination, namely \verb'exitFunction()'
+(lines 157-165). It was registered at line 173 through the
+\verb'atexit()' function. Note that, if you do not want visualize all
+the computational steps, you can call the \verb'calglSetDisplayStep()'
+function to specify a refreshing interval in steps (cf. line 224).
 
 \begin{figure}
   \begin{center}
