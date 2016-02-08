@@ -16,18 +16,18 @@ application is now subdivided in two parts: the \emph{host program},
 running on the CPU, and the \emph{device program}, running on a
 compliant computational device (e.g. a Nvidia or AMD GPU). The CA
 object is still defined host-side, as in OpenCAL, while elementary
-processes (and possibly other functions) are defined
-device-side. Belonging to the device program, CA elementary processes
+processes (and possibly other functions), due to their \textsl{parallel nature} in the CA context, are defined
+device-side. Moreover, belonging to the device program, CA elementary processes
 must be defined as OpenCL's \emph{kernels} and therefore the developer
 has to be able to write some minimal OpenCL code to implement
 them. Fortunately, OpenCAL-CL hides lots of parallel aspects to the
-user (e.g. the simulation loop is internally managed by the library)
+user (e.g., the simulation loop is internally managed by the library)
 and also simplifies data exchange between host and device. The user's
 OpenCL parallel programming background can be therefore limited or
-even null. In the latter case, the user can learn some basic elements
-of OpenCL kernel programming thanks to this guide.
+even null. However, the user can learn some basic elements
+of OpenCL kernel programming thanks to this guide \footnote{For more in-depth knowledge of OpenCL, please refer to the book OpenCL in Action: How to accelerate graphics and computations, Matthew Scarpino, Manning Pubblication, ISBN-13: 860-1400825129.}.
 
-This chapter is divided into two parts: the first part is a very brief
+This chapter is divided in two parts: the first part is a very brief
 overview of OpenCL, while the second one introduces OpenCAL-CL by
 examples.
 
@@ -35,17 +35,17 @@ examples.
 As already stated, OpenCL allows for the parallel execution of
 computational tasks, called kernels, on multiple processing elements
 of compliant devices. In the OpenCAL-CL modeling context, the host
-application, which run on the CPU, defines the CA model and also
+application, which runs on the CPU, defines the CA model and also
 performs data exchange and kernels execution on the compliant device.
-Data exchange and kernels extecution are managed thanks to an OpenCL
+Data exchange and kernels execution are managed thanks to an OpenCL
 \emph{context}. Each CA elementary process is implemented as a kernel
 and is therefore sent to a compliant device for execution.
 
-In particular, host application links kernels into one or more
+In particular, the host application links kernels into one or more
 containers, called \emph{programs}.The program therefore connects
 kernels with the data to be processed and dispatches them to a special
 OpenCL structure called \emph{command queue}. This is a necessary
-becouse only enqueued kernel are actually executed.
+because only enqueued kernel are actually executed.
 
 %The command queue is a structure that allows the host to decide what
 %the devices have to do and, when a kernel is enqueued, the device
@@ -62,7 +62,7 @@ becouse only enqueued kernel are actually executed.
 Figure \ref{fig:GeneralStructure} shows the general structure of an
 OpenCL program. Context contains all the devices, command queues
 and kernels, each device has its own command queue and each
-command queue contains the kernles to be executed on the corresponding
+command queue contains the kernels to be executed on the corresponding
 device.
 
 \section{The structure of OpenCAL-CL}
@@ -74,7 +74,7 @@ objects\footnote{2D and 3D CA are natively supported by
 this latter manages kernels and dispatches data to be processed (e.g.,
 CA substates, the type of neighbourhood, size of the cellular space,
 etc) to the computational compliant unit. The host application also
-selects the computational unit to be omployed and manages the
+selects the computational unit to be employed and manages the
 execution of the CA main loop. The host application is typically
 subdivided in the following parts:
 \begin{itemize}
@@ -132,7 +132,7 @@ these. Below you can see a simple program showing how the
 In OpenCAL-CL platforms and devices are stored in a matrix where rows
 represent platforms and columns devices. Thus, to choose which
 platform and device to use for the computation, it is necessary to
-specify their indeces within the matrix. For example, at lines 14, we
+specify their indexes within the matrix. For example, at lines 14, we
 chose the platform number 0 and the device number 0. If we have a
 system with 3 NVIDIA GPUs and 3 AMD GPUs, the library will have a $2
 \times 3$ size matrix, where 2 are the vendors (i.e., the platforms
@@ -175,12 +175,12 @@ given a compiled OpenCL program.
                                 KERNEL_NAME);
 \end{lstlisting}
 
-\subsection{Send data from the CA model to devices}
+\subsection{Sending data from the CA model to devices}
 
 To transfer data from host side to kernel side, the user must define
 the structure called \verb'CALCLToolkit(2D/3D)' containing all the
-buffers (data) of the CA model.  By default, the library sends to all
-the kernels the data associated to the model. Such data are listed
+buffers (data) of the CA model. By default, the library sends to all
+kernels the data associated to the model. Such data is listed
 below:
 
 \begin{itemize}
@@ -248,11 +248,11 @@ processes previously declared on the specified device.
 \section{Kernel programming}
 
 In order to program kernels in OpenCAL, the user needs to include some
-header files.  Specifically, \verb'cal2D.h' or \verb'cal3D.h' permit
+header files. Specifically, \verb'cal2D.h' or \verb'cal3D.h' permit
 to use some simple functions to interact with the data structures
-belonging to the model. To create a kernel function in OpenCL, user
+belonging to the model. To create a kernel function in OpenCL, the user
 must place the keyword \verb'__kernel' before the returning the type
-of the function. In OpenCAL-CL every time a kernel function, the
+of the function. In OpenCAL-CL every time a kernel function is defined, the
 keyword \verb'MODEL_DEFINITION2D' must be specified as first parameter
 and the function \verb'initThreads2D()' called as first
 instruction.\\ The code below shows how to declare a new kernel.
@@ -268,7 +268,7 @@ instruction.\\ The code below shows how to declare a new kernel.
 \end{lstlisting}
 
 When the user implements an elementary process - by defining
-its kernel function - she/he can rely on a set of OpenCAL functions
+the corresponding kernel function - she/he can rely on a set of OpenCAL functions
 that allow to get the substates values of both the central and the
 neighbouring cells, and to update the substates values of the central
 cell. Every time the user wants to use this function, the keyword \verb'MODEL2D' must be passed
@@ -281,11 +281,11 @@ want to retrieve the value of a specific cell we need to use the function
 \end{lstlisting}
 
 The function returns the value of the cell (i, j) of the substate
-0. Since inside OpenCAL-CL one can use all OpenCL features, all
+0. Since inside OpenCAL-CL one can use all OpenCL advanced features, all
 memory levels such as global memory, local memory, private memory
-(XXXcitazione libroXXX) can be exploited. In order to use these memory
+can be exploited. In order to use these memory
 levels, variables must be declared using this specific syntax
-respectively \verb'__global', \verb'__local', \verb'__private'.
+\verb'__global', \verb'__local', \verb'__private',respectively.
 
 \section{Conway's Game of Life with OpenCAL-CL}
  
@@ -342,10 +342,10 @@ specifying the program and kernel names. Once kernels are chosen to be
 executed, the user must only call the function
 \verb'calclAddElementaryProcessKernel2D' (line 71) that adds the
 specific kernel elementary process inside the \verb'CALCLToolkit'
-structure. Finally, to run the simulation the user must call the
+structure. Finally, to run the simulation, the user must call the
 function \verb'calclRun2D' specifying the initial and final step.
 
-Below is reported the device side code of Conway's Game of Life.  In
+Below is reported the device-side code of Conway's Game of Life.  In
 this application, we have only one elementary process, defined as a
 kernel called \verb'life_transition_function'. The OpenCAL-CL library
 will launch exactly a number of threads equal to the entire cellular
@@ -372,9 +372,9 @@ As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
 visualization system by adding few lines of code to your
 application. Combining OpenCAL-CL and OpenCAL-GL does not differ from
 what we have done in Section \ref{sec:combining_gl} for OpenCAL and
-OpenCAL-GL. Therefore, we remand you to that section for majour
+OpenCAL-GL. Therefore, please refer to this section for major
 details.
 
 Similarly, you can use the same global reduction functions
-described in Section \ref{sec:redution} also in OpenCAL-CL.  Plese
+described in Section \ref{sec:redution} also in OpenCAL-CL.  Please
 refer to that section for further details.
