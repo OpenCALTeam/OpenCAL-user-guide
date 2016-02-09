@@ -202,7 +202,7 @@ value will be assumed (cf. Table \ref{ch:installation:cmakeoptions}).
 \end{table}
 
 
-\section{Build and Install/Uninstall}
+\section{Build and Install}
 Once makefiles have been produced by CMake, everything is set up and
 ready for compiling. To build use the following command:
 
@@ -214,54 +214,95 @@ for speeding up the compilation process.
 
 You can install the compiled objects (libraries and examples - if
 enabled during the CMake configuration), headers and API documentation
-in the appropriate folders using the following command:
+in the system default directories using the following command:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:install}]
   user@machine:-$ sudo -
   root@machine:-$ make install
 \end{lstlisting}
 
-or equivalently, if your user is in the \texttt{sudoers} list
+\noindent or equivalently, if your user is in the \texttt{sudoers} list
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
   user@machine:-$ sudo make install
 \end{lstlisting}
 
-By default, files are installed in \texttt{/usr/local/}folder on \textit{UNIX} and  \texttt{c:/Program Files} on \textit{Windows}.
-Installation folder can be configured using the \textit{CMAKE} variable  \texttt{-DCMAKE\_INSTALL\_PREFIX:PATH=\{DIRECTORY\}}.
-The followings are the necessary steps for compiling \verb'OpenCAL' and \verb'OpenCAL-OMP' and their examples
-in the \texttt{/home/user/libraries}
+\noindent Under Linux systems, files are installed by default in
+\texttt{/usr/local/}. See Table \ref{ch:ddefault_paths} for majour
+details.
+
+\begin{table}[]
+  \centering
+  \caption{Default installation paths for OpenCAL files under Linux systems}
+  \label{ch:ddefault_paths}
+  \begin{tabularx}{\textwidth}{ll}
+    \hline
+    \textbf{Installation path} & \textbf{Installed objects}\\
+    \hline\hline
+    \verb'/usr/local/lib/'                    & Shared objects \\
+    \verb'/usr/local/include/'                & Header files \\
+    \verb'/usr/local/share/OpenCAL-CL/'       & OpenCL kernels \\
+    \verb'/usr/local/share/OpenCAL-Examples/' & Example codes \\
+    \verb'/usr/local/share/doc/OpenCAL/'      & API documentation \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\section{Custom installation path}
+
+If you want to install the libraries in a different directory you can
+use the \texttt{CMAKE\_INSTALL\_PREFIX:PATH} CMake variable. For
+instance, to instlall \verb'OpenCAL' and \verb'OpenCAL-OMP', together
+with their examples, in the \texttt{/home/user/libraries/OpenCAL-1.0}
+directory, you have to do as follows:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
   user@machine:-$ cd ${OPENCAL_ROOT}
   user@machine:-$ mkdir -p build && cd build
-  user@machine:-$ cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/user/libraries/ -DBUILD_EXAMPLES=ON -DBUILD_OPENCAL_OMP=ON ..
-  user@machine:-$ [sudo] make install
+  user@machine:-$ cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/user/libraries/OpenCAL-1.0 -DBUILD_EXAMPLES=ON -DBUILD_OPENCAL_OMP=ON ../
+  user@machine:-$ make install
 \end{lstlisting}
-The following is a sample of the installation output that shows that the installation root is now \texttt{/home/user/libraries/}.
-\begin{mdframed}
-{\small
-\begin{verbatim}
-Installing: /home/knotman/libraries/lib/libopencal.a
-Installing: /home/knotman/libraries/include/OpenCAL/cal2D.h
 
-...
+%% The following is a sample of the installation output that shows that the installation root is now \texttt{/home/user/libraries/}.
+%% \begin{mdframed}
+%% {\small
+%% \begin{verbatim}
+%% Installing: /home/knotman/libraries/lib/libopencal.a
+%% Installing: /home/knotman/libraries/include/OpenCAL/cal2D.h
 
-Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
-\end{verbatim}
-}
-\end{mdframed}
+%% ...
 
+%% Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
+%% \end{verbatim}
+%% }
+%% \end{mdframed}
 
+%% \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
+%% \end{lstlisting}
+
+\section{Configuring the environment}
+After installation, you probably have to set you environment up in
+order to use OpenCAL libraries. In the case you chose the default
+installation, headers and shared objects are located in a system
+trusted directory (i.e. /usr/local/) and therefore you only need to
+regenerate the loader cahce file (i.e. /etc/ld.so.cache) in order to
+allow the shared objects to be found. To do this you can simply
+do the following command:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
-
+  user@machine:-$ sudo ldconfig
 \end{lstlisting}
 
-If you want to uninstall OpenCAL for some reason, you can simply enter the build directory and call make with the uninstall target, as in the following:
+At the contrary, XXX
+
+\section{Uninstall}
+
+If you want to uninstall OpenCAL for some reason, you can simply enter
+the build directory and call make with the uninstall target, as in the
+following example:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudouninstall}]
-  user@machine:-$ [sudo] make uninstall
+  user@machine:-$ sudo make uninstall
 \end{lstlisting}
 
 \section{Web Page and Bug Reporting}
