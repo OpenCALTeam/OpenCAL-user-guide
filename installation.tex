@@ -127,7 +127,7 @@ directories:
 %% \texttt{-DBUILD\_OPENCAL\_OMP=ON} and
 %% \texttt{-DBUILD\_OPENCAL\_OMP\_PARALLEL=ON} arguments.
 
-\subsection{Generating makfiles}
+\section{Generating makfiles}
 
 Once you have satisfied all necessary dependencies it is time to
 generate the makefiles (or the project files or for your development
@@ -172,8 +172,8 @@ examples and documentation), you can use the following commands:
 \end{lstlisting}
 
 Each CMake option corresponds to a target. If you are not interested
-to some of them, simply switch off the corresponding option. For
-instace, if you set the \verb'ENABLE_SHARED' option to \verb'OFF'
+in some of them, simply switch off the corresponding option. For
+instance, if you set the \verb'ENABLE_SHARED' option to \verb'OFF'
 (that, indeed, is the default value), generated makefiles will be set
 to build static libraries (.a files under Linux systems) instead of
 shared objects (.so files). If you omit a CMake option, the default
@@ -252,15 +252,13 @@ details.
 
 If you want to install the libraries in a different directory you can
 use the \texttt{CMAKE\_INSTALL\_PREFIX:PATH} CMake variable. For
-instance, to instlall \verb'OpenCAL' and \verb'OpenCAL-OMP', together
-with their examples, in the \texttt{/home/user/libraries/OpenCAL-1.0}
-directory, you have to do as follows:
+instance, to install \verb'OpenCAL' and \verb'OpenCAL-OMP', together
+with their examples in a versioned directory, for instance in
+\texttt{/usr/local/OpenCAL-1.0}, type the following:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
-  user@machine:-$ cd ${OPENCAL_ROOT}
-  user@machine:-$ mkdir -p build && cd build
-  user@machine:-$ cmake -DCMAKE_INSTALL_PREFIX:PATH=/home/user/libraries/OpenCAL-1.0 -DBUILD_EXAMPLES=ON -DBUILD_OPENCAL_OMP=ON ../
-  user@machine:-$ make install
+  user@machine:-$ cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/OpenCAL-1.0 -DBUILD_EXAMPLES=ON -DBUILD_OPENCAL_OMP=ON ../
+  user@machine:-$ sudo make install
 \end{lstlisting}
 
 %% The following is a sample of the installation output that shows that the installation root is now \texttt{/home/user/libraries/}.
@@ -281,19 +279,52 @@ directory, you have to do as follows:
 %% \end{lstlisting}
 
 \section{Configuring the environment}
-After installation, you probably have to set you environment up in
-order to use OpenCAL libraries. In the case you chose the default
-installation, headers and shared objects are located in a system
-trusted directory (i.e. /usr/local/) and therefore you only need to
-regenerate the loader cahce file (i.e. /etc/ld.so.cache) in order to
-allow the shared objects to be found. To do this you can simply
-do the following command:
+After installation, you need to set you environment up in order to use
+OpenCAL libraries. In the case you chose the default installation,
+headers and shared objects are located in a system trusted directory
+(e.g. /usr/local/) and therefore you only need to regenerate the
+loader cache (i.e. /etc/ld.so.cache) in order to allow the shared
+objects to be found. To do this you can simply type the following
+command:
 
-\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoldconfig}]
   user@machine:-$ sudo ldconfig
 \end{lstlisting}
 
-At the contrary, XXX
+In case of custom installation, you need to update the
+\verb'LD_LIBRARY_PATH' environment variable and regenerate the loader
+cahce file. For instance, if you installed the software in
+\verb'/usr/local/OpenCAL-1.0', you need to add the path
+\verb'/usr/local/OpenCAL-1.0/lib' to \verb'LD_LIBRARY_PATH' and then
+run the command \verb'ldconfig' as root.
+
+Alternatively, you can create
+a new file in \verb'/etc/ld.so.conf.d/', for instance
+\verb'opencal.conf', containing the \verb'/usr/local/OpenCAL-1.0/lib'
+path, and then call \verb'ldconfig' as root.
+
+\section{Test the installation}
+
+In order to test software installation you can compile and run the
+\verb'life' example program. You can use CMake, as we did before, or
+compile it directly. In the latter case, if you chose the
+default installation, it is sufficient to type the following command:
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc}]
+  user@machine:-$ gcc life.c -o life -lopencal
+\end{lstlisting}
+while, if you chose a custom installation path, e.g. \verb'/usr/local/OpenCAL-1.0', you need to specify where the include files and libraries are located by using the following command:
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc-full}]
+  user@machine:-$ gcc life.c -o life -I /usr/local/OpenCAL-1.0/include/ -L /usr/local/OpenCAL-1.0/lib/ -lopencal
+\end{lstlisting}
+
+If the compilation process is successful, the \verb'life' program will be
+generated. Please execute it by typing the following command:
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc}]
+  user@machine:-$ ./life
+\end{lstlisting}
+The \verb'life_0000.txt' and \verb'life_LAST.txt' files shoud be
+generated. If this is the case, congratulations, you installed
+OpenCAL properly.
 
 \section{Uninstall}
 
