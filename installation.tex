@@ -253,7 +253,7 @@ details.
 If you want to install the libraries in a different directory you can
 use the \texttt{CMAKE\_INSTALL\_PREFIX:PATH} CMake variable. For
 instance, to install \verb'OpenCAL' and \verb'OpenCAL-OMP', together
-with their examples in a versioned directory, for instance in
+with their examples, in a versioned directory, for instance in
 \texttt{/usr/local/OpenCAL-1.0}, type the following:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
@@ -261,60 +261,55 @@ with their examples in a versioned directory, for instance in
   user@machine:-$ sudo make install
 \end{lstlisting}
 
-%% The following is a sample of the installation output that shows that the installation root is now \texttt{/home/user/libraries/}.
-%% \begin{mdframed}
-%% {\small
-%% \begin{verbatim}
-%% Installing: /home/knotman/libraries/lib/libopencal.a
-%% Installing: /home/knotman/libraries/include/OpenCAL/cal2D.h
-
-%% ...
-
-%% Installing: /home/user/lib/share/OpenCAL-Examples/OpenCAL/examples/...
-%% \end{verbatim}
-%% }
-%% \end{mdframed}
-
-%% \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
-%% \end{lstlisting}
 
 \section{Configuring the environment}
 After installation, you need to set you environment up in order to use
-OpenCAL libraries. In the case you chose the default installation,
-headers and shared objects are located in a system trusted directory
-(e.g. /usr/local/) and therefore you only need to regenerate the
-loader cache (i.e. /etc/ld.so.cache) in order to allow the shared
-objects to be found. To do this you can simply type the following
-command:
-
-\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoldconfig}]
-  user@machine:-$ sudo ldconfig
-\end{lstlisting}
-
-In case of custom installation, you need to update the
+OpenCAL libraries. In particular, you need to update the
 \verb'LD_LIBRARY_PATH' environment variable and regenerate the loader
 cahce file. For instance, if you installed the software in
 \verb'/usr/local/OpenCAL-1.0', you need to add the path
 \verb'/usr/local/OpenCAL-1.0/lib' to \verb'LD_LIBRARY_PATH' and then
-run the command \verb'ldconfig' as root.
+run the command \verb'ldconfig' as root. To do this you can add the
+following lines to your \verb'.bash_profile' configuration file in
+your home direcory
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:.bash_profile}]
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/OpenCAL-1.0/lib
+export LD_LIBRARY_PATH
+\end{lstlisting}
+and then type the following commands:
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:source}]
+user@machine:-$ source .bash_profile
+user@machine:-$ sudo ldconfig
+\end{lstlisting}
+The first command executes the content of the file passed as argument
+(i.e. \verb'.bash_profile'), while the second update the cache for the
+loader, so that openCAL shared objects can be loaded at run time.
 
-Alternatively, you can create
-a new file in \verb'/etc/ld.so.conf.d/', for instance
-\verb'opencal.conf', containing the \verb'/usr/local/OpenCAL-1.0/lib'
-path, and then call \verb'ldconfig' as root.
+The above procedure is only valid for the current user. If you want
+allow all the other users to use OpenCAL you can create a new file in
+\verb'/etc/ld.so.conf.d/', for instance \verb'opencal.conf',
+containing the \verb'/usr/local/OpenCAL-1.0/lib' path, and then call
+\verb'ldconfig' as root.
+
+Please, note that even in the case you chose the default installation
+path, that locates shared objects in \verb'/usr/local/lib' under Linux
+systems, you need to update the loader path and cache by putting the
+string \verb'/usr/local/lib' in \verb'/etc/ld.so.conf.d/opencal.conf'
+and then calling \verb'sudo ldconfig'.
+
 
 \section{Test the installation}
 
 In order to test software installation you can compile and run the
 \verb'life' example program. You can use CMake, as we did before, or
-compile it directly. In the latter case, if you chose the
-default installation, it is sufficient to type the following command:
+compile it directly. In the latter case, if you chose the default
+installation, it is sufficient to type the following command:
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc}]
   user@machine:-$ gcc life.c -o life -lopencal
 \end{lstlisting}
-while, if you chose a custom installation path, e.g. \verb'/usr/local/OpenCAL-1.0', you need to specify where the include files and libraries are located by using the following command:
+while, if you chose a custom installation path, e.g. \verb'/usr/local/OpenCAL-1.0', you need to specify where include files are located by using the following command:
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc-full}]
-  user@machine:-$ gcc life.c -o life -I /usr/local/OpenCAL-1.0/include/ -L /usr/local/OpenCAL-1.0/lib/ -lopencal
+  user@machine:-$ gcc life.c -o life -I /usr/local/OpenCAL-1.0/include/ -lopencal
 \end{lstlisting}
 
 If the compilation process is successful, the \verb'life' program will be
