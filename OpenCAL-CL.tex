@@ -2,117 +2,97 @@
 
 
 This chapter introduces OpenCAL-CL, a porting of OpenCAL in
-OpenCL. OpenCL is a parallel framework originally proposed by Apple
+OpenCL. OpenCL is a parallel framework, originally proposed by Apple
 and then released as an Open Standard under the Khronos Group
 management. Besides computational efficiency, one of the main
-advantages of OpenCL is portability. In fact, you can run your program
-wherever you want across heterogeneous processors like Central
-Processing Units (CPUs), Graphics Processing Units (GPUs), Digital
-Signal Processors (DSPs), and Field-Programmable Gate Arrays (FPGAs).
+advantages of OpenCL is portability. In fact, it allows to run
+programs across heterogeneous processors, like Central Processing Units
+(CPUs), Graphics Processing Units (GPUs), Digital Signal Processors
+(DSPs), and Field-Programmable Gate Arrays (FPGAs).
 
 OpenCAL-CL inherits many OpenCAL's features, by also adding parallel
-computation capability thanks to the adoption of OpenCL. The
-application is now subdivided in two parts: the \emph{host program},
-running on the CPU, and the \emph{device program}, running on a
-compliant computational device (e.g. a Nvidia or AMD GPU). The CA
-object is still defined host-side, as in OpenCAL, while elementary
-processes (and possibly other functions), due to their \textsl{parallel nature} in the CA context, are defined
-device-side. Moreover, belonging to the device program, CA elementary processes
-must be defined as OpenCL's \emph{kernels} and therefore the developer
-has to be able to write some minimal OpenCL code to implement
-them. Fortunately, OpenCAL-CL hides lots of parallel aspects to the
-user (e.g., the simulation loop is internally managed by the library)
-and also simplifies data exchange between host and device. The user's
-OpenCL parallel programming background can be therefore limited or
-even null. However, the user can learn some basic elements
-of OpenCL kernel programming thanks to this guide \footnote{For more in-depth knowledge of OpenCL, please refer to the book OpenCL in Action: How to accelerate graphics and computations, Matthew Scarpino, Manning Pubblication, ISBN-13: 860-1400825129.}.
+computation capability thanks to the adoption of OpenCL. OpenCAL-CL
+based applications are subdivided in two parts: the \emph{host
+  program}, running on the CPU, and the \emph{device program}, running
+on a compliant computational device (e.g. a Nvidia or AMD GPU). The CA
+object is still defined host-side, as in OpenCAL and OpenCAL-OMP,
+while elementary processes (and possibly other functions) are defined
+device-side, due to their \textsl{parallel nature} in the CA
+context. Accordingly, elementary processes must be defined as OpenCL
+\emph{kernels} and therefore developers have to be able to write some
+minimal OpenCL code to implement them. Fortunately, OpenCAL-CL hides
+lots of parallel aspects to the user (e.g., the simulation loop is
+internally managed by the library) and also simplifies data exchange
+between host and device. Therefore, OpenCL parallel programming
+background can be limited or even null. In any case, the user can
+learn some basic elements of OpenCL kernel programming thanks to this
+guide.
 
 This chapter is divided in two parts: the first part is a very brief
-overview of OpenCL, while the second one introduces OpenCAL-CL by
+overview to OpenCL, while the second one introduces OpenCAL-CL by
 examples.
 
-\section{OpenCL framework}\label{sec:openclstructure}
-As already stated, OpenCL allows for the parallel execution of
-computational tasks, called kernels, on multiple processing elements
-of compliant devices. In the OpenCAL-CL modeling context, the host
-application, which runs on the CPU, defines the CA model and also
-performs data exchange and kernels execution on the compliant device.
-Data exchange and kernels execution are managed thanks to an OpenCL
-\emph{context}. Each CA elementary process is implemented as a kernel
-and is therefore sent to a compliant device for execution.
-
-In particular, the host application links kernels into one or more
-containers, called \emph{programs}.The program therefore connects
-kernels with the data to be processed and dispatches them to a special
-OpenCL structure called \emph{command queue}. This is a necessary
-because only enqueued kernel are actually executed.
-
-%The command queue is a structure that allows the host to decide what
-%the devices have to do and, when a kernel is enqueued, the device
-%will execute the relative function.
+\section{OpenCAL-CL structure}\label{sec:opencalclstructure}
+In the OpenCAL-CL modeling context, host application, runing on the
+CPU, defines the CA model and also performs data exchange and kernels
+(i.e. elementary processes) execution on the compliant device. Data
+exchange and kernels execution are managed thanks to an OpenCL
+\emph{context}. In particular, the host application links kernels into
+one or more containers, called \emph{programs}. The program therefore
+connects kernels with the data to be processed and dispatches them to
+a special OpenCL structure called \emph{command queue}. This is
+necessary because only enqueued kernel are actually executed. Figure
+\ref{fig:GeneralStructure} shows the general structure of an OpenCL
+program. Context contains all the devices, command queues and kernels,
+each device has its own command queue and each command queue contains
+the kernels to be executed on the corresponding device.
 
 \begin{figure}[htp]
   \begin{center}
     \includegraphics[width=12cm]{./images/OpenCAL-CL/kernelDistribution}
-    \caption{General structure of a OpenCL program}
+    \caption{General structure of a OpenCL program, from \emph{OpenCL
+        in Action: How to accelerate graphics and computations},
+      Matthew Scarpino, Manning Pubblication, ISBN-13:
+      860-1400825129.}
     \label{fig:GeneralStructure}
   \end{center}
 \end{figure}
 
-Figure \ref{fig:GeneralStructure} shows the general structure of an
-OpenCL program. Context contains all the devices, command queues
-and kernels, each device has its own command queue and each
-command queue contains the kernels to be executed on the corresponding
-device.
-
-\section{The structure of OpenCAL-CL}
-OpenCAL-CL provides a set of predefined structures and functions to
-develop CA oriented host applications and kernels. CA
-objects\footnote{2D and 3D CA are natively supported by
-  OpenCAL-CL. Also 1D CA can be defined as degenerate case of a 2D
-  CA.} and substates are defined in the host application. Moreover,
-this latter manages kernels and dispatches data to be processed (e.g.,
-CA substates, the type of neighbourhood, size of the cellular space,
-etc) to the computational compliant unit. The host application also
-selects the computational unit to be employed and manages the
-execution of the CA main loop. The host application is typically
+Specifically, an OpenCAL-CL host application is typically
 subdivided in the following parts:
 \begin{itemize}
-\item Definition of the CA model\footnote{OpenCAL-CL CA definition
-  does not differ from what done for the cases of OpenCAL (cf. Chapter
-  \ref{ch:opencal}) and OpenCAL-OMP (cf. Chapter
-  \ref{ch:opencal-omp}).};
+\item Definition of the CA model;
 \item Management of the OpenCL devices;
 \item Kernels definition and allocation;
-\item Data dispatch from the CA model, defined host-side, to the device;
-\item Start of the CA simulation main loop.
+\item Data dispatch from the CA model, defined host-side, to the compliant OpenCL device;
+\item Start of the CA simulation main loop (kernel execution).
 \end{itemize}
 
-\section{Host programming} 
+OpenCAL-CL CA definition does not differ from what done for the cases
+of OpenCAL (cf. Chapter \ref{ch:opencal}) and OpenCAL-OMP (cf. Chapter
+\ref{ch:opencal-omp}). At the contrary, compliant device management,
+kernel definition and allocation, data dispatch, and kernel execution
+are completely new. All theese phases are discussed in the following
+sections.
 
-\subsection{Definition of the CA model}
+\subsection{Compliant Device Management}
 
-XXX
-
-\subsection{Manage of the devices}
-
-After model definition, the user must choose the device for kernel
-execution. An OpenCAL-CL structure called \verb'CALOpenCL' allows the
-user to manage all available platforms and devices. This structure
-simplifies the access to the devices compared with the native API of
-OpenCL. The library supplies other functions to know which platforms
-and devices are available on the system and to have information about
-these. Below you can see a simple program showing how the
-\verb'CALOpenCL' structure can be used (Listing \ref{lst:CALOpenCL}).
-
+After model definition, the user must select an OpenCL compliant
+device in order to run the kernels. At this purpose, OpenCAL-CL
+provides the \verb'CALOpenCL' structure that, together with other
+utility functions, considerably simplifies platform, device, and
+context management with respect to the native OpenCL API. Listing
+\ref{lst:CALOpenCL} shows how to select a compliant device in
+OpenCAL-CL.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALOpenCL, caption=Access to platform and devices.]
-  #include <calCL2D .h>
+  #include <calCL2D.h>
 
   int main ()
   {
-    // get all available  platforms
+    // Initilize a pointer to the calclCreateCALOpenCL structure
     CALOpenCL * calOpenCL = calclCreateCALOpenCL ();
+
     // get all available devices
     calclInitializePlatforms ( calOpenCL );
 
@@ -129,10 +109,33 @@ these. Below you can see a simple program showing how the
   }
 \end{lstlisting}
 
+% which fills the object with the platforms available on the machine.
+
+The \verb'calCL2D.h' header file, needed to define OpenCAL-CL 2D CA,
+is included at line 1. Line 6 declares a pointer to the above cited
+\verb'CALOpenCL' strucure, and initializes it throgh the
+\verb'calclCreateCALOpenCL()' utility function. This object,
+\verb'calOpenCL', is used as parameter for the
+\verb'calclInitializePlatforms()' function at line 9, which fills the
+object with the platforms available on the machine. Line 12 calls the
+\verb'calclInitializeDevices()' function, that initializes the
+available devices, while line 15 selects one of them for kernel
+execution. Specifically, an object of type \verb'CALCLdevice' is
+declared ad initialized by the function \verb'calclGetDevice()'. This
+latter takes as first parameter a pointer to a \verb'CALOpenCL'
+object, while the second and third parameters are used to select
+platform and device, respectively. Since both platforms and devices
+are identified by 0-based numerical ID, statement at line 15 selects
+the first device belonging to the first platform (e.g. a GTX 980
+belonging to the NVIDIA CUDA platform). Eventually, line 18 creates a
+OpenCL context, based on the device previously selected. At this
+porpose, an object of type \verb'CALCLcontext' declared and defined by
+means of the \verb'calclcreateContext()' function.
+
 In OpenCAL-CL platforms and devices are stored in a matrix where rows
 represent platforms and columns devices. Thus, to choose which
 platform and device to use for the computation, it is necessary to
-specify their indexes within the matrix. For example, at lines 14, we
+specify their indexes within the matrix. For example, at lines 15, we
 chose the platform number 0 and the device number 0. If we have a
 system with 3 NVIDIA GPUs and 3 AMD GPUs, the library will have a $2
 \times 3$ size matrix, where 2 are the vendors (i.e., the platforms
@@ -312,7 +315,7 @@ computed by choosing the \verb'platformNum' and \verb'deviceNum'
 integers(line 24-25). Moreover, two important functions are here
 considered: \verb'calclcreateContext' and
 \verb'calclLoadProgramLib2D'. The first returns the context
-\ref{sec:openclstructure}, while the second builds all kernels inside
+(see \ref{sec:opencalclstructure}), while the second builds all kernels inside
 the path specified by \verb'kernelSrc'(line 15) including the files
 specified by \verb'kernelInc'(line 16), and returns a program
 containing all the compiled kernels.
