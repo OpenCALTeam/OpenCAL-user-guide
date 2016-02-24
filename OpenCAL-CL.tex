@@ -33,19 +33,30 @@ overview to OpenCL, while the second one introduces OpenCAL-CL by
 examples.
 
 \section{OpenCAL-CL structure}\label{sec:opencalclstructure}
-In the OpenCAL-CL modeling context, host application, runing on the
-CPU, defines the CA model and also performs data exchange and kernels
-(i.e. elementary processes) execution on the compliant device. Data
-exchange and kernels execution are managed thanks to an OpenCL
-\emph{context}. In particular, the host application links kernels into
-one or more containers, called \emph{programs}. The program therefore
-connects kernels with the data to be processed and dispatches them to
-a special OpenCL structure called \emph{command queue}. This is
-necessary because only enqueued kernel are actually executed. Figure
-\ref{fig:GeneralStructure} shows the general structure of an OpenCL
-program. Context contains all the devices, command queues and kernels,
-each device has its own command queue and each command queue contains
-the kernels to be executed on the corresponding device.
+In the OpenCAL-CL modeling context, the host application, runing on
+the CPU, defines the CA model and also performs data exchange and
+kernels (i.e. elementary processes) execution on the compliant device.
+
+The CA model is defined exactly as in the case of the serial
+implementation of OpenCAL (cf. Chapter \ref{ch:opencal}. However,
+elementary processes are implemented as OpenCL kernels, to be executed
+in parallel on compliant device. For this reason, they are not added
+to the host-side CA model, but to the so called OpenCAL-CL \emph{toolkit},
+which is also responsible for data exchange between host and device.
+
+In order to better understand how OpenCAL-CL manages kernel execution
+and data exchange, it is necessary to introduce some OpenCL
+conceptss. Data exchange and kernels execution are managed thanks to
+an OpenCL \emph{context}. In particular, the host application links
+kernels into one or more containers, called \emph{programs}. The
+program therefore connects kernels with the data to be processed and
+dispatches them to a special OpenCL structure called \emph{command
+  queue}. This is necessary because only enqueued kernel are actually
+executed. Figure \ref{fig:GeneralStructure} shows the general
+structure of an OpenCL program. Context contains all the devices,
+command queues and kernels, each device has its own command queue and
+each command queue contains the kernels to be executed on the
+corresponding device.
 
 \begin{figure}[htp]
   \begin{center}
@@ -61,11 +72,12 @@ the kernels to be executed on the corresponding device.
 Specifically, an OpenCAL-CL host application is typically
 subdivided in the following parts:
 \begin{itemize}
-\item Definition of the CA model;
-\item Management of the OpenCL devices;
-\item Kernels definition and allocation;
-\item Data dispatch from the CA model, defined host-side, to the compliant OpenCL device;
-\item Start of the CA simulation main loop (kernel execution).
+\item Definition of the host-side CA model;
+\item Selection of the OpenCL compliant device;
+\item OpenCAL-CL toolkit definition;
+\item Kernels reading, compilation and equeuing;
+%\item Optional kernel parameters settings;
+\item Simulation execution on the compliant device.
 \end{itemize}
 
 OpenCAL-CL CA definition does not differ from what done for the cases
@@ -75,7 +87,7 @@ kernel definition and allocation, data dispatch, and kernel execution
 are completely new. All theese phases are discussed in the following
 sections.
 
-\subsection{Compliant Device Management}
+\subsection{Selection of the OpenCL compliant device}
 
 After model definition, the user must select an OpenCL compliant
 device in order to run the kernels. At this purpose, OpenCAL-CL
@@ -91,96 +103,156 @@ OpenCAL-CL.
   int main ()
   {
     // Initilize a pointer to the calclCreateCALOpenCL structure
-    CALOpenCL * calOpenCL = calclCreateCALOpenCL ();
+    CALOpenCL * calclManager = calclCreateCALOpenCL ();
 
-    // get all available devices
-    calclInitializePlatforms ( calOpenCL );
+    // get all available platforms
+    calclInitializePlatforms ( calclManager );
 
     // Initialize the devices
-    calclInitializeDevices ( calOpenCL );
+    calclInitializeDevices ( calclManager );
+
+    // Uncomment if platforms and devices are unknown
+    //calclGetPlatformsAndDeviceFromStandardInput();
 
     // get the first device on the first platform
-    CALCLdevice device = calclGetDevice ( calOpenCL , 0, 0 );
+    // this call is unnecessary if calclGetPlatformsAndDeviceFromStandardInput() is used
+    CALCLdevice device = calclGetDevice ( calclManager , 0, 0 );
 
     // create a context
-    CALCLcontext context = calclcreateContext ( &device , 1 );
+    CALCLcontext calclContext = calclCreateContext ( &device , 1 );
 
-    return 0;
+    // ...
   }
 \end{lstlisting}
 
-% which fills the object with the platforms available on the machine.
-
 The \verb'calCL2D.h' header file, needed to define OpenCAL-CL 2D CA,
 is included at line 1. Line 6 declares a pointer to the above cited
-\verb'CALOpenCL' strucure, and initializes it throgh the
+\verb'CALOpenCL' strucure, and initializes it through the
 \verb'calclCreateCALOpenCL()' utility function. This object,
-\verb'calOpenCL', is used as parameter for the
+\verb'calclManager', is used as parameter for the
 \verb'calclInitializePlatforms()' function at line 9, which fills the
 object with the platforms available on the machine. Line 12 calls the
 \verb'calclInitializeDevices()' function, that initializes the
-available devices, while line 15 selects one of them for kernel
+available devices, while line 19 selects one of them for kernel
 execution. Specifically, an object of type \verb'CALCLdevice' is
 declared ad initialized by the function \verb'calclGetDevice()'. This
 latter takes as first parameter a pointer to a \verb'CALOpenCL'
 object, while the second and third parameters are used to select
 platform and device, respectively. Since both platforms and devices
-are identified by 0-based numerical ID, statement at line 15 selects
-the first device belonging to the first platform (e.g. a GTX 980
-belonging to the NVIDIA CUDA platform). Eventually, line 18 creates a
-OpenCL context, based on the device previously selected. At this
-porpose, an object of type \verb'CALCLcontext' declared and defined by
-means of the \verb'calclcreateContext()' function.
+are identified by a 0-based index\footnote{In OpenCAL-CL platforms and
+  devices are stored in a matrix where rows represent platforms and
+  columns devices. Thus, to choose which platform and device to use
+  for the computation, it is necessary to specify their indexes within
+  the matrix. For example, at lines 15, we chose the platform number 0
+  and the device number 0. If we have a system with 3 NVIDIA GPUs and
+  3 AMD GPUs, the library will have a $2 \times 3$ size matrix, where
+  2 are the vendors (i.e., the platforms NVIDIA and AMD) and 3 are the
+  GPUs for each platforms. If we want to run the program using the
+  third AMD GPU, we can specify 1 and 2 as indices.}, statement at
+line 15 selects the first device belonging to the first platform
+(e.g. a GTX 980 belonging to the NVIDIA CUDA platform). If system's
+platforms and devices are unknown, the
+\verb'calclGetPlatformsAndDeviceFromStandardInput()' function can be
+used alternatively to \verb'calclGetDevice()'. It prints all the
+available platforms and devices and permits for their interactive
+selection. Eventually, line 22 creates a OpenCL context, based on the
+device previously selected. At this porpose, an object of type
+\verb'CALCLcontext' is declared and defined by means of the
+\verb'calclCreateContext()' function.
 
-In OpenCAL-CL platforms and devices are stored in a matrix where rows
-represent platforms and columns devices. Thus, to choose which
-platform and device to use for the computation, it is necessary to
-specify their indexes within the matrix. For example, at lines 15, we
-chose the platform number 0 and the device number 0. If we have a
-system with 3 NVIDIA GPUs and 3 AMD GPUs, the library will have a $2
-\times 3$ size matrix, where 2 are the vendors (i.e., the platforms
-NVIDIA and AMD) and 3 are the GPUs for each platforms. If we want to
-run the program using the third AMD GPU, we can specify 1 and 2 as
-indices. If we don't know how the system identifies the platforms and
-devices, the library supplies us a function called
-\verb'calclGetPlatformsAndDeviceFromStandardInput' that allows us to
-know the available platforms and devices. First it prints the
-information on standard output and then we can insert the indices
-directly from standard input.
+\subsection{OpenCAL-CL toolkit Definition and Kernels Management}
 
-After the device is chosen, the user must specify the path where the
-kernels and relative headers are located (cf. Listing
-\ref{lst:calclLoadProgramLib}). Through the function
-\verb'calclLoadProgramLib(2D/3D)' the library automatically reads
-kernels and compiles them.
+After the compliant device has been chosen and elementary processes
+implemented as kernels, these latter can automatically be read and
+compiled through the \verb'calclLoadProgramLib2D()' function
+(cf. Listing \ref{lst:calclLoadProgramLib}). It takes both the context
+and device, and also the paths of user defined kernels and
+corresponding headers as parameters, and returns an OpenCL
+program\footnote{\texttt{CALCLprogram} redefines the
+\texttt{cl\_program} OpenCL type.}.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgramLib, caption=The calclLoadProgramLib function., numbers=none]
-  CALCLprogram calclLoadProgramLib(2D|3D) (
-                  CALCLcontext context ,
-                  CALCLdevice device ,
-                  char * path_user_kernel ,
-                  char * path_user_include
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgramLib, caption={The calclLoadProgramLib function. It loads and compiles kernels by returning an OpenCL program.}, numbers=none]
+  CALCLprogram calclLoadProgramLib2D (
+    CALCLcontext context ,
+    CALCLdevice device ,
+    char * path_user_kernel ,
+    char * path_user_include
   )
 \end{lstlisting}
 
-\subsection{Kernels allocation}
+Once compiled and grouped into an OpenCL program, kernels can be
+extracted in order to be attached to a command queue for
+execution. Specifically, the \verb'calclGetKernelFromProgram()'
+function extracts a kernel from an OpenCL program, taking a pointer to
+the program and the kernel name (cf. Listing
+\ref{lst:calclGetKernelFromProgram}).
 
-The library doesn't know which kernels are related to the CA
-elementary processes, nor their execution order on the available
-devices. Thus, to create and allocate a kernel it Is necessary to call
-the \verb'calclGetKernelFromProgram' function (see Listing
-\ref{lst:calclGetKernelFromProgram}), that retrieves an OpenCL kernel
-given a compiled OpenCL program.
-
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetKernelFromProgram, caption=The calclGetKernelFromProgram function., numbers=none]
-  cl_kernel elementaryProcess = calclGetKernelFromProgram(
-                                &program,
-                                KERNEL_NAME);
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetKernelFromProgram, caption={The calclGetKernelFromProgram kernel extraction function}., numbers=none]
+  CALCLkernel calclGetKernelFromProgram (
+    CALCLprogram * program,
+    char * kernelName 
+  )
 \end{lstlisting}
 
-\subsection{Sending data from the CA model to devices}
+In order to equeue the extracted kernels, instead of explicitly
+adopting an OpenCL command queue, OpenCAL-CL make use of an instance of
+the \verb'CALCLToolkit2D' data structure, which can be created by
+means of the \verb'calclCreateToolkit2D()' function (cf. Listing
+\ref{lst:calclCreateToolkit2D}). 
 
-To transfer data from host side to kernel side, the user must define
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclCreateToolkit2D, caption=The calclCreateToolkit2D data structure., numbers=none]
+  CALCLToolkit2D * calclCreateToolkit2D(
+                   struct CALModel2D * model,
+                   CALCLcontext context,
+                   CALCLprogram program,
+                   CALCLdevice device,
+                   CALCLOptimization opt
+  )
+\end{lstlisting}
+
+The first parameter is a pointer to a CALModel2D, defined host side as
+in the case of the serial implementation of OpenCAL (cf. Chapter
+\ref{ch:opencal}). The second one is an OpenCL context, as well as the
+third and fourth parameters are an OpenCL program and compliant
+device, respectively.
+
+The function \verb'calclAddElementaryProcessKernel2D' adds a new
+kernel to the execution queue
+
+\begin{lstlisting}[numbers=none]
+  void calclAddElementaryProcessKernel2D(
+               CALCLToolkit2D * toolkit2d,
+               struct CALModel2D *model,
+               CALCLkernel * elemProcKernel
+  );
+\end{lstlisting}
+
+
+Kernel parameters...
+
+
+
+
+%% The structure \verb'CALCLToolkit(2D/3D)' doesn't contain only the
+%% buffers to transfer data but also the kernels belonging to the
+%% execution loop.
+
+%% , by sending all necessary data to the
+%% device:
+
+%% \begin{itemize}
+%% \item Cellular space dimensions;
+%% \item The number of substates for each CALbyte, CALint and CALreal type;
+%% \item The CA substates;
+%% \item The list of active cells;
+%% \item Neighbourhood specifications;
+%% \item Cellular space boundary condition.
+%% \end{itemize}
+
+
+\subsection{Kernel parameters settings}
+
+To transfer data from host to the compliant device, the user must define
 the structure called \verb'CALCLToolkit(2D/3D)' containing all the
 buffers (data) of the CA model. By default, the library sends to all
 kernels the data associated to the model. Such data is listed
@@ -233,7 +305,7 @@ kernel.
 \end{lstlisting}
 
 
-\subsection{Start execution loop}
+\subsection{Simulation execution on the compliant device}
 
 To start the execution loop, the user has to call the function
 \verb'calclRun(2D/3D)'. This function executes all the elementary
