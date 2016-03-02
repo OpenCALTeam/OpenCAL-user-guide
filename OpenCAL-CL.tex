@@ -75,7 +75,7 @@ subdivided in the following parts:
 \item Definition of the host-side CA model;
 \item Selection of the OpenCL compliant device;
 \item OpenCAL-CL toolkit definition;
-\item Kernels reading, compilation and equeuing;
+\item Kernels reading, compilation and enqueuing;
 %\item Optional kernel parameters settings;
 \item Simulation execution on the compliant device.
 \end{itemize}
@@ -164,15 +164,15 @@ device previously selected. At this porpose, an object of type
 
 After the compliant device has been chosen and elementary processes
 implemented as kernels, these latter can automatically be read and
-compiled through the \verb'calclLoadProgramLib2D()' function
-(cf. Listing \ref{lst:calclLoadProgramLib}). It takes both the context
+compiled through the \verb'calclLoadProgram2D()' function
+(cf. Listing \ref{lst:calclLoadProgram}). It takes both the context
 and device, and also the paths of user defined kernels and
 corresponding headers as parameters, and returns an OpenCL
 program\footnote{\texttt{CALCLprogram} redefines the
 \texttt{cl\_program} OpenCL type.}.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgramLib, caption={The calclLoadProgramLib function. It loads and compiles kernels by returning an OpenCL program.}, numbers=none]
-  CALCLprogram calclLoadProgramLib2D (
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgram, caption={The calclLoadProgramLib function. It loads and compiles kernels by returning an OpenCL program.}, numbers=none]
+  CALCLprogram calclLoadProgram2D (
     CALCLcontext context ,
     CALCLdevice device ,
     char * path_user_kernel ,
@@ -194,38 +194,37 @@ the program and the kernel name (cf. Listing
   )
 \end{lstlisting}
 
-In order to equeue the extracted kernels, instead of explicitly
-adopting an OpenCL command queue, OpenCAL-CL make use of an instance of
-the \verb'CALCLToolkit2D' data structure, which can be created by
-means of the \verb'calclCreateToolkit2D()' function (cf. Listing
-\ref{lst:calclCreateToolkit2D}). 
+In order to equeue the extracted kernels, OpenCAL-CL make use of an
+instance of the \verb'CALCLToolkit2D' data structure\footnote{Instead
+  of explicitly adopting an OpenCL command queue.}, which can be
+created by means of the \verb'calclCreateToolkit2D()' function
+(cf. Listing \ref{lst:calclCreateToolkit2D}). The first parameter is a
+pointer to a \verb'CALModel2D', defined host side as in the case of the
+serial implementation of OpenCAL (cf. Chapter \ref{ch:opencal}). The
+second one is an OpenCL context, as well as the third and fourth
+parameters are an OpenCL program and compliant device, respectively.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclCreateToolkit2D, caption=The calclCreateToolkit2D data structure., numbers=none]
   CALCLToolkit2D * calclCreateToolkit2D(
                    struct CALModel2D * model,
                    CALCLcontext context,
                    CALCLprogram program,
-                   CALCLdevice device,
-                   CALCLOptimization opt
+                   CALCLdevice device
   )
 \end{lstlisting}
 
-The first parameter is a pointer to a CALModel2D, defined host side as
-in the case of the serial implementation of OpenCAL (cf. Chapter
-\ref{ch:opencal}). The second one is an OpenCL context, as well as the
-third and fourth parameters are an OpenCL program and compliant
-device, respectively.
-
 The function \verb'calclAddElementaryProcessKernel2D' adds a new
 kernel to the execution queue
+(cf. Listing \ref{lst:calclAddElementaryProcessKernel2D}).
 
-\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclAddElementaryProcessKernel2D, caption=The calclCreateToolkit2D function., numbers=none]
   void calclAddElementaryProcessKernel2D(
                CALCLToolkit2D * toolkit2d,
                struct CALModel2D *model,
                CALCLkernel * elemProcKernel
   );
 \end{lstlisting}
+
 
 
 Kernel parameters...
@@ -233,85 +232,12 @@ Kernel parameters...
 
 
 
-%% The structure \verb'CALCLToolkit(2D/3D)' doesn't contain only the
-%% buffers to transfer data but also the kernels belonging to the
-%% execution loop.
-
-%% , by sending all necessary data to the
-%% device:
-
-%% \begin{itemize}
-%% \item Cellular space dimensions;
-%% \item The number of substates for each CALbyte, CALint and CALreal type;
-%% \item The CA substates;
-%% \item The list of active cells;
-%% \item Neighbourhood specifications;
-%% \item Cellular space boundary condition.
-%% \end{itemize}
-
-
-\subsection{Kernel parameters settings}
-
-To transfer data from host to the compliant device, the user must define
-the structure called \verb'CALCLToolkit(2D/3D)' containing all the
-buffers (data) of the CA model. By default, the library sends to all
-kernels the data associated to the model. Such data is listed
-below:
-
-\begin{itemize}
-	\item the dimension of cellular space
-	\item the number of substate for every type (i.e., byte, int, real)
-	\item the substates allocated from the user
-	\item the list of active cells
-	\item the list of active cells flags
-	\item type, dimension and ID of the neighbourhood
-	\item the border condition
-\end{itemize}
-
-First, the user must create an instance of the structure
-\verb'CALCLToolkit(2D/3D)' by calling the function
-\verb'calclCreateToolkit' as shown in the following code snippet.
-
-\begin{lstlisting}[numbers=none]
-  CALCLToolkit2D * calclCreateToolkit (2D|3D)(
-                   struct CALModel (2D|3D) *model,
-                   CALCLcontext context,
-                   CALCLprogram program,
-                   CALCLdevice device,
-                   CALCLOptimization opt
-  )
-\end{lstlisting}
-
-The \verb'CALCLOptimization' enumerative allows the user to choose if
-she/he wants to use the library without optimization
-\verb|(CALCL_NO_OPT)| or with active cells optimization
-\verb|(CALCL_OPT_ACTIVE_CELLS)|. The structure
-\verb'CALCLToolkit(2D/3D)' doesn't contain only the buffers to
-transfer data but also the kernels belonging to the execution
-loop.
-
-To add a new kernel to the execution loop, the user has to
-call the function \verb'calclAddElementaryProcessKernel(2D/3D)' that
-adds the chosen kernel to the list of CA elementary processes;
-moreover, it sends to the device all the necessary data to execute the
-kernel.
-
-\begin{lstlisting}[numbers=none]
-  void calclAddElementaryProcessKernel2D(
-               CALCLToolkit2D * toolkit2d,
-               struct CALModel2D *model,
-               CALCLkernel * elemProcKernel
-  );
-\end{lstlisting}
-
-
 \subsection{Simulation execution on the compliant device}
 
-To start the execution loop, the user has to call the function
-\verb'calclRun(2D/3D)'. This function executes all the elementary
-processes previously declared on the specified device.
+The \verb'calclRun()' function (cf. Listing \ref{lst:calclRun2D}) runs the CA simulation by executing
+all the defined kernels on the selected compliant device.
 
-\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclRun2D, caption=The calclRun2D function., numbers=none]
   void calclRun2D(CALCLToolkit2D* toolkit2d,
                   struct CALModel2D * model,
                   unsigned int initialStep,
@@ -320,7 +246,24 @@ processes previously declared on the specified device.
 \end{lstlisting}
 
 
-\section{Kernel programming}
+\section{OpenCAL-CL Kernel Programming}
+
+Let us condider the OpenCAL-CL kernel example in Listing (cf. Listing
+\ref{lst:OpenCAL-CL-kernel}. To define an OpenCAL-CL kernel, the
+\verb'cal2D.h' header must be included (line 1). Accordingly to OpenCL, each
+kernel definition must start with the \verb'__kernel'
+keyword. However, differently to OpenCL, each OpenCAL-CL kernel must
+have (at least) an implicit parameter,
+i.e. \verb'__CALCL_MODEL_2D'. It is macro-like C object, and is used
+to implicitly let the kernel to know details about the CA model,
+e.g. the defined neighborhood. Moreover, the \verb'initThreads2D()'
+function must be the first to be called into the kernel as it prevents
+the execution of a number of threads exceeding the CA
+dimension. Eventually, function calls that in OpenCAL were requiring a
+pointer to a CA model, here take the \verb'MODEL_2D' macro-like C
+object to its place (cf. Listing \ref{lst:OpenCAL-CL-kernel}, line
+17).
+
 
 In order to program kernels in OpenCAL, the user needs to include some
 header files. Specifically, \verb'cal2D.h' or \verb'cal3D.h' permit
@@ -332,12 +275,35 @@ keyword \verb'MODEL_DEFINITION2D' must be specified as first parameter
 and the function \verb'initThreads2D()' called as first
 instruction.\\ The code below shows how to declare a new kernel.
 
-\begin{lstlisting} 
-  __kernel void kernel(MODEL_DEFINITION2D)
+\begin{lstlisting}[float,floatplacement=H, label=lst:OpenCAL-CL-kernel, caption=Example of OpenCAL-CL kernel.] 
+  #include <cal2D.h>
+
+  // Define handles to CA substates
+  //...
+  #define Z 4
+  #define H 5
+
+  //...
+  
+  __kernel void kernel(__CALCL_MODEL_2D)
   {
+    // Prevent the execution of more threads than the CA dimension
     initThreads2D();
+
     //...
+
+    // Get the cell coordinates back
+    int i = getRow();
+    int j = getCol();
+
     //...
+
+    // Set a new value for the substate
+    // whose handle is defined by H.
+    // Please, note the usage of the
+    // MODEL_2D macro-like object
+    calSet2Dr(MODEL_2D, H, i, j, h_next);
+    
     //...
   }
 \end{lstlisting}
@@ -386,7 +352,7 @@ function, which will return the device where elementary process are
 computed by choosing the \verb'platformNum' and \verb'deviceNum'
 integers(line 24-25). Moreover, two important functions are here
 considered: \verb'calclcreateContext' and
-\verb'calclLoadProgramLib2D'. The first returns the context
+\verb'calclLoadProgram2D'. The first returns the context
 (see \ref{sec:opencalclstructure}), while the second builds all kernels inside
 the path specified by \verb'kernelSrc'(line 15) including the files
 specified by \verb'kernelInc'(line 16), and returns a program
