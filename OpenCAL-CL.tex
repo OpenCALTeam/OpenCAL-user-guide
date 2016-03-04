@@ -28,37 +28,27 @@ background can be limited or even null. In any case, the user can
 learn some basic elements of OpenCL kernel programming thanks to this
 guide.
 
-This chapter is divided in two parts: the first part is a very brief
-overview to OpenCL, while the second one introduces OpenCAL-CL by
-examples.
+This chapter is divided in two parts: the first part provides a brief
+overview to both OpenCL and OpenCAL-CL, while the second one
+introduces OpenCAL-CL by examples.
 
-\section{OpenCAL-CL structure}\label{sec:opencalclstructure}
-In the OpenCAL-CL modeling context, the host application, runing on
-the CPU, defines the CA model and also performs data exchange and
-kernels (i.e. elementary processes) execution on the compliant device.
+
+\section{A brief introduction to OpenCL and OpenCAL-CL}\label{sec:opencalclstructure}
+
+As stated above, OpenCAL-CL applications ara made by two parts: the
+host and the device applications. The host application, runing on the
+CPU, defines the CA model and also performs data exchange and kernels
+(i.e. elementary processes) execution on the compliant device.
 
 The CA model is defined exactly as in the case of the serial
 implementation of OpenCAL (cf. Chapter \ref{ch:opencal}. However,
 elementary processes are implemented as OpenCL kernels, to be executed
 in parallel on compliant device. For this reason, they are not added
-to the host-side CA model, but to the so called OpenCAL-CL \emph{toolkit},
-which is also responsible for data exchange between host and device.
+to anymore the host-side CA model. At the contrary, theyare added to
+the so called OpenCAL-CL \emph{toolkit}, which is also responsible for
+data exchange between host and device.
 
-In order to better understand how OpenCAL-CL manages kernel execution
-and data exchange, it is necessary to introduce some OpenCL
-conceptss. Data exchange and kernels execution are managed thanks to
-an OpenCL \emph{context}. In particular, the host application links
-kernels into one or more containers, called \emph{programs}. The
-program therefore connects kernels with the data to be processed and
-dispatches them to a special OpenCL structure called \emph{command
-  queue}. This is necessary because only enqueued kernel are actually
-executed. Figure \ref{fig:GeneralStructure} shows the general
-structure of an OpenCL program. Context contains all the devices,
-command queues and kernels, each device has its own command queue and
-each command queue contains the kernels to be executed on the
-corresponding device.
-
-\begin{figure}[htp]
+\begin{figure}[tp]
   \begin{center}
     \includegraphics[width=12cm]{./images/OpenCAL-CL/kernelDistribution}
     \caption{General structure of a OpenCL program, from \emph{OpenCL
@@ -69,30 +59,170 @@ corresponding device.
   \end{center}
 \end{figure}
 
-Specifically, an OpenCAL-CL host application is typically
+In order to better understand how OpenCAL-CL manages kernel execution
+and data exchange, it is necessary to introduce some OpenCL
+concepts. In OpenCL, data exchange and kernels execution are managed
+thanks to an OpenCL \emph{context}. In particular, the host
+application links kernels into one or more containers, called
+\emph{programs}. The program therefore connects kernels with the data
+to be processed and dispatches them to a special OpenCL structure
+called \emph{command queue}. This is necessary because only enqueued
+kernel are actually executed. Figure \ref{fig:GeneralStructure} shows
+the general structure of an OpenCL application. Context contains all the
+devices, command queues and kernels, each device has its own command
+queue and each command queue contains the kernels to be executed on
+the corresponding device.
+
+In the following sections, both device- and host-side OpenCAL-CL
+programming is briefly introduced.
+
+
+\subsection{OpenCAL-CL device-side Programming}
+
+As stated above, functions that can be executed on an OpenCL compliant
+device are called kernels. In order to explain ho to write an
+OpenCAL-CL kernel, let us condider the example in Listing
+\ref{lst:OpenCAL-CL-kernel}.
+
+First of all, the \verb'cal2D.h' header file must be included (line
+1). Accordingly to OpenCL, each kernel definition must start with the
+\verb'__kernel' keyword (line 10). However, each OpenCAL-CL kernel
+must have (at least) the \verb'__CALCL_MODEL_2D' parameter. It is a
+macro-like C object defining a list of pre-fixed typed parameters,
+needed to let the kernel to know any data about the CA model, like
+subates and neighbourhood, beside others (cf. line 10). Kenerls can
+also take other parameters, as in the example in Listing
+\ref{lst:Another-OpenCAL-CL-kernel}. In the specific case, the
+\verb'Pessilon' parameter is allocated into the compliant device's
+global memory. It is also possible to allocate kernel parameters in
+the faster local memory, which is shared by threads belonging to the
+same work group, by means of the OpenCL \verb'__local' keyyword. The
+same holds for variables defined inside the kernel body where, besides
+the above cited \verb'__global' and \verb'__local' memory level
+qualifier, the \verb'__private' keyword can be used to define private
+variables, that are not shared with any other thread. Variables
+declared vithout any memory level qualifier are implicitly allocated
+as private, as in the case of variables at lines 18 and 19 of Listing
+\ref{lst:OpenCAL-CL-kernel}.
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:OpenCAL-CL-kernel, caption=Example of OpenCAL-CL kernel.] 
+  #include <cal2D.h>
+
+  // Define handles to CA substates
+  //...
+  #define Z 4
+  #define H 5
+
+  //...
+  
+  __kernel void kernel_example (__CALCL_MODEL_2D)
+  {
+    // Prevent the execution of more threads than the CA dimension
+    initThreads2D();
+
+    //...
+
+    // Get the cell coordinates back
+    int i = getRow();
+    int j = getCol();
+
+    //...
+
+    // Set a new value for the substate
+    // whose handle is defined by H.
+    // Please, note the usage of the
+    // MODEL_2D macro-like object
+    calSet2Dr(MODEL_2D, H, i, j, h_next);
+    
+    //...
+  }
+\end{lstlisting}
+
+The \verb'initThreads2D()' function must be the first to be called
+into the kernel, as it prevents the execution of a number of threads
+exceeding the number of CA cells\footnote{In fact, OpenCAL-CL adopts
+  the one-thread/one-cell policy.} (Listing
+\ref{lst:OpenCAL-CL-kernel}, line 13). The \verb'getRow()' and
+\verb'getCol()' functions (Listing \ref{lst:OpenCAL-CL-kernel}, lines
+18-19) are used to get the CA cell coordinates back from the OpenCL
+thread global identifier. Note that, functions that in OpenCAL were
+requiring a pointer to a CA object, here take the \verb'MODEL_2D'
+macro-like C object in its place (line 27), which implicitly defines a
+list of prefixed parameters needed by the function.
+
+Moreover, note that substates are accessed indirectly, by means of
+numerical handles (cf. Listing \ref{lst:OpenCAL-CL-kernel}, line 27),
+which has to be previously defined into the kernel (Listing
+\ref{lst:OpenCAL-CL-kernel}, line 6). The criterion to be adopted is
+very simple. Handels are zero-based natural nambers. Zero is used to
+link the first host-side substated, i.e. the first substated added to
+the host-side CA, one is used to link the second substate added to the
+host-side CA and so on.
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:Another-OpenCAL-CL-kernel, caption={Another example of OpenCAL-CL kernel, with an additional parameter.}] 
+  #include <cal2D.h>
+  //...
+    
+  __kernel void another_kernel_example (__CALCL_MODEL_2D, __global CALParameterr * Pepsilon)
+  {
+    
+    //...
+  }
+\end{lstlisting}
+
+
+
+%% \subsection{Selection of the OpenCL compliant device}
+\subsection{OpenCAL-CL host-side Programming}
+
+An OpenCAL-CL host application is typically
 subdivided in the following parts:
 \begin{itemize}
-\item Definition of the host-side CA model;
+\item Definition of the CA model;
 \item Selection of the OpenCL compliant device;
 \item OpenCAL-CL toolkit definition;
 \item Kernels reading, compilation and enqueuing;
-%\item Optional kernel parameters settings;
-\item Simulation execution on the compliant device.
+\item Simulation execution on the previously selected compliant
+  device.
 \end{itemize}
 
-OpenCAL-CL CA definition does not differ from what done for the cases
-of OpenCAL (cf. Chapter \ref{ch:opencal}) and OpenCAL-OMP (cf. Chapter
-\ref{ch:opencal-omp}). At the contrary, compliant device management,
-kernel definition and allocation, data dispatch, and kernel execution
-are completely new. All theese phases are discussed in the following
-sections.
+All these phases are described below.
 
-\subsection{Selection of the OpenCL compliant device}
+\subsubsection{Definition of the CA model}
 
-After model definition, the user must select an OpenCL compliant
-device in order to run the kernels. At this purpose, OpenCAL-CL
-provides the \verb'CALOpenCL' structure that, together with other
-utility functions, considerably simplifies platform, device, and
+The OpenCAL-CL CA definition does not differ from what done for the
+cases of OpenCAL (cf. Chapter \ref{ch:opencal}) and OpenCAL-OMP
+(cf. Chapter \ref{ch:opencal-omp}). Indeed, in Listing
+\ref{lst:host-side-application}, a 2D CA object is defined by using
+the \verb'CALModel2D' OpenCAL data type (line 4), and then initialized
+by means of the \verb'calCADef2D()' function (line 11), exactly as in
+the serial version of OpenCAL. Note that the \verb'calcl2D.h'
+OpenCAL-CL specific header file is included at line 1. It, in turn,
+includes the \verb'cal2D' header, so that it is possible to use
+OpenCAL's data types and functions from an OpenCAL-CL host
+application.
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:host-side-application, caption={An example of OpenCAL-CL host-side application.}] 
+  #include <OpenCAL-CL/calcl2D.h>
+  //...
+
+  struct CALModel2D* sciddicaT;
+  //...
+  
+  int main(int argc, char** argv)
+  {
+    //...
+
+    sciddicaT = calCADef2D(ROWS, COLS, CAL_VON_NEUMANN_NEIGHBORHOOD_2D, CAL_SPACE_TOROIDAL, CAL_OPT_ACTIVE_CELLS);
+
+  }
+\end{lstlisting}
+
+
+\subsubsection{Selection of the OpenCL compliant device}
+
+OpenCAL-CL provides the \verb'CALOpenCL' structure that, together with
+other utility functions, considerably simplifies platform, device, and
 context management with respect to the native OpenCL API. Listing
 \ref{lst:CALOpenCL} shows how to select a compliant device in
 OpenCAL-CL.
@@ -100,7 +230,7 @@ OpenCAL-CL.
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALOpenCL, caption=Access to platform and devices.]
   #include <calCL2D.h>
 
-  int main ()
+  int main (int argc, char** argv)
   {
     // Initilize a pointer to the calclCreateCALOpenCL structure
     CALOpenCL * calclManager = calclCreateCALOpenCL ();
@@ -160,16 +290,40 @@ device previously selected. At this porpose, an object of type
 \verb'CALCLcontext' is declared and defined by means of the
 \verb'calclCreateContext()' function.
 
-\subsection{OpenCAL-CL toolkit Definition and Kernels Management}
 
-After the compliant device has been chosen and elementary processes
-implemented as kernels, these latter can automatically be read and
-compiled through the \verb'calclLoadProgram2D()' function
-(cf. Listing \ref{lst:calclLoadProgram}). It takes both the context
-and device, and also the paths of user defined kernels and
-corresponding headers as parameters, and returns an OpenCL
+\subsubsection{OpenCAL-CL toolkit definition}
+
+In order to equeue the extracted kernels, OpenCAL-CL make use of an
+instance of the \verb'CALCLToolkit2D' data structure\footnote{Instead
+  of explicitly adopting an OpenCL command queue.}, which can be
+created by means of the \verb'calclCreateToolkit2D()' function
+(cf. Listing \ref{lst:calclCreateToolkit2D}). The first parameter is a
+pointer to a \verb'CALModel2D', defined host side as in the case of the
+serial implementation of OpenCAL (cf. Chapter \ref{ch:opencal}). The
+second one is an OpenCL context, as well as the third and fourth
+parameters are an OpenCL program and compliant device, respectively.
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclCreateToolkit2D, caption=The calclCreateToolkit2D data structure., numbers=none]
+  CALCLToolkit2D * calclCreateToolkit2D(
+                   struct CALModel2D * model,
+                   CALCLcontext context,
+                   CALCLprogram program,
+                   CALCLdevice device
+  )
+\end{lstlisting}
+
+
+\subsubsection{Kernels reading, compilation and enqueuing}
+
+After the compliant device has been selected and elementary processes
+(and possibly other functions) implemented as kernels, these latter
+can automatically be read and compiled through the
+\verb'calclLoadProgram2D()' function (cf. Listing
+\ref{lst:calclLoadProgram}). It takes both the context and device, and
+also the paths of user defined kernels and corresponding headers as
+parameters, and returns an OpenCL
 program\footnote{\texttt{CALCLprogram} redefines the
-\texttt{cl\_program} OpenCL type.}.
+  \texttt{cl\_program} OpenCL type.}.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgram, caption={The calclLoadProgramLib function. It loads and compiles kernels by returning an OpenCL program.}, numbers=none]
   CALCLprogram calclLoadProgram2D (
@@ -194,25 +348,6 @@ the program and the kernel name (cf. Listing
   )
 \end{lstlisting}
 
-In order to equeue the extracted kernels, OpenCAL-CL make use of an
-instance of the \verb'CALCLToolkit2D' data structure\footnote{Instead
-  of explicitly adopting an OpenCL command queue.}, which can be
-created by means of the \verb'calclCreateToolkit2D()' function
-(cf. Listing \ref{lst:calclCreateToolkit2D}). The first parameter is a
-pointer to a \verb'CALModel2D', defined host side as in the case of the
-serial implementation of OpenCAL (cf. Chapter \ref{ch:opencal}). The
-second one is an OpenCL context, as well as the third and fourth
-parameters are an OpenCL program and compliant device, respectively.
-
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclCreateToolkit2D, caption=The calclCreateToolkit2D data structure., numbers=none]
-  CALCLToolkit2D * calclCreateToolkit2D(
-                   struct CALModel2D * model,
-                   CALCLcontext context,
-                   CALCLprogram program,
-                   CALCLdevice device
-  )
-\end{lstlisting}
-
 The function \verb'calclAddElementaryProcessKernel2D' adds a new
 kernel to the execution queue
 (cf. Listing \ref{lst:calclAddElementaryProcessKernel2D}).
@@ -225,11 +360,45 @@ kernel to the execution queue
   );
 \end{lstlisting}
 
+Note that, if the kernel to be added has one or more parameters beside
+the mandatory \verb'__CALCL_MODEL_2D' one, they must be passed to the
+device-side application. To pass a parameter to a kernel, a double
+step procedure must be used. Fist, the \verb'calclCreateBuffer()'
+function must be called. It takes the OpenCL context, the address of
+the host parameter to be passed to the kernel, and the dimension of
+the host parameter type, and returns an object of type
+\verb'CALCLmem', which is a buffer containing the value of the
+host-side parameter. This buffer is therefore used by the
+\verb'calclSetKernelArg2D()' function, which actually perform the data
+transmission to the device. It takes the kernel to which send the
+parameter, the parameter position within the kernel parameter list (0
+for the first one after the mandatory \verb'__CALCL_MODEL_2D'
+parameter, 1 for the second, and so on), the \verb'CALCLmem'
+dimension, and the address of the buffer containing the value for the
+kernel parameter (cf. Listing \ref{lst:calclKernelParameters}).
 
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclKernelParameters, caption=Passing parametrs to kernel.]
+  #include <OpenCAL-CL/calcl2D.h>
+  //...
+  
+  struct sciddicaTParameters {
+    CALParameterr epsilon;
+    //...
+  } P;
 
-Kernel parameters...
+  //...
+  
+  int main(int argc, char** argv)
+  {
+    //...
+    CALCLmem bufferEpsilonParameter;
+    //...
 
-
+    bufferEpsilonParameter = calclCreateBuffer(context, &P.epsilon, sizeof(CALParameterr));
+    calclSetKernelArg2D(&kernel_elem_proc_flow_computation, 0, sizeof(CALCLmem), &bufferEpsilonParameter);    
+    //...
+  }
+\end{lstlisting}
 
 
 \subsection{Simulation execution on the compliant device}
@@ -246,87 +415,29 @@ all the defined kernels on the selected compliant device.
 \end{lstlisting}
 
 
-\section{OpenCAL-CL Kernel Programming}
-
-Let us condider the OpenCAL-CL kernel example in Listing (cf. Listing
-\ref{lst:OpenCAL-CL-kernel}. To define an OpenCAL-CL kernel, the
-\verb'cal2D.h' header must be included (line 1). Accordingly to OpenCL, each
-kernel definition must start with the \verb'__kernel'
-keyword. However, differently to OpenCL, each OpenCAL-CL kernel must
-have (at least) an implicit parameter,
-i.e. \verb'__CALCL_MODEL_2D'. It is macro-like C object, and is used
-to implicitly let the kernel to know details about the CA model,
-e.g. the defined neighborhood. Moreover, the \verb'initThreads2D()'
-function must be the first to be called into the kernel as it prevents
-the execution of a number of threads exceeding the CA
-dimension. Eventually, function calls that in OpenCAL were requiring a
-pointer to a CA model, here take the \verb'MODEL_2D' macro-like C
-object to its place (cf. Listing \ref{lst:OpenCAL-CL-kernel}, line
-17).
 
 
-In order to program kernels in OpenCAL, the user needs to include some
-header files. Specifically, \verb'cal2D.h' or \verb'cal3D.h' permit
-to use some simple functions to interact with the data structures
-belonging to the model. To create a kernel function in OpenCL, the user
-must place the keyword \verb'__kernel' before the returning the type
-of the function. In OpenCAL-CL every time a kernel function is defined, the
-keyword \verb'MODEL_DEFINITION2D' must be specified as first parameter
-and the function \verb'initThreads2D()' called as first
-instruction.\\ The code below shows how to declare a new kernel.
+%% #define get_rows() *CALCLrows
+%% #define get_columns() *CALCLcolumns
+%% #define get_byte_substates_num() *CALCLbyteSubstatesNum
+%% #define get_int_substates_num() *CALCLintSubstatesNum
+%% #define get_real_substates_num() *CALCLrealSubstatesNum
+%% #define get_current_byte_substates() CALCLcurrentByteSubstates
+%% #define get_current_int_substates() CALCLcurrentIntSubstates
+%% #define get_current_real_substates() CALCLcurrentRealSubstates
+%% #define get_next_byte_substates() CALCLnextByteSubstates
+%% #define get_next_int_substates() CALCLnextIntSubstates
+%% #define get_next_real_substates() CALCLnextRealSubstates
+%% #define get_active_cells() CALCLactiveCells
+%% #define get_active_cellsNum() *CALCLactiveCellsNum
+%% #define get_active_cells_flags() CALCLactiveCellsFlags
+%% #define get_neighborhood() CALCLneighborhood
+%% #define get_neighborhood_id() *CALCLneighborhoodID
+%% #define get_neighborhoods_size() *CALCLneighborhoodSize
+%% #define get_boundary_condition() *CALCLboundaryCondition
+%% #define stopExecution() *CALCLstop = CAL_TRUE
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:OpenCAL-CL-kernel, caption=Example of OpenCAL-CL kernel.] 
-  #include <cal2D.h>
 
-  // Define handles to CA substates
-  //...
-  #define Z 4
-  #define H 5
-
-  //...
-  
-  __kernel void kernel(__CALCL_MODEL_2D)
-  {
-    // Prevent the execution of more threads than the CA dimension
-    initThreads2D();
-
-    //...
-
-    // Get the cell coordinates back
-    int i = getRow();
-    int j = getCol();
-
-    //...
-
-    // Set a new value for the substate
-    // whose handle is defined by H.
-    // Please, note the usage of the
-    // MODEL_2D macro-like object
-    calSet2Dr(MODEL_2D, H, i, j, h_next);
-    
-    //...
-  }
-\end{lstlisting}
-
-When the user implements an elementary process - by defining
-the corresponding kernel function - she/he can rely on a set of OpenCAL functions
-that allow to get the substates values of both the central and the
-neighbouring cells, and to update the substates values of the central
-cell. Every time the user wants to use this function, the keyword \verb'MODEL2D' must be passed
-as first parameter. For instance, if we
-want to retrieve the value of a specific cell we need to use the function
-\verb'calGet2Dr'.
-
-\begin{lstlisting}[numbers=none] 
-	double a = calGet2Dr(MODEL2D, 0, i, j);
-\end{lstlisting}
-
-The function returns the value of the cell (i, j) of the substate
-0. Since inside OpenCAL-CL one can use all OpenCL advanced features, all
-memory levels such as global memory, local memory, private memory
-can be exploited. In order to use these memory
-levels, variables must be declared using this specific syntax
-\verb'__global', \verb'__local', \verb'__private',respectively.
 
 \section{Conway's Game of Life with OpenCAL-CL}
  
@@ -406,8 +517,11 @@ function to update the value of the substate Q for the central cell.
   to implement the Conway's game of Life elementary
   process.]{../opencal/OpenCAL-CL/examples/calcl_life/kernel/source/life.cl}
 
+\section{SciddicaT in OpenCAL-CL}
 
-\section{Combining OpenCAL-OMP and OpenCAL-GL and  Global Functions}
+\section{A three-dimensional example}
+
+\section{Combining OpenCAL-OMP and OpenCAL-GL, and Global Functions}
 
 As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
 visualization system by adding few lines of code to your
