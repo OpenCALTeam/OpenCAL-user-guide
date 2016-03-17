@@ -108,7 +108,7 @@ Listing \ref{lst:kernel-private-parameter}. The same holds for
 variables defined inside the kernel body where the above cited
 \verb'__global', \verb'__local' and \verb'_private' memory level
 qualifiers can be used. Note that both kernel parameters and variables
-declared vithout any memory level qualifier are implicitly considered
+declared without any memory level qualifier are implicitly considered
 as private, as in the case of variables at lines 15 and 16 of Listing
 \ref{lst:OpenCAL-CL-kernel}.
 
@@ -242,8 +242,9 @@ subdivided in the following parts:
 \begin{itemize}
 \item Definition of the host-side CA model;
 \item Selection of the OpenCL compliant device;
+\item Kernels reading and program generation;
 \item Definition of the device-side CA model;
-\item Kernels reading, compilation and enqueuing;
+\item Kernels enqueuing;
 \item Simulation execution on the previously selected compliant
   device.
 \end{itemize}
@@ -259,7 +260,7 @@ declared by using the \verb'CALModel2D' OpenCAL data type (line 4),
 and then initialized by means of the \verb'calCADef2D()' function
 (line 11), exactly as in the serial version of OpenCAL. Note that the
 \verb'calcl2D.h' OpenCAL-CL specific header file is included at line
-1. It, in turn, includes the \verb'cal2D' header, so that it is
+1. It, in turn, includes the \verb'cal2D.h' header, so that it is
 possible to use OpenCAL's data types and functions from an OpenCAL-CL
 host application.
 
@@ -312,7 +313,7 @@ OpenCAL-CL.
     CALCLdevice device = calclGetDevice ( calcl_manager , 0, 0 );
 
     // create a context
-    CALCLcontext context = calclCreateContext ( &device , 1 );
+    CALCLcontext context = calclCreateContext ( &device );
 
     // ...
   }
@@ -352,36 +353,7 @@ an OpenCL context, based on the device previously selected. For this
 porpose, an object of \verb'CALCLcontext' type is declared and defined
 by means of the \verb'calclCreateContext()' function.
 
-
-\subsubsection{Definition of the device-side CA model}
-
-OpenCAL-CL allows for having a counterpart of the host-side CA to
-device-side. Such a device-side CA is declared as a
-\verb'CALCLModel2D' object and, beside managing all the CA components
-device-side, it also provides simulation execution features. Note
-that, this is a main difference with respect to OpenCAL serial
-version, where the simulation execution is managed by a complementary
-object, specifically of type \verb'CALRun2D'. To initialize the
-device-side CA object, the \verb'calclCADef2D' function can be used
-(cf. Listing \ref{lst:calclCADef2D}). The first parameter is a pointer
-to a \verb'CALModel2D', defined host side as in the case of the serial
-implementation of OpenCAL (cf. Chapter \ref{ch:opencal}). The second
-one is an OpenCL context, as well as the third and fourth parameters
-are an OpenCL program and compliant device, respectively.
-
-%% The device-side CA object permits to equeue the defined kernels
-
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclCADef2D, caption=The calclCADef2D data structure., numbers=none]
-  CALCLModel2D * calclCADef2D(
-                   struct CALModel2D * host-model,
-                   CALCLcontext context,
-                   CALCLprogram program,
-                   CALCLdevice device
-  )
-\end{lstlisting}
-
-
-\subsubsection{Kernels reading, compilation and enqueuing}
+\subsubsection{Kernels reading and program generation}
 
 After the compliant device has been selected and elementary processes
 (and possibly other functions) implemented as kernels, these latter
@@ -404,6 +376,38 @@ parameter can be \verb'NULL'.
     char * kernel_include_directory
   )
 \end{lstlisting}
+
+\subsubsection{Definition of the device-side CA model}
+
+OpenCAL-CL allows for having a counterpart of the host-side CA to
+device-side. Such a device-side CA is declared as a
+\verb'CALCLModel2D' object and, beside managing all the CA components
+device-side, it also provides simulation execution features. Note
+that, this is a main difference with respect to OpenCAL serial
+version, where the simulation execution is managed by a complementary
+object, specifically of type \verb'CALRun2D'.
+
+To initialize the device-side CA object, the \verb'calclCADef2D'
+function can be used (cf. Listing \ref{lst:calclCADef2D}). The first
+parameter is a pointer to a \verb'CALModel2D', defined host side as in
+the case of the serial implementation of OpenCAL (cf. Chapter
+\ref{ch:opencal}). The second one is an OpenCL context, as well as the
+third and fourth parameters are an OpenCL program and compliant
+device, respectively.
+
+%% The device-side CA object permits to equeue the defined kernels
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclCADef2D, caption=The calclCADef2D data structure., numbers=none]
+  CALCLModel2D * calclCADef2D(
+                   struct CALModel2D * host-model,
+                   CALCLcontext context,
+                   CALCLprogram program,
+                   CALCLdevice device
+  )
+\end{lstlisting}
+
+
+\subsubsection{Kernels enqueuing}
 
 Once compiled and grouped into an OpenCL program, kernels can be
 extracted in order to be attached to a command queue for
@@ -523,7 +527,10 @@ kernel. Other kernel can be registered to the device-side CA. Table
     Function & Brief description\\
     \hline
     \hline
-    XXX()                 & XXX \\
+    calclAddInitFunc2D             & register a global kernel to be executed once before simulation loop \\
+    calclAddElementaryProcess2D()  & register an cell elementary process \\
+    calclAddSteeringFunc2D         & register a global kernel to be executed after each simulation step \\
+    calclAddStopConditionFunc2D()  & register a global stop condition kernel callback \\
     \hline
     \end{tabular}
     \end{footnotesize}
@@ -553,19 +560,22 @@ kernel. Other kernel can be registered to the device-side CA. Table
 
 \section{Conway's Game of Life with OpenCAL-CL}
  
-As already reported in \ref{sec:cal_life}, to introduce how to develop
-a CA model with OpenCAL-CL we can start by implementing Conway’s Game
-of Life and specifically its host application part, which is shown in
-Listing \ref{lst:calcl_life}. In order to use OpenCAL-CL, some header
-files are included (lines 3-8) and, in particular, the OpenCAL library
-and the OpenCAL-CL library. The OpenCAL library inclusion is necessary
-to define the CA object (line 46) and the related substates (line
-49). The \verb'cal2DIO.h' header file (line 4) provides some basic
-input/output functions for reading/writing substates from/to file. To
-run the application with OpenCAL-CL, all the necessary objects have to
-be declared (line 27-31): specifically, the \verb'CALOpenCL' structure
-(line 27), the \verb'CALCLcontext', the \verb'CALCLdevice', the
-\verb'CALCLprogram' and the \verb'CALCLToolkit2D'. To create and
+As already done in previuous Chapters, we introduce OpenCAL-CL
+programming by implementing Conway’s Game of Life. It is subdivided in
+two parts, one for the host and one for the compliant device.
+
+The host side application is shown in Listing \ref{lst:calcl_life}. In
+order to use OpenCAL-CL, some header files are included (lines 3-8)
+and, in particular, the OpenCAL library and the OpenCAL-CL
+library. The OpenCAL library inclusion is necessary to define the CA
+object (line 46) and the related substates (line 49). The
+\verb'cal2DIO.h' header file (line 4) provides some basic input/output
+functions for reading/writing substates from/to file.
+
+To run the application with OpenCAL-CL, all the necessary objects have
+to be declared (line 27-31). Specifically, the \verb'CALOpenCL'
+structure (line 27), the \verb'CALCLcontext', the \verb'CALCLdevice',
+the \verb'CALCLprogram' and the \verb'CALCLToolkit2D'. To create and
 initialize these variables we need to call the function
 \verb'calclCreateManager' that creates the CALOpenCL structure, the
 functions \verb|calclInitializePlatforms| and
@@ -575,10 +585,10 @@ function, which will return the device where elementary process are
 computed by choosing the \verb'platformNum' and \verb'deviceNum'
 integers(line 24-25). Moreover, two important functions are here
 considered: \verb'calclcreateContext' and
-\verb'calclLoadProgram2D'. The first returns the context
-(see \ref{sec:opencalclstructure}), while the second builds all kernels inside
-the path specified by \verb'kernelSrc'(line 15) including the files
-specified by \verb'kernelInc'(line 16), and returns a program
+\verb'calclLoadProgram2D'. The first returns the context (see
+\ref{sec:opencalclstructure}), while the second builds all kernels
+inside the path specified by \verb'kernelSrc'(line 15) including the
+files specified by \verb'kernelInc'(line 16), and returns a program
 containing all the compiled kernels.
 
 The definition and declaration of the model (line 46) has the same code
