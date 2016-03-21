@@ -1,0 +1,11 @@
+
+CALGL
+
+CALUpdater2D -> CALGLRun2D                                      OK!
+
+calglCreateUpdater2D -> calglRunDef2D                           OK!
+calglCreateUpdater2DCL -> calglRunCLDef2D                       OK!
+
+
+calglDefDrawModel2DCL -> calglDefDrawModelCL2D                  OK!
+calglAddToDrawModel2Dr -> calglAdd2Dr                           OK!

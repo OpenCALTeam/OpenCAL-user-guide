@@ -567,7 +567,7 @@ device.
 
 
 \lstinputlisting[label=lst:calcl_life, caption=An OpenCAL-CL
-  implementation of the Conway's game of
+  host-side implementation of the Conway's Game of
   Life.]{../opencal/OpenCAL-CL/examples/calcl_life/source/life.c}
 
 The host-side application, running on the CPU and controlling the
@@ -576,16 +576,16 @@ computation on the compliant device (e.g. a GPU) is shown in Listing
 
 Differently from the serial implentation, discussed in Section
 \ref{sec:cal_life}, the OpenCAL-CL \verb'calcl2D.h' header file is
-include at line 3. It, in turn, includes the \verb'cal2D.h'' header,
+include at line 3. It, in turn, includes the \verb'cal2D.h' header,
 needed to define the host-side CA model. The \verb'cal2DIO.h' header
 is also included at line 4 for I/O operations.
 
 At line 7, the path containing the kernels to be executed in parallel
 on the compliant device is defined, while the name of the (only)
 kernel considered in this example is defined at line 8. Lines 9-10
-define OpenCL platform and device to be considered for execution. In
-this example, the first device belonging to the first platform is
-considered, for the sake of simplicity.
+define OpenCL platform and device IDs to be considered for
+execution. In this example, the first device belonging to the first
+platform is considered, for the sake of simplicity.
 
 Lines 15-18 are needed to select the compliant device and to create an
 OpenCL context. Indeed, these statements widely simplyfy the device
@@ -593,7 +593,7 @@ management and can be considered as a kind of template. As a confirm,
 they will also be adopted in the subsequent examples.
 
 Line 21 reads kernels (actually, just one in this example) from file
-(contained in the directory specified at line 3), compile and groups
+(contained in the directory specified at line 7), compile and groups
 them into an OpenCL program, to be used later to exctract kernels for
 execution.
 
@@ -642,7 +642,7 @@ defined objets.
 Listing \ref{lst:calcl_life_kernel} shows the OpenCAL-CL kernel
 implementing the Conway's Game of Life transition function.
 
-The \verb'calcl2D .h' is included at line 3, while the numeric
+The \verb'calcl2D.h' is included at line 3, while the numeric
 \verb'Q' handle is defined at line 5 to access the the \verb'Q'
 substate, registerd to the host CA and, implicitly, to the device CA
 at lines 31 and 41 of Listing \ref{lst:calcl_life}, respectively. In
@@ -656,15 +656,15 @@ discussed in previous sections, it takes the \verb'__CALCL_MODEL_2D'
 macro, which implicitly defines a set of parameters for the kernel.
 
 Line 9 assure the execution of a number of cocnurrent treads equal to
-the number of cells i the CA cellular space, while lines 11-12 get the
+the number of cells in the CA cellular space, while lines 11-12 get the
 indexes correnspondig to the integer coordinates of the cell the
 kernel is going to process. In this way, the one thread/one cell
-policy is assured.
+policy is obtained.
 
 Line 14 get the neighborhood size, while line 16 declares some
 variables to be used later.
 
-Lines 18-24 implement the life's transition roule. Note that, the the
+Lines 18-24 implement the life's transition roule. Note that, the
 \verb'calclGetX2Di()' and \verb'calclSet2Di()' functions are here used
 to access the substate values for the neighbouring cells and to set
 the new state for the central cell. They correspond to the
