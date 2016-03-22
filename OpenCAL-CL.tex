@@ -703,18 +703,110 @@ rendering support for the OpenCAL-CL library. Eventually, the
 \verb'calgl2D.h' and \verb'calgl2DWindow.h' OpenCAL-GL headers are
 included, to complete the application support for 2D and 3D rendering.
 
+Lines 12-21 provide defininitions. They are almost the same of the
+serial implementation of SciddicaT, shown in Listing
+\ref{lst:cal_sciddicaT}. However, in addition, we can find
+\verb'GRAPHIC_UPDATE_INTERVAL', which defines the interval (in
+computational steps) used later for data retrival from the OpenCL
+compliant device and visualization purposes.
+
+Lines 24-34 provide other definitions, specifying kernels paths and
+names. Note that, different paths are here defined, depending whether
+the active cells optimization is considered or not
+(cf. \verb'ACTIVE_CELLS', line 24). In the firs case, an additional
+kernel is also defined at line 33.
+
+Lines 37-47 define two data types for grouping CA substates and
+parameters, while lines 50-54 declare host- and device-side CA
+objects, substates, and parameters, besides the
+\verb'calcl_device_manager' object, needed for OpenCL compliant device
+section.
+
+In the main function, after OpenCL device, context and program
+declarations, kernel varables are declared at lines 117-120, while
+lines 120-121 declare buffers to be used for kernel parameter
+settings.  The device manager is then defined at line 125, and an
+OpenCL device selected at line 126 by means of the
+\verb'calclGetPlatformAndDeviceFromStdIn()' function.  This latter
+prints all the available platforms and devices to standard output and
+allows for their interactive selection.
+
+OpenCL kernels, implementing transition function's elementary
+processes and, optionally, other functions like global init or
+steering, are read from file, compiled and grouped together into an
+OpenCL container called program at line 130, with a single call to
+\verb'calclLoadProgram2D()'.
+
+The host-side CA is therefore defined (cf. lines 133-137), and
+substates registered at line 140-145. Note that, the order in which
+substates are registered, implicitly define the values to be assigned
+to substate handles to refer related data device-side.
+
+The CA initial configuration is defined at lines 148-152. Here, the
+\verb'calLoadSubstate2Dr()' is used to initialize two substates from
+file, while the others are initilized through
+\verb'sciddicaTSimulationInit()' function at line 151. Note that, in
+order to apply the initialization performed before to the substates'
+\emph{next working planes}, it is necessary to call
+\verb'calUpdate2D()'\footnote{In the serial implementation of
+  SciddicaT, this operation was performed automatically by the
+  simulation object.}.
+
+The device-side CA is defined at line 155. As for the case of Conway's
+Game of Life, the \verb'calclCADef2D()' function initializes the
+object, by performing data tranfer from the host to the device memory,
+in a transparent way to the user.
+
+In order to be able to execute a simulation, transition function's
+elementary processes and global fuctions must be registered to the
+device-side CA object. This is a two-step process: at first, kernels
+are extracted from the OpenCL program by means of the
+\verb'calclGetKernelFromProgram()' function (cf. e.g. line 158) and
+therefore they are registered to the device-side CA object through the
+\verb'calclAddElementaryProcess2D()' function (cf. e.g. line 172). In
+the specific case of SciddicaT, some elementary processes require
+parameters, that are defined and set at lines 166-177 through the
+\verb'calclCreateBuffer()' and \verb'calclSetKernelArg2D()' functions,
+respectively (as described in Section
+\ref{sec:opencalclstructure}). Eventually, the steering kernel is
+registered at line 179 through the \verb'calclAddSteeringFunc2D()'
+function.
+
+Starting from line 182, an integration with the OpenCAL-GL library is
+implemented in order to provide a minimal GLUT-based Graphical User
+Interface and a simplified 2D/3D visualization system to the
+application. Firstly, an exit function is registered to the
+application for memory release purposes at line 182 through the
+\verb'atexit()' C function\footnote{This is necessary because, once
+  entered the GLUT main loop, the GL Utility Toolkit does not return
+  the control to the main application.}. The viewer is initialized at
+line 186 by means of the \verb'calglInitViewer()' function, while the
+next call is used to define a vertical layout for the two 2D and 3D
+rendering objects, defined later at lines 190-191.
+
+The 3D and 2D rendering objects are defined at lines 198-213, exactly
+as for the serial implementation shown in Section
+\ref{sec:calgl_sciddicaT}, while a simulation object defined at line
+194 by means of the \verb'calglRunCLDef2D()' function and run on the
+OpenCL compliant device at line 216 by means of the
+\verb'calglMainLoop2D()' function. This latter executes kernel in
+parallel on the device by considering the one thread-one cell policy,
+manages data retrieval from compliant device to host at prefixed
+intervals (in terms of computational steps - cf. the
+\verb'GRAPHIC_UPDATE_INTERVAL' deinition at line 21), and performs the
+graphic rending.
 
 
 \section{A three-dimensional example}
 
-\section{Combining OpenCAL-OMP and OpenCAL-GL, and Global Functions}
+%% \section{Combining OpenCAL-OMP and OpenCAL-GL, and Global Functions}
 
-As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
-visualization system by adding few lines of code to your
-application. Combining OpenCAL-CL and OpenCAL-GL does not differ from
-what we have done in Section \ref{sec:combining_gl} for OpenCAL and
-OpenCAL-GL. Therefore, please refer to this section for major details.
+%% As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
+%% visualization system by adding few lines of code to your
+%% application. Combining OpenCAL-CL and OpenCAL-GL does not differ from
+%% what we have done in Section \ref{sec:combining_gl} for OpenCAL and
+%% OpenCAL-GL. Therefore, please refer to this section for major details.
 
-Similarly, you can use the same global reduction functions
-described in Section \ref{sec:redution} also in OpenCAL-CL.  Please
-refer to that section for further details.
+%% Similarly, you can use the same global reduction functions
+%% described in Section \ref{sec:redution} also in OpenCAL-CL.  Please
+%% refer to that section for further details.
