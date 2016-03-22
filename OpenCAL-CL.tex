@@ -672,8 +672,38 @@ the new state for the central cell. They correspond to the
 difference that, inspite of taking a CA model as parameter, they take
 the \verb'MODEL_2D' OpenCAL-CL macro.
 
+Figures \ref{fig:calcl_life_0000} and \ref{fig:calcl_life_LAST} show the initial
+and final configuration of Game of Life as implemented in Listing
+\ref{lst:calcl_life}, respectively. 
 
-\section{SciddicaT in OpenCAL-CL}
+
+\section{SciddicaT}\label{sec:calcl_sciddicaT}
+In the previous section we illustrated an OpenCAL-CL implementation of
+a simple cellular automaton, namely the Conway’s Game of Life. Here,
+we will deal with a more complex example, concerning the the SciddicaT
+Cellular Automata model for landslide simulation, already presented in
+Section \ref{sec:sciddicaT}, together with its serial
+implementation. Eventually, we will show you how to combine the
+OpenCAL-CL and OpenCAL-GL libraries to provide a simplified graphic
+output for the application.
+
+\lstinputlisting[label=lst:calcl_gl_sciddicaT, caption=An OpenCAL-CL
+  host-side implementation of the SciddicaT Cellular Automata model
+  for landslide
+  simulation.]{../opencal/OpenCAL-CL/examples/calcl_gl_sciddicaT/source/sciddicaT.c}
+
+The host-side implementation of SciddicaT is shown in Listing
+\ref{lst:calcl_gl_sciddicaT}. Lines 4-9 inlcude some headers from
+different version of OpenCAL.
+
+In particular, the \verb'cal2DIO.h' OpenCAL header is included for
+I/O purposes, while the \verb'calcl2D.h' and
+\verb'calgl2DRunCL.h' headers provide CA definition and graphic
+rendering support for the OpenCAL-CL library. Eventually, the
+\verb'calgl2D.h' and \verb'calgl2DWindow.h' OpenCAL-GL headers are
+included, to complete the application support for 2D and 3D rendering.
+
+
 
 \section{A three-dimensional example}
 
@@ -683,8 +713,7 @@ As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
 visualization system by adding few lines of code to your
 application. Combining OpenCAL-CL and OpenCAL-GL does not differ from
 what we have done in Section \ref{sec:combining_gl} for OpenCAL and
-OpenCAL-GL. Therefore, please refer to this section for major
-details.
+OpenCAL-GL. Therefore, please refer to this section for major details.
 
 Similarly, you can use the same global reduction functions
 described in Section \ref{sec:redution} also in OpenCAL-CL.  Please
