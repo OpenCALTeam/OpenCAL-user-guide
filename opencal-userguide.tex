@@ -1,9 +1,9 @@
-\documentclass{report}
+\documentclass[9pt]{report}
+\usepackage{extsizes}
 \usepackage{amsmath}
 \usepackage{courier}
 \usepackage{stmaryrd}
 \usepackage{lscape}
-\usepackage{hyperref}
 \usepackage{nameref}
 \usepackage{tabularx}
 \usepackage[pdftex]{graphicx}
@@ -66,20 +66,21 @@
   \renewcommand{\headrulewidth}{0pt}  % e la linea
 }
 
+\usepackage{color}
+\definecolor{bgcolor}{rgb}{0.98,0.98,0.98}
+
 \usepackage{listings}
 \lstset{language=C}
 \lstset{
-%  basicstyle=\tiny,
-%  basicstyle=\ttfamily,
   basicstyle=\footnotesize\ttfamily,
   breaklines=true,
   showstringspaces=false,
   numbers=left,
-  commentstyle=\color{darkgray},
+  backgroundcolor=\color{bgcolor},
+  commentstyle=\color{gray},
   keywordstyle=\color{blue},
   keywordstyle=[2]\color{teal},   % cyan or teal can also be a good choice, use \bfseries for bold
-  %  frame=single,                   % adds a frame around the code
-  frame=none,
+  frame=none,                     % adds a frame around the code
   tabsize=2,                      % sets default tabsize to 2 spaces
   captionpos=b,                   % sets the caption-position to bottom
   morekeywords=[2]{               % if you want to add more keywords to the set
@@ -155,7 +156,7 @@
     calglAddToDrawModel2Dr,
     calglAddToDrawModel3Dr,
     calglColor2D,
-    calglColor3D,    
+    calglColor3D,
     calglDefDrawModel2D,
     calglDefDrawModel3D,
     calglDisplayDrawJBound2D,
@@ -246,7 +247,7 @@
     CALSubstate3Di,
     CALSubstate3Dr,
     CALUpdateMode,
-    }   
+    }
 }
 
 

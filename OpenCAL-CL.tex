@@ -558,7 +558,7 @@ kernel. Other kernel can be registered to the device-side CA. Table
 \end{lstlisting}
 
 
-\section{Conway's Game of Life with OpenCAL-CL}
+\section{Conway's Game of Life with OpenCAL-CL}\label{sec:calcl_life}
  
 As already done in previuous Chapters, we introduce OpenCAL-CL
 programming by implementing Conway's Game of Life. The application is
@@ -694,14 +694,13 @@ output for the application.
 
 The host-side implementation of SciddicaT is shown in Listing
 \ref{lst:calcl_gl_sciddicaT}. Lines 4-9 inlcude some headers from
-different version of OpenCAL.
-
-In particular, the \verb'cal2DIO.h' OpenCAL header is included for
-I/O purposes, while the \verb'calcl2D.h' and
-\verb'calgl2DRunCL.h' headers provide CA definition and graphic
-rendering support for the OpenCAL-CL library. Eventually, the
-\verb'calgl2D.h' and \verb'calgl2DWindow.h' OpenCAL-GL headers are
-included, to complete the application support for 2D and 3D rendering.
+different version of OpenCAL. In particular, the \verb'cal2DIO.h'
+OpenCAL header is included for I/O purposes, while the
+\verb'calcl2D.h' and \verb'calgl2DRunCL.h' headers provide CA
+definition and graphic rendering support for the OpenCAL-CL
+library. Eventually, the \verb'calgl2D.h' and \verb'calgl2DWindow.h'
+OpenCAL-GL headers are included, to complete the application support
+for 2D and 3D rendering.
 
 Lines 12-21 provide defininitions. They are almost the same of the
 serial implementation of SciddicaT, shown in Listing
@@ -714,17 +713,17 @@ Lines 24-34 provide other definitions, specifying kernels paths and
 names. Note that, different paths are here defined, depending whether
 the active cells optimization is considered or not
 (cf. \verb'ACTIVE_CELLS', line 24). In the firs case, an additional
-kernel is also defined at line 33.
+kernel is defined at line 33.
 
 Lines 37-47 define two data types for grouping CA substates and
 parameters, while lines 50-54 declare host- and device-side CA
 objects, substates, and parameters, besides the
 \verb'calcl_device_manager' object, needed for OpenCL compliant device
-section.
+selection.
 
 In the main function, after OpenCL device, context and program
 declarations, kernel varables are declared at lines 117-120, while
-lines 120-121 declare buffers to be used for kernel parameter
+lines 121-122 declare buffers to be used for kernel parameter
 settings.  The device manager is then defined at line 125, and an
 OpenCL device selected at line 126 by means of the
 \verb'calclGetPlatformAndDeviceFromStdIn()' function.  This latter
@@ -737,19 +736,19 @@ steering, are read from file, compiled and grouped together into an
 OpenCL container called program at line 130, with a single call to
 \verb'calclLoadProgram2D()'.
 
-The host-side CA is therefore defined (cf. lines 133-137), and
-substates registered at line 140-145. Note that, the order in which
+The host-side CA is therefore defined at lines 133-137, and
+substates registered at lines 140-145. Note that, the order in which
 substates are registered, implicitly define the values to be assigned
 to substate handles to refer related data device-side.
 
 The CA initial configuration is defined at lines 148-152. Here, the
 \verb'calLoadSubstate2Dr()' is used to initialize two substates from
-file, while the others are initilized through
+file, while the others are initilized through the
 \verb'sciddicaTSimulationInit()' function at line 151. Note that, in
 order to apply the initialization performed before to the substates'
 \emph{next working planes}, it is necessary to call
-\verb'calUpdate2D()'\footnote{In the serial implementation of
-  SciddicaT, this operation was performed automatically by the
+\verb'calUpdate2D()'\footnote{Note that, in the serial implementation
+  of SciddicaT, this operation was performed automatically by the
   simulation object.}.
 
 The device-side CA is defined at line 155. As for the case of Conway's
@@ -784,29 +783,136 @@ line 186 by means of the \verb'calglInitViewer()' function, while the
 next call is used to define a vertical layout for the two 2D and 3D
 rendering objects, defined later at lines 190-191.
 
-The 3D and 2D rendering objects are defined at lines 198-213, exactly
-as for the serial implementation shown in Section
-\ref{sec:calgl_sciddicaT}, while a simulation object defined at line
-194 by means of the \verb'calglRunCLDef2D()' function and run on the
-OpenCL compliant device at line 216 by means of the
-\verb'calglMainLoop2D()' function. This latter executes kernel in
-parallel on the device by considering the one thread-one cell policy,
-manages data retrieval from compliant device to host at prefixed
-intervals (in terms of computational steps - cf. the
-\verb'GRAPHIC_UPDATE_INTERVAL' deinition at line 21), and performs the
-graphic rending.
+The rendering tree-based structures for the 3D and 2D rendering
+objects are defined at lines 198-210 and 213-215, respectively. A
+simulation object is then defined at line 194 by means of the
+\verb'calglRunCLDef2D()' function and run on the OpenCL compliant
+device at line 218 by means of the \verb'calglMainLoop2D()'
+function. This latter executes kernels in parallel on the device by
+considering the one thread-one cell policy, manages data retrieval
+from compliant device to host at prefixed intervals (in terms of
+computational steps - cf. the \verb'GRAPHIC_UPDATE_INTERVAL' deinition
+at line 21), and performs the graphic rending.
+
+For further details about OpenCAL-GL, please refer Section \ref{sec:calgl_sciddicaT}.
+
+\lstinputlisting[label=lst:calcl_gl_sciddicaT_kernels_header, caption={The SciddicaT
+  kernels' header file, as implemented in
+  OpenCAL-CL.}]{../opencal/OpenCAL-CL/examples/calcl_gl_sciddicaT/kernelActive/include/kernel.h}
+
+\lstinputlisting[label=lst:calcl_gl_sciddicaT_kernels, caption=The OpenCAL-CL
+  kernels implementing the SciddicaT elementary processes and
+  steering.]{../opencal/OpenCAL-CL/examples/calcl_gl_sciddicaT/kernelActive/source/kernel_user.cl}
+
+The device-side implementation of SciddicaT which take into account
+the active cells optimization is shown in Listings
+\ref{lst:calcl_gl_sciddicaT_kernels_header} and
+\ref{lst:calcl_gl_sciddicaT_kernels} for kernels sources and header,
+respectively. Non-optimized versions are here omitted for the sake of
+shortness.
+
+The kernels' header is straightforward. Line 3 includes the
+\verb'calcl2D.h' header while line 6 define the number of outflows
+considered in SciddicaT. Eventually, lines 7-12 define the substates'
+handles. Here, handles are assigned by taking into account the order
+in which they have been registered to the host-side CA (cf. Listing
+\ref{lst:calcl_gl_sciddicaT}, lines 140-145).
+
+As regards the kernels shown in Listings
+\ref{lst:calcl_gl_sciddicaT_kernels}, they do not differ from that of
+the Game of Life (cf. \ref{lst:calcl_life}). In fact, each kernel is
+identified by the \verb'__kernel' keyword and, with the exeption of
+the first one, do not take any parameter, besides the mandatory
+implicit macro-like \verb'__CALCL_MODEL_2D' one. Concerning the
+\verb'flowsComputation()' kernel, it takes two additional parameters,
+namely \verb'Pepsilon' and \verb'Pr', both of type
+\verb'CALParameterr'. They are declared by means of the
+\verb'__global' OpenCL keyword, meaning that they will be stored in
+the device global memory. Setting the values for these parameters, is
+a host-side application responsability. In the specific case of the
+OpenCAL-CL implementation of SciddicaT, this opration is done at lines
+166-169 of Listing \ref{lst:calcl_gl_sciddicaT}. Note that,
+differently from the case of Life, the
+\verb'calclActiveThreadCheck2D();' function is used in each kernel to
+prevent the computation for threads that do not correspond to active
+cells. For the remaining code, the OpenCAL-CL functions already
+discussed in Section \ref{sec:calcl_life} are employed, while
+the algorithms implemented into the kernels are exactly the same of
+those shown in Section \ref{sec:sciddicaT}.
+
+A screenshot is shown in Figure \ref{fig:calgl_sciddicaT1}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{./images/OpenCAL/calgl_sciddicaT1}
+    \caption{Screenshot of the SciddicaT debris flow model with a
+      multi-view 2D and 3D visualization system based on OpenCAL-GL.}
+    \label{fig:calgl_sciddicaT1}
+  \end{center}
+\end{figure}
 
 
 \section{A three-dimensional example}
 
-%% \section{Combining OpenCAL-OMP and OpenCAL-GL, and Global Functions}
+This section describes the implementation of a simple 3D model, namely
+the \emph{mod2} 3D CA, already presented and implemented by means of
+the serial version of OpenCAL in Section \ref{sec:mod2}. As for the
+previous example about SciddicaT, the \emph{mod2} application comes
+togeter with an OpenCAL-GL-based GUI and 3D rendering system.
 
-%% As for OpenCAL, it is possible to exploit OpenCAL-GL to have a simple
-%% visualization system by adding few lines of code to your
-%% application. Combining OpenCAL-CL and OpenCAL-GL does not differ from
-%% what we have done in Section \ref{sec:combining_gl} for OpenCAL and
-%% OpenCAL-GL. Therefore, please refer to this section for major details.
+The complete source code for the host-side application is shown in
+Listing \ref{lst:calcl_gl_mod2} for the sake of completeness, while Listing .
 
-%% Similarly, you can use the same global reduction functions
-%% described in Section \ref{sec:redution} also in OpenCAL-CL.  Please
-%% refer to that section for further details.
+
+\lstinputlisting[label=lst:calcl_gl_mod2, caption=An OpenCAL-CL
+  implementation of the mod2 3D CA with openCAL-GL graphic
+  output.]{../opencal/OpenCAL-CL/examples/calcl_gl_mod2CA3D/source/mod2CA3D.c}
+
+\lstinputlisting[label=lst:calcl_gl_mod2_kernel, caption=The OpenCAL-CL
+  kernel implementing the mod2 3D CA elementary
+  process.]{../opencal/OpenCAL-CL/examples/calcl_gl_mod2CA3D/kernel/source/mod2CA.cl}
+
+
+Host code is quite similar to that of Game of Life (cf. Section
+\ref{sec:calcl_life}), with the difference that here some OpenCAL-GL
+code is added for GUI and 3D graphic rendering, as already done for
+the SciddicaT example (cf. Section \ref{sec:calcl_sciddicaT}).
+
+The main difference with respect the previous examples is that
+\emph{mod2} is a 3D CA model. In fact, the 3D versions of the
+previously considered 2D headers are included at lines 3-7 and,
+accordingly, the host and device CA, as well as the (only) model
+substate, are declared as 3D objects at lines 18-21. Eventually, note
+that also library functions are in their 3D versions. Their meaning is
+self-expalining, since thei correspond to their 2D couterparts already
+seen in previous examples.
+
+Similarly, device-side code is equivalent to that of the Game of
+Life. However, since \emph{mod2} is a 3D CA, the kernel in Listing
+\ref{lst:calcl_gl_mod2_kernel} also gets the third integer coordinate
+for the cell being processed at line 11, by means of the
+\verb'calclGlobalSlice()' function. Eventually, as for the host-side
+code, even the device-side library functions come in their 3D version.
+
+Figure \ref{fig:calgl_mod2} shows a screenshot of the application.
+
+
+
+\verb'OpenCAL-GL/calgl3D.h'
+and \verb'OpenCAL-GL/calgl3DWindow.h' headers are included. Moreover,
+the OpenCAL-GL functions, already seen in the 2D version in previous
+Section, are here in theyr 3D form (see, e.g., the
+\verb'calglAddToDrawModel3Db()' function at line 80). They are
+completely equivalents to the 2D versions and therefore they will not
+be commented. Eventually, note that statements at lines 86-91 are
+commented. If you remove the comments, you will end with some parts of
+the cellular space cut down form visualization.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{./images/OpenCAL/calgl_mod2}
+    \caption{Screenshot of the \emph{mod2} 3D CA viewer based on
+      OpenCAL-GL.}
+    \label{fig:calgl_mod2}
+  \end{center}
+\end{figure}
