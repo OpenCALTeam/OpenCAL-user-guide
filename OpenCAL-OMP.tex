@@ -36,7 +36,7 @@ same cellular automaton (Listing \ref{lst:calomp_life}), by discussing
 the differences with respect its serial implementation (Listing
 \ref{lst:cal_life}).
 
-\lstinputlisting[float,floatplacement=H, label=lst:calomp_life, caption=An OpenCAL-OMP implementation of the Conway's game of Life.]{../opencal/OpenCAL-OMP/examples/calomp_life/source/life.c}
+\lstinputlisting[float,floatplacement=H, label=lst:calomp_life, caption=An OpenCAL-OMP implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL-OMP/calomp_life/source/life.c}
 
 As you can see, the OpenMP-based implementation of Life, which uses
 only safe operations, is almost identical to the serial one thanks to
@@ -73,7 +73,7 @@ OpenCAL-OMP safe operations, mimimal code change is required, besides
 including the proper OpenCAL-OMP header files instead of the OpenCAL
 ones.
 
-\lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT/source/sciddicaT.c}
+\lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT/source/sciddicaT.c}
 
 \section{SciddicaT with active cells optimization}
 Here we present an OpenCAL-OMP implemenation of SciddicaT, which takes
@@ -84,7 +84,7 @@ implementation can be found in Section
 \ref{sec:sciddicaT_active}, Listing
 \ref{lst:cal_Sciddicat-activecells}.
 
-\lstinputlisting[label=lst:calomp_Sciddicat-activecells, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-activecells/source/sciddicaT.c}
+\lstinputlisting[label=lst:calomp_Sciddicat-activecells, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-activecells/source/sciddicaT.c}
 
 With respect to the Sciddica implementation shown in Listing
 \ref{lst:calomp_sciddicaT}, which is exclusively based on safe
@@ -114,7 +114,7 @@ implemented as an eXtended CA in Listing
 implementation can be found in Section \ref{sec:sciddicaT_extended},
 Listing \ref{lst:cal_sciddicaT-unsafe}.
 
-\lstinputlisting[label=lst:calomp_SciddicaT-unsafe, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows eXtended CA simulation model with unsafe optimization.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-unsafe/source/sciddicaT.c}
+\lstinputlisting[label=lst:calomp_SciddicaT-unsafe, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows eXtended CA simulation model with unsafe optimization.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe/source/sciddicaT.c}
 
 First of all - from a XCA modeling point of view - note that only the
 topographic altitude and the debris thickness are now considered as
@@ -163,7 +163,7 @@ for last, and the contribution of the other thread will be lost.
     // <snip>
   }
   // <snip>
-\end{lstlisting}  
+\end{lstlisting}
 
 In order to avoid such kind of problems when dealing with more
 threads, the above mentioned \verb'calAddNext2Dr()' and
@@ -204,7 +204,7 @@ the simulation termination.
 \lstinputlisting[label=lst:calomp_sciddicaT-explicit, caption=An
   OpenCAL-OMP implementation of the SciddicaT XCA debris flows
   simulation model with explicit simulation
-  loop.]{../opencal/OpenCAL-OMP/examples/calomp_sciddicaT-unsafe-explicit/source/sciddicaT.c}
+  loop.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 \section{SciddicaT computational performance}
 
@@ -273,7 +273,7 @@ implementation.
 %%   \caption{Speedup of the four different
 %%     implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
 %%   \label{tab:speedup}
-%% \end{table} 
+%% \end{table}
 
 %% \begin{table}
 %%   \centering
@@ -287,7 +287,7 @@ implementation.
 %%   \end{tabular}
 %%   \caption{mbusu Speedup.}
 %%   \label{tab:speedup}
-%% \end{table} 
+%% \end{table}
 
 %% \begin{table}
 %%   \centering
@@ -305,7 +305,7 @@ implementation.
 %%   \end{tabular}
 %%   \caption{mbusu Speedup.}
 %%   \label{tab:speedup}
-%% \end{table} 
+%% \end{table}
 
 
 \section{A three-dimensional example}
@@ -318,7 +318,7 @@ implementation (Listing \ref{lst:cal_life}).
 
 \lstinputlisting[float,floatplacement=H, label=lst:calomp_mod2,
   caption=An OpenCAL-OMP implementation of the mod2
-  CA.]{../opencal/OpenCAL-OMP/examples/calomp_mod2CA3D/source/mod2CA3D.c}
+  CA.]{../opencal-examples/OpenCAL-OMP/calomp_mod2CA3D/source/mod2CA3D.c}
 
 As you can see, the OpenMP-based implementation, which uses only safe
 operations, is almost identical to the serial one. As for the case of

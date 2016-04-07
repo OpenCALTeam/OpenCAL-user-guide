@@ -112,7 +112,7 @@ declared without any memory level qualifier are implicitly considered
 as private, as in the case of variables at lines 15 and 16 of Listing
 \ref{lst:OpenCAL-CL-kernel}.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:OpenCAL-CL-kernel, caption=Example of OpenCAL-CL kernel.] 
+\begin{lstlisting}[float,floatplacement=H, label=lst:OpenCAL-CL-kernel, caption=Example of OpenCAL-CL kernel.]
   #include <OpenCAL-CL/calcl2D.h>
 
   // Define handles to CA substates
@@ -177,12 +177,12 @@ can be used within an OpenCAL-CL kernel are listed in Table
     calclgGetByteSubstatesNum()    & Get the number of substates of \verb'CALbyte' type \\
     calclGetIntSubstatesNum()      & Get the number of substates of \verb'CALint' type \\
     calclGetRealSubstatesNum()     & Get the number of substates of \verb'CALreal' type \\
-    calclGetCurrentByteSubstates() & Get a pointer to the set of current layer of \verb'CALbyte' substates \\ 
-    calclGetCurrentIntSubstates()  & Get a pointer to the set of current layer of \verb'CALint' substates \\ 
-    calclGetCurrentRealSubstates() & Get a pointer to the set of current layer of \verb'CALreal' substates \\ 
-    calclGetNextByteSubstates()    & Get a pointer to the set of next layer of \verb'CALbyte' substates \\ 
-    calclGetNextIntSubstates()     & Get a pointer to the set of next layer of \verb'CALint' substates \\  
-    calclGetNnextRealSubstates()   & Get a pointer to the set of next layer of \verb'CALreal' substates \\ 
+    calclGetCurrentByteSubstates() & Get a pointer to the set of current layer of \verb'CALbyte' substates \\
+    calclGetCurrentIntSubstates()  & Get a pointer to the set of current layer of \verb'CALint' substates \\
+    calclGetCurrentRealSubstates() & Get a pointer to the set of current layer of \verb'CALreal' substates \\
+    calclGetNextByteSubstates()    & Get a pointer to the set of next layer of \verb'CALbyte' substates \\
+    calclGetNextIntSubstates()     & Get a pointer to the set of next layer of \verb'CALint' substates \\
+    calclGetNnextRealSubstates()   & Get a pointer to the set of next layer of \verb'CALreal' substates \\
     %% calclGetActiveCells()          & Get a pointer to the set of active cells \\
     %% calclGetActiveCellsNum()       & Get the number of active cells \\
     %% calclGetActiveCellsFlags()     & Get a pointer to the set of active cells flags \\
@@ -196,7 +196,7 @@ can be used within an OpenCAL-CL kernel are listed in Table
     \end{footnotesize}
   \caption{Some OpenCAL-CL utility kernel functions.}
   \label{tab:kernel-utility-function}
-\end{table} 
+\end{table}
 
 Note that, functions that in OpenCAL were requiring a pointer to a CA
 object, here take the \verb'MODEL_2D' macro-like C object in its place
@@ -210,24 +210,24 @@ first host-side substate, i.e. the first substate added to the
 host-side CA, one is used to link the second substate added to the
 host-side CA, and so on.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:Another-OpenCAL-CL-kernel, caption={Another example of OpenCAL-CL kernel, with an additional global parameter.}] 
+\begin{lstlisting}[float,floatplacement=H, label=lst:Another-OpenCAL-CL-kernel, caption={Another example of OpenCAL-CL kernel, with an additional global parameter.}]
   #include <calcl2D.h>
   //...
-    
+
   __kernel void another_calcl_kernel_example (__CALCL_MODEL_2D, __global CALParameterr * Pepsilon)
   {
-    
+
     //...
   }
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:kernel-private-parameter, caption={Another example of OpenCAL-CL kernel, with an additional private parameter.}] 
+\begin{lstlisting}[float,floatplacement=H, label=lst:kernel-private-parameter, caption={Another example of OpenCAL-CL kernel, with an additional private parameter.}]
   #include <calcl2D.h>
   //...
-    
+
   __kernel void another_calcl_kernel_example (__CALCL_MODEL_2D, __private CALParameterr Pepsilon)
   {
-    
+
     //...
   }
 \end{lstlisting}
@@ -264,20 +264,20 @@ and then initialized by means of the \verb'calCADef2D()' function
 possible to use OpenCAL's data types and functions from an OpenCAL-CL
 host application.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:host-side-application, caption={An example of OpenCAL-CL host-side application.}] 
+\begin{lstlisting}[float,floatplacement=H, label=lst:host-side-application, caption={An example of OpenCAL-CL host-side application.}]
   #include <OpenCAL-CL/calcl2D.h>
   //...
 
   struct CALModel2D* hostCA;
   //...
-  
+
   int main(int argc, char** argv)
   {
     //...
 
     hostCA = calCADef2D(ROWS, COLS, CAL_VON_NEUMANN_NEIGHBORHOOD_2D, CAL_SPACE_TOROIDAL, CAL_OPT_ACTIVE_CELLS);
     //...
-        
+
   }
 \end{lstlisting}
 
@@ -419,7 +419,7 @@ the program and the kernel name (cf. Listing
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclGetKernelFromProgram, caption={The calclGetKernelFromProgram kernel extraction function}., numbers=none]
   CALCLkernel calclGetKernelFromProgram (
     CALCLprogram * program,
-    char * kernelName 
+    char * kernelName
   )
 \end{lstlisting}
 
@@ -465,7 +465,7 @@ like in the example in Listing \ref{lst:kernel-private-parameter}, the
 above double step process is no longer necessary, since it is
 sufficient to call the \verb'calclSetKernelArg2D()' by specifying as
 third parameter the dimension of the actual type of the variable to be
-passed to the kernel. 
+passed to the kernel.
 
 %% calclSetKernelArg2D(&kernel_elem_proc_flow_computation, 1, sizeof(CALParameterr), &P.r);
 
@@ -481,14 +481,14 @@ passed to the kernel.
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclKernelParameters, caption=Passing parametrs to kernel.]
   #include <OpenCAL-CL/calcl2D.h>
   //...
-  
+
   struct sciddicaTParameters {
     CALParameterr epsilon;
     //...
   } P;
 
   //...
-  
+
   int main(int argc, char** argv)
   {
     //...
@@ -496,7 +496,7 @@ passed to the kernel.
     //...
 
     bufferEpsilonParameter = calclCreateBuffer(context, &P.epsilon, sizeof(CALParameterr));
-    calclSetKernelArg2D(&kernel_elem_proc_flow_computation, 0, sizeof(CALCLmem), &bufferEpsilonParameter);    
+    calclSetKernelArg2D(&kernel_elem_proc_flow_computation, 0, sizeof(CALCLmem), &bufferEpsilonParameter);
     //...
   }
 \end{lstlisting}
@@ -536,7 +536,7 @@ kernel. Other kernel can be registered to the device-side CA. Table
     \end{footnotesize}
   \caption{}
   \label{tab:XXX}
-\end{table} 
+\end{table}
 
 
 
@@ -559,7 +559,7 @@ kernel. Other kernel can be registered to the device-side CA. Table
 
 
 \section{Conway's Game of Life with OpenCAL-CL}\label{sec:calcl_life}
- 
+
 As already done in previuous Chapters, we introduce OpenCAL-CL
 programming by implementing Conway's Game of Life. The application is
 subdivided in two parts, one for the host and one for the compliant
@@ -568,7 +568,7 @@ device.
 
 \lstinputlisting[label=lst:calcl_life, caption=An OpenCAL-CL
   host-side implementation of the Conway's Game of
-  Life.]{../opencal/OpenCAL-CL/examples/calcl_life/source/life.c}
+  Life.]{../opencal-examples/OpenCAL-CL/calcl_life/source/life.c}
 
 The host-side application, running on the CPU and controlling the
 computation on the compliant device (e.g. a GPU) is shown in Listing
@@ -637,7 +637,7 @@ defined objets.
 
 \lstinputlisting[label=lst:calcl_life_kernel, caption=The OpenCAL-CL kernel
   implementing the Conway's Game of Life elementary
-  process.]{../opencal/OpenCAL-CL/examples/calcl_life/kernel/source/life.cl}
+  process.]{../opencal-examples/OpenCAL-CL/calcl_life/kernel/source/life.cl}
 
 Listing \ref{lst:calcl_life_kernel} shows the OpenCAL-CL kernel
 implementing the Conway's Game of Life transition function.
@@ -674,7 +674,7 @@ the \verb'MODEL_2D' OpenCAL-CL macro.
 
 Figures \ref{fig:calcl_life_0000} and \ref{fig:calcl_life_LAST} show the initial
 and final configuration of Game of Life as implemented in Listing
-\ref{lst:calcl_life}, respectively. 
+\ref{lst:calcl_life}, respectively.
 
 
 \section{SciddicaT}\label{sec:calcl_sciddicaT}
@@ -690,7 +690,7 @@ output for the application.
 \lstinputlisting[label=lst:calcl_gl_sciddicaT, caption=An OpenCAL-CL
   host-side implementation of the SciddicaT Cellular Automata model
   for landslide
-  simulation.]{../opencal/OpenCAL-CL/examples/calcl_gl_sciddicaT/source/sciddicaT.c}
+  simulation.]{../opencal-examples/OpenCAL-CL/calcl_gl_sciddicaT/source/sciddicaT.c}
 
 The host-side implementation of SciddicaT is shown in Listing
 \ref{lst:calcl_gl_sciddicaT}. Lines 4-9 inlcude some headers from
@@ -798,11 +798,11 @@ For further details about OpenCAL-GL, please refer Section \ref{sec:calgl_sciddi
 
 \lstinputlisting[label=lst:calcl_gl_sciddicaT_kernels_header, caption={The SciddicaT
   kernels' header file, as implemented in
-  OpenCAL-CL.}]{../opencal/OpenCAL-CL/examples/calcl_gl_sciddicaT/kernelActive/include/kernel.h}
+  OpenCAL-CL.}]{../opencal-examples/OpenCAL-CL/calcl_gl_sciddicaT/kernelActive/include/kernel.h}
 
 \lstinputlisting[label=lst:calcl_gl_sciddicaT_kernels, caption=The OpenCAL-CL
   kernels implementing the SciddicaT elementary processes and
-  steering.]{../opencal/OpenCAL-CL/examples/calcl_gl_sciddicaT/kernelActive/source/kernel_user.cl}
+  steering.]{../opencal-examples/OpenCAL-CL/calcl_gl_sciddicaT/kernelActive/source/kernel_user.cl}
 
 The device-side implementation of SciddicaT which take into account
 the active cells optimization is shown in Listings
@@ -866,11 +866,11 @@ Listing \ref{lst:calcl_gl_mod2} for the sake of completeness, while Listing .
 
 \lstinputlisting[label=lst:calcl_gl_mod2, caption=An OpenCAL-CL
   implementation of the mod2 3D CA with openCAL-GL graphic
-  output.]{../opencal/OpenCAL-CL/examples/calcl_gl_mod2CA3D/source/mod2CA3D.c}
+  output.]{../opencal-examples/OpenCAL-CL/calcl_gl_mod2CA3D/source/mod2CA3D.c}
 
 \lstinputlisting[label=lst:calcl_gl_mod2_kernel, caption=The OpenCAL-CL
   kernel implementing the mod2 3D CA elementary
-  process.]{../opencal/OpenCAL-CL/examples/calcl_gl_mod2CA3D/kernel/source/mod2CA.cl}
+  process.]{../opencal-examples/OpenCAL-CL/calcl_gl_mod2CA3D/kernel/source/mod2CA.cl}
 
 
 Host code is quite similar to that of Game of Life (cf. Section

@@ -105,9 +105,9 @@ where:
   $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1)
   = (i-1, j)$, i.e. the first neighbour, and so on (cf. Figure
   \ref{fig:LifeNeighborhood}).
-  
+
 \item $Q = \{0, 1\}$ is the set of cell's states.
-  
+
 \item $\sigma : Q^9 \rightarrow Q$ is the deterministic cell
   transition function. It is composed by one elementary process, which
   implements the previously above mentioned transition rules.
@@ -120,7 +120,7 @@ implementation in C with OpenCAL. As you can see, even if Listing
 Game of Life CA and performs a simulation (actually, only one
 computational step in this example).
 
-\lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal/OpenCAL/examples/cal_life/source/life.c}
+\lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL/cal_life/source/life.c}
 
 In order to use OpenCAL, you need to include some header files (lines
 3-5). Specifically, \verb'cal2D.h' (line 3) allows you to define the
@@ -159,7 +159,7 @@ permits to restrict the computation to only \emph{non-stationary
     enum CALSpaceBoundaryCondition CAL_TOROIDALITY,
     enum CALOptimization CAL_OPTIMIZATION
   )
-\end{lstlisting}  
+\end{lstlisting}
 
 The complete definition of \verb'calCADef2D()' is provided in Listing
 \ref{lst:calCADef2D}, here reported together with few other OpenCAL
@@ -188,14 +188,14 @@ type (Listing \ref{lst:CALOptimization}) allows you to consider the
 \emph{active cells optimization}, discussed later in this Chapter.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood2D, caption=The CALNeighborhood2D enum type., numbers=none]
-  enum CALNeighborhood2D { 
+  enum CALNeighborhood2D {
     CAL_CUSTOM_NEIGHBORHOOD_2D,
     CAL_VON_NEUMANN_NEIGHBORHOOD_2D,
     CAL_MOORE_NEIGHBORHOOD_2D,
     CAL_HEXAGONAL_NEIGHBORHOOD_2D,
-    CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D 
+    CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D
 };
-\end{lstlisting}  
+\end{lstlisting}
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood3D, caption=The CALNeighborhood3D enum type., numbers=none]
   enum CALNeighborhood3D {
@@ -203,12 +203,12 @@ type (Listing \ref{lst:CALOptimization}) allows you to consider the
     CAL_VON_NEUMANN_NEIGHBORHOOD_3D,
     CAL_MOORE_NEIGHBORHOOD_3D
 };
-\end{lstlisting}  
+\end{lstlisting}
 
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALSpaceBoundaryCondition, caption=The CALSpaceBoundaryCondition enum type., numbers=none]
   enum CALSpaceBoundaryCondition{
-    CAL_SPACE_FLAT = 0,         
+    CAL_SPACE_FLAT = 0,
     CAL_SPACE_TOROIDAL
   };
 \end{lstlisting}
@@ -216,7 +216,7 @@ type (Listing \ref{lst:CALOptimization}) allows you to consider the
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALOptimization, caption=The CALOptimization enum type., numbers=none]
   enum CALOptimization{
     CAL_NO_OPT = 0,
-    CAL_OPT_ACTIVE_CELLS        
+    CAL_OPT_ACTIVE_CELLS
   };
 \end{lstlisting}
 
@@ -244,7 +244,7 @@ policies.
     int initial_step,
     int final_step,
     enum CALUpdateMode UPDATE_MODE
-  )	
+  )
 \end{lstlisting}
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALUpdateMode, caption=The CALUpdateMode enum type., numbers=none]
@@ -345,8 +345,8 @@ and final configuration of Game of Life as implemented in Listing
 \end{figure}
 
 \section{OpenCAL statement conventions}\label{sec:Conventions}
-As noted from a rapid view to the source code, all  
-OpenCAL statements are characterized by a prefix and a suffix. In particular, all 
+As noted from a rapid view to the source code, all
+OpenCAL statements are characterized by a prefix and a suffix. In particular, all
 data types have the \verb'CAL' prefix, and an optional suffix that
 identifies the CA dimension (e.g. 2D for a two-dimensional model) and
 the basic type. For instance, in the case of Life's \verb'Q'
@@ -415,7 +415,7 @@ CA) function to add a cell to the pattern.
     // define of the life CA and life_simulation simulation objects
     life = calCADef2D (8, 16, CAL_MOORE_NEIGHBORHOOD_2D, CAL_CUSTOM_NEIGHBORHOOD_2D , CAL_NO_OPT );
     //...
-    
+
     //add neighbors of the Moore neighborhood
     calAddNeighbor2D(life,   0,   0); // neighbor 0 (central cell)
     calAddNeighbor2D(life, - 1,   0); // neighbor 1
@@ -510,8 +510,8 @@ neighbourhood. Let $|X|$ be the number of elements in X, and $n \in
 
 $$N(X, (i, j), n)$$
 
-represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby, $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1) = (i-1, j)$, i.e. the first neighbour, and so on. 
-  
+represents the $n^{th}$ neighbourhood of the cell $(i,j)$. Thereby, $N(X, (i, j), 0) = (i, j)$, i.e. the central cell, $N(X, (i, j), 1) = (i-1, j)$, i.e. the first neighbour, and so on.
+
 \item $Q$ is the set of cell states. It is subdivided in the following
   substates:
 
@@ -583,7 +583,7 @@ In particular, $q_{o_0}$ represents the outflows from the central cell towards t
 In the following Listing \ref{lst:cal_sciddicaT}, an OpenCAL
 implementation of SciddicaT is shown.
 
-\lstinputlisting[label=lst:cal_sciddicaT, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model.]{../opencal/OpenCAL/examples/cal_sciddicaT/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_sciddicaT, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model.]{../opencal-examples/OpenCAL/cal_sciddicaT/source/sciddicaT.c}
 
 As for the case of Game of Life, the CA model and the simulation
 objects are declared as global variables (lines 22 and 35,
@@ -788,7 +788,7 @@ version of SciddicaT is shown in Listing
 if only the differences with respect to the original implementation
 are commented.
 
-\lstinputlisting[label=lst:cal_Sciddicat-activecells, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal/OpenCAL/examples/cal_sciddicaT-activecells/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_Sciddicat-activecells, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal-examples/OpenCAL/cal_sciddicaT-activecells/source/sciddicaT.c}
 
 %% All of this is done in the \verb'sciddicaTCADef()' function,
 %% that you can see in Listing \ref{lst:sciddicaTCADef()}, and on the
@@ -868,7 +868,7 @@ are commented.
 %%   void sciddicaT_flows_computation(struct CALModel2D* sciddicaT, int i, int j)
 %%   {
 %%     // <snip>
-    
+
 %%     for (n=1; n<sciddicaT->sizeof_X; n++)
 %%       if (eliminated_cells[n])
 %%         calSet2Dr(sciddicaT, Q.f[n-1], i, j, 0.0);
@@ -880,7 +880,7 @@ are commented.
 %%   }
 
 %%   // <snip>
-  
+
 %%   // The sigma_3 elementary process
 %%   void sciddicaT_remove_inactive_cells(struct CALModel2D* sciddicaT, int i, int j)
 %%   {
@@ -1035,7 +1035,7 @@ SciddicaT. The OpenCAL implementation of the further optimized
 SciddicaT debris flows model is shown in Listing
 \ref{lst:cal_sciddicaT-unsafe}.
 
-\lstinputlisting[label=lst:cal_sciddicaT-unsafe, caption=An OpenCAL implementation of the SciddicaT further optimized debris flows simulation model.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_sciddicaT-unsafe, caption=An OpenCAL implementation of the SciddicaT further optimized debris flows simulation model.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe/source/sciddicaT.c}
 
 As noted, the definitions of CA and simulation objects doesn't
 change from the previous implementation (lines 131-132), while only
@@ -1119,7 +1119,7 @@ simulation termination. The complete implementation is shown for the
 sake of completeness.
 
 
-\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal/OpenCAL/examples/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 
 As noted, the \verb'calRunAddGlobalTransitionFunc2D()' function is
@@ -1178,7 +1178,7 @@ illustrated SciddicaT implementations.
   \caption{Computational performance of the four different
     implementations of the SciddicaT debris flows model.}
   \label{tab:speedup}
-\end{table} 
+\end{table}
 
 
 \section{A three-dimensional example}\label{sec:mod2}
@@ -1227,9 +1227,9 @@ where:
   represents the $n^{th}$ neighbourhood of the cell $(i,j,k)$. Thereby,
   $N(X, (i, j, k), 0) = (i, j, k)$, i.e. the central cell, $N(X, (i, j, k), 1)
   = (i-1, j, k)$, i.e. the first neighbour, and so on.
-  
+
 \item $Q = \{0, 1\}$ is the set of cell states.
-  
+
 \item $\sigma : Q^{27} \shortrightarrow Q$ is the deterministic cell
   transition function. It is composed by one elementary process, which
   implements the previously described transition rules.
@@ -1240,7 +1240,7 @@ As you can imagine, the OpenCAL implementation of the \emph{mod2} 3D
 CA is very simple as the Conway's game of Life is. The complete
 source code is shown in Listing \ref{lst:cal_mod2CA3D}.
 
-\lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal/OpenCAL/examples/cal_mod2CA3D/source/mod2CA3D.c}
+\lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal-examples/OpenCAL/cal_mod2CA3D/source/mod2CA3D.c}
 
 Even if Listing \ref{lst:cal_life} is concise, it
 completely defines the \emph{mod2} 3D CA and performs a simulation
@@ -1334,7 +1334,7 @@ shown in Figure \ref{fig:calgl_sciddicaT1}.
 
 \lstinputlisting[label=lst:calgl_sciddicaT, caption=An OpenCAL
   implementation of the sciddicaT 3D CA with openCAL-GL graphic
-  output.]{../opencal/OpenCAL-GL/examples/calgl_sciddicaT/source/sciddicaT.c}
+  output.]{../opencal-examples/OpenCAL-GL/calgl_sciddicaT/source/sciddicaT.c}
 
 As you can see, the \verb'OpenCAL-GL/calgl2D.h' and
 \verb'OpenCAL-GL/calgl2DWindow.h' headers are included to use
@@ -1373,7 +1373,7 @@ pointer to the corresponding simulation object.
   \end{tabular}
   \caption{Possible OpenCAL-GL drawing types. DEM is the acronym of Digital Elevation Model.}
   \label{tab:draw_modes}
-\end{table} 
+\end{table}
 
 To build a specifig view, we can use the
 \verb'calglAddToDrawModel2Dr()' function (lines 204-208). It adds a
@@ -1414,7 +1414,7 @@ static substates is generally more efficient.
   \end{tabular}
   \caption{Possible OpenCAL-GL graphic interpretation for substate's data.}
   \label{tab:substate_type_info}
-\end{table} 
+\end{table}
 
 \begin{table}
   \centering
@@ -1433,7 +1433,7 @@ static substates is generally more efficient.
   \end{tabular}
   \caption{Possible OpenCAL-GL substate's color settings.}
   \label{tab:substate_color_info}
-\end{table} 
+\end{table}
 
 \begin{table}
   \centering
@@ -1449,7 +1449,7 @@ static substates is generally more efficient.
   \end{tabular}
   \caption{Possible substate's data updating type.}
   \label{tab:substate_updating_type}
-\end{table} 
+\end{table}
 
 In the considered example (Listing \ref{lst:calgl_sciddicaT}), the
 \verb'draw_model3D' object defines a 3D view for the CA, since the
@@ -1535,7 +1535,7 @@ window in a matrix layout.
   \end{tabular}
   \caption{Possible OpenCAL-GL graphic interpretation for substate's data.}
   \label{tab:calgl_layouts}
-\end{table} 
+\end{table}
 
 The \verb'calglMainLoop2D()' function (line 226) enters the
 application main loop. It corresponds to the GLUT main loop and
@@ -1581,7 +1581,7 @@ screenshot of the application.
 
 \lstinputlisting[label=lst:calgl_mod2, caption=An OpenCAL
   implementation of the mod2 3D CA with openCAL-GL graphic
-  output.]{../opencal/OpenCAL-GL/examples/calgl_mod2CA3D/source/mod2CA.c}
+  output.]{../opencal-examples/OpenCAL-GL/calgl_mod2CA3D/source/mod2CA.c}
 
 \begin{figure}
   \begin{center}
@@ -1653,13 +1653,13 @@ you can write something like in Listing \ref{lst:reduction_example}.
     suffix character from r to b or i, for CALbyte- or CALint-based
     substates, respectively.}
   \label{tab:reductions}
-\end{table} 
+\end{table}
 
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:reduction_example, caption=An example of global reduction operation., numbers=none]
   // ...
   #include <cal2DReduction.h>
-  
+
   // ...
   void sciddicaTSteering(struct CALModel2D* sciddicaT)
   {
