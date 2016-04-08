@@ -1,60 +1,63 @@
 \chapter{Installation} \label{ch:installation}
 
-The 1.0 release of \verb'OpenCAL', here presented, is a collection of
-four different software libraries. Under the name \verb'OpenCAL' we
+The release of \verb'OpenCAL', here presented, is a collection of four
+different software libraries. Under the name \verb'OpenCAL' we
 identify the serial version of the library. It comes together with two
 different parallel implementations based on OpenMP and OpenCL, namely
 OpenCAL-OMP and OpenCAL-CL, respectively. Moreover, OpenCAL-GL
-identifies a general purpose OpenGL/GLUT visualization library. Many
-examples are also included into the distribution.
+identifies a general purpose OpenGL/GLUT visualization library.
 
-The library can be obtained as source code from GitHub to be compiled
-in your system. You can chose if compiling all the four different
-implementations or only some of them, and also if compling the
-examples. Some dependencies must be satisfied, depending on what you
-want to compile. Libraries can be compiled both statically (as .lib
-files) and as shared objects (as .so files). Eventually, you can
-install headers and libraries in your system and also uninstall them
-if no longer needed.
+%% Many examples are also included into the distribution.
+
+The library can be currently obtained only as source code to be
+compiled from GitHub. Some dependencies must be satisfied, depending
+on which libraries must be compiled. Eventually, you
+can install headers and libraries in your system and also uninstall
+them if no longer needed.
+
+%% Libraries can be compiled both statically (as .lib files) and as
+%% shared objects (as .so files).
 
 In the following Sections we will see all the steps needed to obtain
 the software and make it working on your computer.
 
 \section{Requirements and dependencies}
 
-In order to compile OpenCAL, you essentially need CMake (version 2.8
-or greater) and an ANSI C compiler (e.g. gcc 4.9 or greater\footnote{
-  The clang C compiler can also be used, taking in mind that it still
-  does not fully support Open-MP natively.}) installed in your
-system. CMake is used to generate the makefiles (or even project files
-for several IDEs) to be used to build OpenCAL.
+In order to build the different libraries, you need a quite recent
+ANSI C compiler (e.g. gcc under Linux/Unix systems or MinGW under
+Windows\footnote{The clang C compiler can also be used, taking in mind
+  that it still does not fully support Open-MP natively.}), and CMake
+(to generate the makefiles, or even project files for several IDEs
+like Eclipse). An OpenCL implementation (e.g. by AMD, Intel or NVIDIA)
+is also needed to build OpenCAL-CL, as well as GLUT (eg. freeglut) is
+needed to build OpenCAL-GL. Some dependencies must also be satisfied,
+depending on the library to be build:
 
-An OpenCL implementation (e.g. by NVIDIA, AMD, Intel) is also needed
-to compile OpenCAL-CL. Moreover, still to compile OpenCAL-CL, at least
-the 3.1 version of CMake is required. Eventually, a GLUT development
-library is needed to compile OpenCAL-GL. The following is a
-dependencies list for each of the above software libraries:
+%% Moreover, still to compile OpenCAL-CL, at least the 3.1 version of
+%% CMake is required. Eventually, a GLUT development library is needed to
+%% compile OpenCAL-GL. The following is a dependencies list for each of
+%% the above software libraries:
 
 \begin{description}
-\item[OpenCAL: ] CMake version 2.8 or grater, and a quite new C
-  compiler.
+\item[OpenCAL: ] CMake version 2.8 or grater.
 \item[OpenCAL-OMP: ] A C compiler supporting at least Open-MP version
   2.0\footnote{For a list of OpenMP compliant compilers see the
     following link: \url{http://openmp.org/wp/openmp-compilers/}.}.
-\item[Open-CL: ] CMake version 3.1 or grater and at least one OpenCL
-  implementation installed in your system\footnote{OpenCAL-CL was
-    tested on the NVIDIA OpenCL implementation. You can find the
+\item[Open-CL: ] CMake version 3.1 or grater, and at least a OpenCL
+  implementation version 1.2 or greater installed\footnote{OpenCAL-CL
+    was tested on the NVIDIA OpenCL implementation. You can find the
     NVIDIA's OpenCL implementation, shipped with the CUDA platform, at
     the following url:
     \url{http://docs.nvidia.com/cuda/\#installation-guides}}.
 \item[OpenCAL-GL: ] OpenGL/GLUT headers and libraries \footnote{For
   example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages
-  on \texttt{yum/dnf}- and \texttt{apt}-based systems, respectively.};
+  on \texttt{yum/dnf}- and \texttt{apt}-based systems,
+  respectively.}. Moreover, POSIX Threads are required.
 \end{description}
 
 \noindent Eventually, Doxygen and Graphviz are required to build the
-software documentation, which provides specific information about
-library's data structures and functions.
+software documentation, which provides specific information
+implemented data structures and functions.
 
 \section{Obtaining OpenCAL}
 
