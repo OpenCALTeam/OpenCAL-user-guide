@@ -1,63 +1,75 @@
 \chapter{Introduction}
 
-Cellular Automata (CA) represent a parallel computing methodology for
-modelling complex systems. Well known examples of applications include
-the simulation of natural phenomena such as lava and debris flows,
-forest fires, agent based social processes such as pedestrian
-evacuation and highway traffic problems, besides many others (e.g.,
-theoretical studies).
+OpenCAL (Open Computing Abstraction Layer) is a parallel computational
+software library, developed as an Open Source project at University of
+Calabria (Italy) and released under the LGPL v2.1 licence.
 
-Many Cellular Automata software environments and libraries exist.
-However, when non-trivial modelling is needed, only non-open source
-software are generally available. This is particularly true for
-eXtended Cellular Automata (XCA), adopted for simulating phenomena at
-a macroscopic point of view, for which only a significant example of
-non free software exists, namely the CAMELot Cellular Automata
-Simulation Environment.
+OpenCAL allows for the definition of numerical simulation models based
+on the Cellular Automata computational paradigm. It also supports
+eXtended Cellular Automata (XCA), Finite Differences method and, in
+general, all numerical methods based on uniform computational grids.
 
-In order to fill this deficiency in the world of free software, the
-\verb'OpenCAL' C Library has been developed. Similarly to CAMELot, it
-allows for a simple and concise definition of both the transition
-function and the other characteristics of the cellular automaton
-definition. Moreover, it allows for both sequential and parallel
-execution, both on CPUs and GPUs (thanks to the adoption of the OpenMP
-and OpenCL APIs, respectively), hiding most parallel implementation issues
-to the user.
+OpenCAL is currently developed in C/C++ and can run in parallel on
+both CPUs, thanks to its implementation based on OpenMP, and on GPUs,
+thanks to its implementation in OpenCL.
 
-The library has been tested on both CPUs anf GPUs by considering
+%% Cellular Automata (CA) represent a parallel computing methodology for
+%% modelling complex systems. Well known examples of applications include
+%% the simulation of natural phenomena such as lava and debris flows,
+%% forest fires, agent based social processes such as pedestrian
+%% evacuation and highway traffic problems, besides many others (e.g.,
+%% theoretical studies).
+
+%% Many Cellular Automata software environments and libraries exist.
+%% However, when non-trivial modelling is needed, only non-open source
+%% software are generally available. This is particularly true for
+%% eXtended Cellular Automata (XCA), adopted for simulating phenomena at
+%% a macroscopic point of view, for which only a significant example of
+%% non free software exists, namely the CAMELot Cellular Automata
+%% Simulation Environment.
+
+%% In order to fill this deficiency in the world of free software, the
+%% \verb'OpenCAL' C Library has been developed. Similarly to CAMELot, it
+%% allows for a simple and concise definition of both the transition
+%% function and the other characteristics of the cellular automaton
+%% definition. Moreover, it allows for both sequential and parallel
+%% execution, both on CPUs and GPUs (thanks to the adoption of the OpenMP
+%% and OpenCL APIs, respectively), hiding most parallel implementation issues
+%% to the user.
+
+The library has been tested on both CPUs and GPUs by considering
 different Cellular Automata, including the well known Conway's Game of
 Life and the SciddicaT XCA debris flows simulation model. Results have
 demonstrated the goodness the library both in terms of usability and
 performance.
 
-In the present release 1.0 of the library, 2D and 3D cellular automata
-can be defined\footnote{Indeed, even 1D CA can be defined oas a
-  degenerate case of 2D, or even 3D, CA.}. The library also offers
-diverse facilities (e.g. it provides many pre-defined cell's
-neighborhoods), allows to explicate the simulation main cycle and
-provides a built in optimization algorithm to speed up your
-simulation. Moreover, OpenCAL offers you a built in interactive 2D/3D
-visualization system you can use to graphically represent step by step
-your simulation based. The visualization system was developed in
-OpenGL Compatibility Profile, thus is able to run everywhere, also on
-old workstations.
+In the present release, 2D and 3D numerical models can be
+defined. Actually, even 1D models can be defined as a degenerate case
+of 2D CA. The library also offers diverse facilities (e.g. it provides
+many pre-defined cell's neighborhoods), allows to explicate the
+simulation main loop and provides a built in optimization algorithm
+to speed up the simulation. Moreover, OpenCAL offers a built in
+interactive 2D/3D visualization system developed in OpenGL
+Compatibility Profile (so that it can run everywhere, even on old
+workstations).
 
 The present manual reports the main usage of the \verb'OpenCAL'
-library related to the sequential, OpenMP and OpenCL versions, the
-library installation procedure, besides diverse examples of
+library related to the sequential, OpenMP- and OpenCL-based versions,
+the installation procedure, besides diverse examples of
 application. In particular, Chapter \ref{ch:installation} deals with
-OpenCAL download and installation, while Chapter \ref{ch:CA} introduce
-you to the CA and XCA computational paradigms. If you already know
-theese topics, you can skip this Chapter. Chapter \ref{ch:opencal} is
-about serial CA and XCA development with OpenCAL, and introduce the
-different library features by examples. Chapter \ref{ch:opencal-omp}
-is about the OpenMP-based parallel version of OpenCAL and also
-introduces the library by examples. Chapter \ref{ch:opencal-cl}
-briefly introduces you to General Purpose GPU programmin with OpenCL
-and then presents you the OpenCL-based version of OpenCAL, still by
-examples. OpenCAL-GL, whihch is the name that identifies the OpenGL
-visualization system built into OpenCAL, is introduced at the end of
-each of the above Chapters, together with computational performaces of
-some of the implemented CA. Eventually, Chapter \ref{ch:utility} ends
-this user guide by presenting you some usefull library features that
-weren't presented previously, like reduction functions.
+download and installation, while Chapter \ref{ch:CA} introduce you to
+the CA and XCA computational paradigms. The numerical method of Finite
+Differences is not covered, as it can be considered a particuar case
+of the XCA paradigm. Chapter \ref{ch:opencal} is about serial CA and
+XCA development with OpenCAL, and introduce the different library
+features by examples. Chapter \ref{ch:opencal-omp} is about the
+OpenMP-based parallel version of OpenCAL and also introduces the
+library by examples. Chapter \ref{ch:opencal-cl} briefly introduces to
+General Purpose GPU programmin with OpenCL and then presents the
+OpenCL-based version of OpenCAL, still by examples. OpenCAL-GL is
+introduced at the end of each of the above Chapters, together with
+computational performaces of some of the implemented CA.
+
+%% Eventually, Chapter \ref{ch:utility} ends this user guide by
+%% presenting you some usefull library features that weren't presented
+%% previously, like reduction functions.
