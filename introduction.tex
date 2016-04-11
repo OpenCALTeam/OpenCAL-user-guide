@@ -1,13 +1,15 @@
 \chapter{Introduction}
 
 OpenCAL (Open Computing Abstraction Layer) is a parallel computational
-software library, developed as an Open Source project at University of
-Calabria (Italy) and released under the LGPL v2.1 licence.
+software library, developed as an Open Source project at the
+Department of Mathematics and Computer Science University of Calabria
+(Italy) and released under the LGPL v2.1 license.
 
 OpenCAL allows for the definition of numerical simulation models based
 on the Cellular Automata computational paradigm. It also supports
-eXtended Cellular Automata (XCA), Finite Differences method and, in
-general, all numerical methods based on uniform computational grids.
+eXtended Cellular Automata (XCA), the Finite Differences method and,
+in general, all numerical methods based on uniform computational
+grids.
 
 OpenCAL is currently developed in C/C++ and can run in parallel on
 both CPUs, thanks to its implementation based on OpenMP, and on GPUs,
@@ -46,29 +48,29 @@ performance.
 In the present release, 2D and 3D numerical models can be
 defined. Actually, even 1D models can be defined as a degenerate case
 of 2D CA. The library also offers diverse facilities (e.g. it provides
-many pre-defined cell's neighborhoods), allows to explicate the
-simulation main loop and provides a built in optimization algorithm
-to speed up the simulation. Moreover, OpenCAL offers a built in
+many predefined cell's neighborhoods), allows to make explicit the
+simulation main loop and provides a built in optimization algorithm to
+speed up the simulation. Moreover, OpenCAL offers a built in
 interactive 2D/3D visualization system developed in OpenGL
-Compatibility Profile (so that it can run everywhere, even on old
-workstations).
+Compatibility Profile, so that it can run everywhere, even on old
+workstations.
 
 The present manual reports the main usage of the \verb'OpenCAL'
 library related to the sequential, OpenMP- and OpenCL-based versions,
-the installation procedure, besides diverse examples of
-application. In particular, Chapter \ref{ch:installation} deals with
-download and installation, while Chapter \ref{ch:CA} introduce you to
-the CA and XCA computational paradigms. The numerical method of Finite
-Differences is not covered, as it can be considered a particuar case
-of the XCA paradigm. Chapter \ref{ch:opencal} is about serial CA and
-XCA development with OpenCAL, and introduce the different library
-features by examples. Chapter \ref{ch:opencal-omp} is about the
-OpenMP-based parallel version of OpenCAL and also introduces the
-library by examples. Chapter \ref{ch:opencal-cl} briefly introduces to
-General Purpose GPU programmin with OpenCL and then presents the
-OpenCL-based version of OpenCAL, still by examples. OpenCAL-GL is
-introduced at the end of each of the above Chapters, together with
-computational performaces of some of the implemented CA.
+the installation procedure, besides examples of application. In
+particular, Chapter \ref{ch:installation} deals with download and
+installation, while Chapter \ref{ch:CA} introduces the CA and XCA
+computational paradigms. The Finite Differences numerical method is
+not covered, as it can be considered a particular case of the XCA
+paradigm. Chapter \ref{ch:opencal} is about serial CA and XCA
+development with OpenCAL, and introduces the different library features
+by examples. Chapter \ref{ch:opencal-omp} is about the OpenMP-based
+parallel version of OpenCAL and also introduces the library by
+examples. Chapter \ref{ch:opencal-cl} briefly introduces to General
+Purpose GPU programming with OpenCL and then presents the OpenCL-based
+version of OpenCAL, still by examples. OpenCAL-GL is discussed at the
+end of each of the above Chapters, together with computational
+performances of some of the implemented CA.
 
 %% Eventually, Chapter \ref{ch:utility} ends this user guide by
 %% presenting you some usefull library features that weren't presented

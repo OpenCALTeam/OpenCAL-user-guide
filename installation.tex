@@ -7,19 +7,12 @@ different parallel implementations based on OpenMP and OpenCL, namely
 OpenCAL-OMP and OpenCAL-CL, respectively. Eventually, OpenCAL-GL
 identifies an OpenGL/GLUT-based visualization library.
 
-%% Many examples are also included into the distribution.
-
 The library can be currently obtained only as source code to be
 compiled from GitHub. Some dependencies must be satisfied, depending
-on which libraries must be compiled. Eventually, you
-can install headers and libraries in your system and also uninstall
-them if no longer needed.
-
-%% Libraries can be compiled both statically (as .lib files) and as
-%% shared objects (as .so files).
-
-In the following Sections we will see all the steps needed to obtain
-the software and make it working on your computer.
+on which libraries must be compiled. Eventually, headers and libraries
+can be installed and, eventually, uninstalled if no longer needed. In
+the following Sections we will see all the steps needed to obtain the
+software and make it working.
 
 \section{Requirements and dependencies}
 
@@ -29,9 +22,9 @@ Windows\footnote{The clang C compiler can also be used, taking in mind
   that it still does not fully support Open-MP natively.}), and CMake
 (to generate the makefiles, or even project files for several IDEs
 like Eclipse). An OpenCL implementation (e.g. by AMD, Intel or NVIDIA)
-is also needed to build OpenCAL-CL, as well as GLUT (eg. freeglut) is
+is also needed to build OpenCAL-CL, as well as GLUT (e.g. freeglut) is
 needed to build OpenCAL-GL. Some dependencies must also be satisfied,
-depending on the library to be build:
+depending on the library to be built:
 
 %% Moreover, still to compile OpenCAL-CL, at least the 3.1 version of
 %% CMake is required. Eventually, a GLUT development library is needed to
@@ -40,11 +33,11 @@ depending on the library to be build:
 
 \begin{description}
 \item[OpenCAL: ] A quite recent ANSI C compiler, and CMake version 2.8
-  or grater.
+  or greater.
 \item[OpenCAL-OMP: ] A C compiler supporting at least Open-MP version
   2.0\footnote{For a list of OpenMP compliant compilers see the
     following link: \url{http://openmp.org/wp/openmp-compilers/}.},
-  and CMake version 2.8 or grater.
+  and CMake version 2.8 or greater.
 \item[Open-CL: ] A quite recent ANSI C compiler, CMake version 3.1 or
   grater, and OpenCL version 1.2 or greater\footnote{OpenCAL-CL was
     tested on the NVIDIA OpenCL implementation. You can find the
@@ -59,7 +52,7 @@ depending on the library to be build:
 \end{description}
 
 \noindent Eventually, Doxygen and Graphviz are required to build the
-software documentation, which provides specific information
+software documentation, which provides specific information about
 implemented data structures and functions.
 
 \section{Obtaining OpenCAL}
@@ -76,8 +69,9 @@ following GitHub urls:
 \end{table}
 
 \noindent Development releases of libraries and examples can also be
-downloaded (for instance into the \verb'~/git' directory) by cloning
-the GitHub repositories:
+downloaded (for instance into the \verb'~/git' directory, where the
+symbol \verb'~' identifies the user's home directory) by cloning the
+GitHub repositories:
 
 \begin{lstlisting}[numbers=none,language=bash]
 user@machine:-$ cd ~/git
@@ -134,12 +128,14 @@ user@machine:-$ git clone https://github.com/OpenCALTeam/opencal-examples
 
 \subsection{Generating makfiles}
 
-In order to generate the makefiles (or the project files for Eclipse or other IDEs), needed to compile OpenCAL libraries and examples:
+In order to generate the makefiles (or the project files for Eclipse
+or other IDEs), needed to compile OpenCAL libraries and examples, the
+following steps can be carried out:
 
 \begin{enumerate}
-\item Enter the OpenCAL source tree root directory (e.g. \verb'~git/opencal-1.0/');
+\item Enter the OpenCAL source tree root directory (e.g. \verb'~/git/opencal-1.0/');
 \item Create a directory for the binaries
-  (e.g. \verb'~git/opencal-1.0/build/') and enter into it;
+  (e.g. \verb'~/git/opencal-1.0/build/') and enter into it;
 \item Run CMake using the options listed in Table
   \ref{ch:installation:cmakeoptions} to control which features will be
   enabled in the compiled libraries.
@@ -189,7 +185,7 @@ following commands:
 
 \subsubsection{Custom installation path}
 
-Another usefull CMake option is \texttt{CMAKE\_INSTALL\_PREFIX:PATH},
+Another useful CMake option is \texttt{CMAKE\_INSTALL\_PREFIX:PATH},
 that allows to change the default installation directory, that is
 \verb'/usr/local' under Linux systems. Therefore, to select
 \texttt{/opt} as installation target directory, change the above
@@ -221,7 +217,7 @@ for speeding up the compilation process.
 \subsection{Install}
 
 You can install the compiled libraries, headers and API documentation
-in the system default directories using the following command:
+using the following command:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
   user@machine:-$ sudo make install
@@ -260,7 +256,7 @@ details.
 After installation, you need to set you environment up in order to use
 OpenCAL libraries. In particular, you need to update the
 \verb'LD_LIBRARY_PATH' environment variable and regenerate the loader
-cahce file. For instance, if you installed the software in
+cache file. For instance, if you installed the software in
 \verb'/usr/local/opencal-1.0', you need to add the path
 \verb'/usr/local/opencal-1.0/lib' to \verb'LD_LIBRARY_PATH' and then
 run the command \verb'ldconfig' as root. To do this you can add the
@@ -275,9 +271,9 @@ and then type the following commands:
 user@machine:-$ source .bash_profile
 user@machine:-$ sudo ldconfig
 \end{lstlisting}
-The first command executes the content of the file passed as argument
-(i.e. \verb'.bash_profile'), while the second update the cache for the
-loader, so that openCAL shared objects can be loaded at run time.
+The first command executes the content of the file argument
+(i.e. \verb'.bash_profile'), while the second updates the loader's
+cache, so that openCAL shared objects can be loaded at run time.
 
 The above procedure is only valid for the current user. If you want to
 allow all the other users to use OpenCAL you can create a new file in
@@ -315,8 +311,7 @@ If you want to use CMake, follow the steps below:
 
 \begin{lstlisting}[numbers=none,language=bash]
   user@machine:-$ cd ~/git/opencal-examples/OpenCAL/cal_life
-  user@machine:-$ mkdir build
-  user@machine:-$ cd build
+  user@machine:-$ mkdir build && cd build
   user@machine:-$ cmake ..
   user@machine:-$ cd ..
   user@machine:-$ ./bin/cal_life  
@@ -329,7 +324,8 @@ If you want to use CMake, follow the steps below:
 %% \end{lstlisting}
 %% while, if you chose a custom installation path, e.g. \verb'/usr/local/OpenCAL-1.0',
 
-In the latter case you need to specify where include files are located by using the following command:
+In the latter case you need to specify where include files are located
+and link the required library, by using the following command:
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc-full}]
   user@machine:-$ gcc life.c -o life -I/usr/local/opencal-1.0/include/ -lopencal
 \end{lstlisting}
@@ -342,7 +338,7 @@ typing the following command:
 \end{lstlisting}
 
 In both cases, the \verb'life_0000.txt' and \verb'life_LAST.txt' files
-shoud be generated. If this is the case, congratulations, you
+should be generated. If this is the case, congratulations, you
 installed OpenCAL properly.
 
 
