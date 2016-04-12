@@ -1,25 +1,92 @@
 \chapter{OpenCAL}\label{ch:opencal}
 
-With OpenCAL (without any suffix) we identify the sequential version
-of the OpenCAL software library, which runs on just a single core of
-your CPU, and represents the basis for the other parallel versions,
-namely OpenCAL-OMP, based on OpenMP, and OpenCAL-CL, based on OpenCL
-(and thus able to run on GPUs). Moreover, OpenCAL allows for some
-\emph{unsafe operations}, which can significantly speed up your
-application. Such unsafe operations can also be found in the OpenMP
-version, while they are not currently available in OpenCAL-CL.
+This Chapter introduces the serial implementation of OpenCAL by
+examples. After a brief overview of supported data and name
+conventions, a simple 2D CA is implemented and the main structure of
+the library presented. Subsequently, four different implementations of
+a more complex 2D example are illustrated, to show differet
+optimizations that can be used to speed up the simulation. The
+implementation of a simple 3D CA is also presented. The last part of
+the Chapter deals with OpenCAL-GL and shows how to integrate a basic
+OpenGL/GLUT visualization system in both 2D and 3D applications based
+on OpenCAL.
 
-In the following sections, we will introduce OpenCAL by examples. In
-the first part of the Chapter, we will deal with the OpenCAL's
-\emph{safe mode}, while in the last one, we will go deep inside
-OpenCAL, discussing \emph{unsafe mode} operations.
+
+\section{OpenCAL data types and statements convention}\label{sec:Conventions}
+
+The current version of OpenCAL provides support for three different
+basic scalar types, substates, CA and simulation objects. Basic types
+are listed in Table \ref{tab:basic_types}, while supported substates
+in Table \ref{tab:substate_types}; Table \ref{tab:ca_sim_types} lists
+OpenCAL data types for CA and simulation objects.
+
+Data types are characterized by the \verb'CAL' prefix, and an optional
+suffix identifying the CA dimension or the basic type, or both of
+them. For instance, the 2Di suffix specifies a two-dimensional object
+in which each element is of type integer (cf. Table
+\ref{tab:substate_types}).
+
+Predefined numerical constants start with the \verb'CAL_' prefix,
+followed by at least one uppercase keyword. In case of more keywords,
+they are separated by the \verb'_' character.
+
+Eventually, functions start with the \verb'cal' suffix, followed by at
+least one capitalized keyword, and end with a suffix specifying the CA
+dimension and the basic datatype.
+
+\begin{table}
+  \centering
+  \begin{tabular}{ccc}
+    \hline
+    OpenCAL basic type & Parameters alias & Corresponding C type \\
+    \hline
+    \verb'CALbyte' & \verb'CALParameterb' & \verb'char'  \\
+    \verb'CALint'  & \verb'CALParameteri' & \verb'int'  \\
+    \verb'CALreal' & \verb'CALParameterr' & \verb'double'  \\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL basic types, together with their alias, used for
+    defining CA parameters, and correspondent types in C.}
+  \label{tab:basic_types}
+\end{table}
+
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \hline
+    OpenCAL substate type & Basic scalar type \\
+    \hline
+    \verb'CALSubstate[2D|3D]b' & \verb'CALbyte'\\
+    \verb'CALSubstate[2D|3D]i' & \verb'CALint' \\
+    \verb'CALSubstate[2D|3D]r' & \verb'CALreal'\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL substate types, together with their basic scalar
+    types.}
+  \label{tab:substate_types}
+\end{table}
+
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \hline
+    OpenCAL substate type & Meaning \\
+    \hline
+    \verb'CALModel[2D|3D]' & CA data type\\
+    \verb'CALRun2D[2D|3D]' & Simulation data type\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL types for CA and simulation objects.}
+  \label{tab:ca_sim_types}
+\end{table}
+
 
 \section{Conway's Game of Life}\label{sec:cal_life}
 
-In order to introduce Cellular Automata development with OpenCAL, we
-start this section by implementing the Conway's Game of Life. It
-represents one of the most simple, yet powerful examples of Cellular
-Automata, devised by mathematician John Horton Conway in 1970.
+In order to introduce model development with OpenCAL, this section
+starts by implementing the Conway's Game of Life. It represents one of
+the most simple, yet powerful examples of CA, devised by mathematician
+John Horton Conway in 1970.
 
 The Game of Life can be thought as an infinite two-dimensional
 orthogonal grid of square cells, each of which is in one of two
@@ -112,53 +179,21 @@ where:
 \end{itemize}
 
 
-The program in Listing \ref{lst:cal_life} provides a simple Game of
-Life sequential implementation with OpenCAL. As you can see, even if
-it is very concise, it completely defines the Conway's Game of Life CA
-and performs a simulation (actually, only one computational step in
-this example).
-
 \lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL/cal_life/source/life.c}
 
-In order to use OpenCAL, you need to include some header files (lines
-3-5). Specifically, \verb'cal2D.h' (line 3) allows to define the CA
-object (line 9) and the related substate (line 10 - cf. Table
-\ref{tab:types}), while \verb'cal2DRun.h' (line 5) allows to define a
-CA simulation object (line 11), needed to run the CA model. The
-\verb'cal2DIO.h' header file (line 4) provides some basic input/output
-functions for reading/writing substates from/to file.
 
+The program in Listing \ref{lst:cal_life} provides a complete
+OpenCAL-based implementation of Game of Life in just 60 lines of code,
+by defining both the CA model and the simulation object, needed to let
+the CA evolve step by step.
 
-\begin{table}
-  \centering
-  \label{tab:types}
-  \begin{tabular}{l|c|c}
-    \hline
-    OpenCAL substate type & OpenCAL basic type & Corresponding basic C type \\
-    \hline
-    \hline
-    \verb'CALSubstate2Db' & \verb'CALbyte' & \verb'char'  \\
-    \verb'CALSubstate2Di' & \verb'CALint'  & \verb'int'   \\
-    \verb'CALSubstate2Dr' & \verb'CALreal' & \verb'double'\\
-    \hline
-  \end{tabular}
-  \caption{Two-dimensional OpenCAL substate types, together with OpenCAL basic types and their correspondent types in C.}
-  \label{tab:speedup}
-\end{table}
-
-%% OpenCAL comes with three different basic numeric
-%% types, which are in lowercase (besides the prefix):
-%% \begin{itemize}
-%% \item \verb'CALbyte', corresponding to the \verb'char' C data type;
-%% \item \verb'CALint', corresponding to the \verb'int' C data type;
-%% \item \verb'CALreal', corresponding to the \verb'double' C data type;
-%% \end{itemize}
-%% which are adopted to define the three predefined substates types:
-%% \begin{itemize}
-%% \item \verb'CALSubstate2Db', corresponding to a \verb'CALbyte' based substate;
-%% \item \verb'CALSubstate2Di', corresponding to a \verb'CALint' based substate;
-%% \item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate.
-%% \end{itemize}
+Header files at lines 3-5 allow to use the serial implementation of
+OpenCAL. Specifically, \verb'cal2D.h' allows to define CA and
+substates, while \verb'cal2DRun.h' the simulation object. Eventually,
+\verb'cal2DIO.h' provides some basic input/output functions for
+reading/writing substates from/to file. The CA object is then declared
+at line 9, while lines 10 and 11 declare a substate and a simulation
+object, respectively.
 
 While statements at lines 9-11 just declare the required objects, they
 are defined later in the \verb'main' function. In particular, the life
@@ -316,16 +351,16 @@ neighboring cells, and to update the central cell state. In the
 specific case of the Game of Life, we used the \verb'calGet2Di()'
 function to get the central cell's value of the substate \verb'Q'
 (remember that the central cell is identified by the coordinates (i,
-j), coming from the callback parameters), the \verb'calGetX2Di()'
-function to get the value of the n-th neighbor's substate \verb'Q',
-and the \verb'calSet2Di()' function to update the value of the
-substate \verb'Q' for the central cell. In the Game of Life example,
-we defined just one elementary process, that therefore represents the
-whole cell transition function. However, as we will see later, many
-elementary processes can be defined in OpenCAL by simply calling the
-\verb'calAddElementaryProcess2D()' function many times. If the user
-defines more than one elementary process, these will be executed in
-the same order they were registered to the CA.
+j), coming from the parameters of the callback function), the
+\verb'calGetX2Di()' function to get the value of the n-th neighbor's
+substate \verb'Q', and the \verb'calSet2Di()' function to update the
+value of the substate \verb'Q' for the central cell. In the Game of
+Life example, we defined just one elementary process, that therefore
+represents the whole cell transition function. However, as we will see
+later, many elementary processes can be defined in OpenCAL by simply
+calling the \verb'calAddElementaryProcess2D()' function many times. If
+the user defines more than one elementary process, these will be
+executed in the same order they were registered to the CA.
 
 The \verb'calInitSubstate2Di()' function at line 39 sets the whole
 substate \verb'Q' to the value 0, i.e. the value of the substate
@@ -369,29 +404,13 @@ in Listing \ref{lst:cal_life}.
   \end{center}
 \end{figure}
 
-\section{OpenCAL statement conventions}\label{sec:Conventions}
-As noted from the previous example, OpenCAL statements are
-characterized by a prefix and a suffix.
-
-In particular, all data types have the \verb'CAL' prefix, and an
-optional suffix that identifies the CA dimension and the basic
-type. For instance, in the case of Life's \verb'Q' substate, the 2Di
-suffix of the \verb'CALSubstate2Di' type specifies that it is a
-two-dimensional substate in which each element is of type integer.
-
-Furthermore, each OpenCAL constants have the \verb'CAL_' prefix, which
-is followed by at least one uppercase keyword. In case of more
-keywords, they are separated by the \verb'_' character. Eventually,
-all the OpenCAL functions start with the \verb'cal' suffix, followed
-by at least one capitalized keyword, and end with a suffix specifying
-the CA dimension and the basic datatype.
 
 \section{Custom Neighborhoods}\label{sec:CustomNeiughbourhoods}
 In the Game of Life example, we used the predefined Moore
-neighborhood. As already stated, OpenCAL also provides other 2D and
-3D predefined neighborhoods. Furthermore, it allows for the
-definition of custom neighborhood patterns (cf. Listings
-\ref{lst:CALNeighborhood2D} and \ref{lst:CALNeighborhood3D}).
+neighborhood. As already stated, OpenCAL also provides other 2D and 3D
+predefined neighborhoods (cf. Listings \ref{lst:CALNeighborhood2D} and
+\ref{lst:CALNeighborhood3D}). Furthermore, it allows for the
+definition of custom neighborhood patterns.
 
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calAddNeighbor2D-3D, caption=The calAddNeighbor2D() and calAddNeighbor3D() functions to define custom neighborhood patterns., numbers=none]
@@ -620,7 +639,7 @@ The topographic altitude and debris thickness substates are
 initialized from files through the \verb'calLoadSubstate2Dr()'
 function (lines 163-164), while the remaining initial state of the CA
 is set by means of the \verb'calRunAddInitFunc2D()' function. It
-registers the \verb'sciddicaT_simulation_init()' callback, which is
+registers the \verb'sciddicaTSimulationInit()' callback, which is
 executed once before the execution of the simulation loop, in which
 the elementary processes are applied to the whole set of cells of the
 cellular space. Such callback function must return void and take a
@@ -628,7 +647,7 @@ pointer to a simulation object as parameter. Differently to an
 elementary process, which can only access state values of cells
 belonging to the neighborhood, this function can perform global
 operations over the whole cellular space. In the specific case of the
-SciddicaT model, the \verb'sciddicaT_simulation_init()' function
+SciddicaT model, the \verb'sciddicaTSimulationInit()' function
 (lines 104-130) sets the values of all the outflows from the central
 cell to its neighbors to zero, by means of the function
 \verb'calInitSubstate2Dr()' (lines 110-113). Moreover, it sets the
@@ -648,7 +667,7 @@ the \verb'calRunAddSteeringFunc2D()' function. Steering is executed at
 the end of each computational step (i.e. after all the elementary
 processes have been applied to each cell of the cellular space), and
 can perform global operations over the cellular space. In this case,
-the \verb'sciddicaT_simulation_init()' callback is registered; it must
+the \verb'sciddicaTSteering()' callback is registered; it must
 return void and takes a pointer to a simulation object as function
 parameter. It simply resets (to zero) outflows everywhere through
 the \verb'calInitSubstate2Dr()' function.
@@ -699,9 +718,9 @@ final step of computation (or this latter is set to
 \verb'CAL_RUN_LOOP'), elementary processes are executed
 concurrently\footnote{On the serial version of OpenCAL, implicit
   parallelism is obtained by exploiting the two different computing
-  planes built into OpenCAL's substates. The first one, that we will
-  call \emph{current}, is used to read substates's values for the
-  central cell and its neighbors, while the second, that we will call
+  planes built into OpenCAL substates. The first one, referred as
+  \emph{current}, is used to read substates values for the central
+  cell and its neighbors, while the second, that referred as
   \emph{next}, is used to update the new state for the central
   cell. When all the cells have been processed and the new state
   values updated, computing planes are switched, i.e. the \emph{next}
@@ -931,17 +950,17 @@ easily obtained when the simulation involves only a limited subset of
 the computational domain.
 
 \section{SciddicaT as eXtended CA}\label{sec:sciddicaT_extended}
-OpenCAL allows for an even further optimization of the SciddicaT debris flows
-simulation model by means of the so called \emph{unsafe
+OpenCAL allows for an even further optimization of the SciddicaT
+debris flows simulation model by means of the so called \emph{unsafe
   operations}. In fact, in some cases, it is possible to consider an
 extended definition of the computational model, allowing for
 operations that are not strictly permitted by the formal definition of
 Cellular Automata. In particular, we will permit the transition
 function to update the state of the neighboring cells, while the CA
-formally only allows for state change for the central one. When
-such kind of unsafe operations are adopted, we are in front of an XCA eXtended
-Cellular Automata. Obviously, in order to be well defined, the XCA
-must be equivalent to the original CA model.
+formally only allows for state change for the central one. When such
+kind of unsafe operations are adopted, we are in front of an XCA
+eXtended Cellular Automata. Obviously, in order to be well defined,
+the XCA must be equivalent to the original CA model.
 
 An XCA equivalent version of SciddicaT can be obtained by observing
 that, when an outflow is computed from the central cell towards a
@@ -1040,7 +1059,7 @@ $$ q = (q_z, q_h)$$
 \end{itemize}
 
 Note that, only the topographic altitude and the debris thickness are
-now considered as model's substates, as the four outflows substates
+now considered as model substates, as the four outflows substates
 are no longer needed. Moreover, the number of elementary process now
 considered is two, instead of three for the previous versions of
 SciddicaT. The OpenCAL implementation of this further optimized
@@ -1143,7 +1162,7 @@ explicit. Here, the elementary processes are applied in the same order
 they are defined by means of the \verb'calAddElementaryProcess2D()'
 function (which is the default behavior of OpenCAL), even if you are
 free to re-order the call sequence within the explicit transition
-function callback. In particular, the \verb'sciddicaT_flows()'
+function callback. In particular, the \verb'sciddicaTFlowsComputation()'
 elementary process is applied to each (active) cell into the
 computational domain by means of the
 \verb'calApplyElementaryProcess2D()'. Then, the set $A$ of the active
@@ -1157,7 +1176,7 @@ respectively\footnote{Note that active cells are updated first
   before any other substates, those new cells will still be considered
   inactive during the current step and their value will not be
   updated, by losing debris flow mass.}. Eventually, the
-\verb'sciddicaT_remove_inactive_cells()' elementary process is
+\verb'sciddicaTRemoveInactiveCells()' elementary process is
 applied, which only removes cells that became inactive during the
 current computational step, and the set $A$ is accordingly updated.
 
@@ -1254,7 +1273,7 @@ source code is shown in Listing \ref{lst:cal_mod2CA3D}.
 
 \lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal-examples/OpenCAL/cal_mod2CA3D/source/mod2CA3D.c}
 
-Even if Listing \ref{lst:cal_life} is concise, it
+Even if Listing \ref{lst:cal_mod2CA3D} is concise, it
 completely defines the \emph{mod2} 3D CA and performs a simulation
 (actually, only one step in this example). Lines 3-5 include some
 header files for the 3D version of OpenCAL, while lines 12-14 declare
@@ -1269,7 +1288,7 @@ and implicit substate update. Finally, the only substate, $Q$, is
 defined at line 34. Note that, since it was defined by means of the
 \verb'calInitSubstate3Db()' function, each element $q \in Q$ results
 to be of the CALbyte type. Line 37 registers the one and only CA elementary
-process, namely the \verb'mod2_transition_function()' function, which
+process, namely the \verb'mod2TransitionFunction()' function, which
 is then implemented at lines 17-25. Line 43 initializes the cell's
 substate $Q$ at coordinates (2, 3, 1) to the state 1. The obtained
 initial configuration is then saved at line 46, and the
