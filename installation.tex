@@ -252,34 +252,34 @@ details.
 \end{table}
 
 
-\subsection{Configuring the environment}
-After installation, you need to set you environment up in order to use
-OpenCAL libraries. In particular, you need to update the
-\verb'LD_LIBRARY_PATH' environment variable and regenerate the loader
-cache file. For instance, if you installed the software in
-\verb'/usr/local/opencal-1.0', you need to add the path
-\verb'/usr/local/opencal-1.0/lib' to \verb'LD_LIBRARY_PATH' and then
-run the command \verb'ldconfig' as root. To do this you can add the
-following lines to your \verb'.bash_profile' configuration file in
-your home direcory
-\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:.bash_profile}]
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/opencal-1.0/lib
-export LD_LIBRARY_PATH
-\end{lstlisting}
-and then type the following commands:
-\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:source}]
-user@machine:-$ source .bash_profile
-user@machine:-$ sudo ldconfig
-\end{lstlisting}
-The first command executes the content of the file argument
-(i.e. \verb'.bash_profile'), while the second updates the loader's
-cache, so that openCAL shared objects can be loaded at run time.
+%% \subsection{Configuring the environment}
+%% After installation, you need to set you environment up in order to use
+%% OpenCAL libraries. In particular, you need to update the
+%% \verb'LD_LIBRARY_PATH' environment variable and regenerate the loader
+%% cache file. For instance, if you installed the software in
+%% \verb'/usr/local/opencal-1.0', you need to add the path
+%% \verb'/usr/local/opencal-1.0/lib' to \verb'LD_LIBRARY_PATH' and then
+%% run the command \verb'ldconfig' as root. To do this you can add the
+%% following lines to your \verb'.bash_profile' configuration file in
+%% your home direcory
+%% \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:.bash_profile}]
+%% LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/opencal-1.0/lib
+%% export LD_LIBRARY_PATH
+%% \end{lstlisting}
+%% and then type the following commands:
+%% \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:source}]
+%% user@machine:-$ source .bash_profile
+%% user@machine:-$ sudo ldconfig
+%% \end{lstlisting}
+%% The first command executes the content of the file argument
+%% (i.e. \verb'.bash_profile'), while the second updates the loader's
+%% cache, so that openCAL shared objects can be loaded at run time.
 
-The above procedure is only valid for the current user. If you want to
-allow all the other users to use OpenCAL you can create a new file in
-\verb'/etc/ld.so.conf.d/', for instance \verb'opencal.conf',
-containing the \verb'/usr/local/opencal-1.0/lib' path, and then call
-\verb'ldconfig' as root.
+%% The above procedure is only valid for the current user. If you want to
+%% allow all the other users to use OpenCAL you can create a new file in
+%% \verb'/etc/ld.so.conf.d/', for instance \verb'opencal.conf',
+%% containing the \verb'/usr/local/opencal-1.0/lib' path, and then call
+%% \verb'ldconfig' as root.
 
 One more operation is necessary if you want use CMake to compile your
 own OpenCAL-based applications, i.e. copy the
@@ -324,22 +324,35 @@ If you want to use CMake, follow the steps below:
 %% \end{lstlisting}
 %% while, if you chose a custom installation path, e.g. \verb'/usr/local/OpenCAL-1.0',
 
-In the latter case you need to specify where include files are located
-and link the required library, by using the following command:
+In the latter case you need to specify where include files and shared objects are located
+and link the required library, as in the following example:
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc-full}]
-  user@machine:-$ gcc life.c -o life -I/usr/local/opencal-1.0/include/ -lopencal
-\end{lstlisting}
-
-If the compilation process is successful, the \verb'life' executable
-program will be generated in the same directory. Please execute it by
-typing the following command:
-\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:gcc}]
+  user@machine:-$ cd ~/git/opencal-examples/OpenCAL/cal_life
+  user@machine:-$ gcc source/life.c -o life -I/usr/local/opencal-1.0/include \
+                                            -L/usr/local/opencal-1.0/lib \
+                                            -lopencal
   user@machine:-$ ./life
 \end{lstlisting}
 
 In both cases, the \verb'life_0000.txt' and \verb'life_LAST.txt' files
 should be generated. If this is the case, congratulations, you
 installed OpenCAL properly.
+
+
+
+\section{Compiling the examples}
+
+The examples can be easily compiled using CMake, all together or one
+at a time. To compile all the examples at once, follow the steps below
+(cf. Table \ref{ch:installation:cmakeoptions-example} for available
+options and their default values):
+
+\begin{lstlisting}[numbers=none,language=bash]
+  user@machine:-$ cd ~/git/opencal-examples
+  user@machine:-$ mkdir build
+  user@machine:-$ cd build
+  user@machine:-$ cmake .. -DBUILD_OPENCAL_CL=ON -DBUILD_OPENCAL_GL=ON
+\end{lstlisting}
 
 
 \begin{table}[h]
@@ -360,33 +373,19 @@ installed OpenCAL properly.
 \end{table}
 
 
-\section{Compiling the examples}
-
-The examples can be easily compiled using CMake, all together or one
-at a time. To compile all the examples at once, follow the steps below
-(cf. Table \ref{ch:installation:cmakeoptions-example} for available
-options and their default values):
-
-\begin{lstlisting}[numbers=none,language=bash]
-  user@machine:-$ cd ~/git/opencal-examples
-  user@machine:-$ mkdir build
-  user@machine:-$ cd build
-  user@machine:-$ cmake .. -DBUILD_OPENCAL_CL=ON -DBUILD_OPENCAL_GL=ON
-\end{lstlisting}
-
 To compile a particular example, please follow the steps described in
 Section \ref{sec:installation:test_installation}.
 
-
 \section{Uninstall}
 
-If you want to uninstall OpenCAL for some reason, you can simply enter
-the build directory (e.g. \verb'~/git/opencal/build') and call the
-\verb'make' command with the uninstall target, as in the following
-example:
+If you want to uninstall OpenCAL, you can call \verb'make' with the
+uninstall target, remove the installation direcory and, if installed,
+remove the FindOpenCAL.cmake module, as in the following example:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudouninstall}]
-  user@machine:-$ sudo make uninstall
+  user@machine:-$ sudo make uninstall && 
+                       rm -rf /usr/local/opencal-1.0 && \
+                       rm /usr/share/cmake/Modules/FindOpenCAL.cmake
 \end{lstlisting}
 
 \section{Web Page and Bug Reporting}

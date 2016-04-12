@@ -122,11 +122,43 @@ this example).
 
 In order to use OpenCAL, you need to include some header files (lines
 3-5). Specifically, \verb'cal2D.h' (line 3) allows to define the CA
-object (line 9) and the related substate (line 10), while
-\verb'cal2DRun.h' (line 5) allows to define a CA simulation object
-(line 11), needed to run the CA model. The \verb'cal2DIO.h' header
-file (line 4) provides some basic input/output functions for
-reading/writing substates from/to file.
+object (line 9) and the related substate (line 10 - cf. Table
+\ref{tab:types}), while \verb'cal2DRun.h' (line 5) allows to define a
+CA simulation object (line 11), needed to run the CA model. The
+\verb'cal2DIO.h' header file (line 4) provides some basic input/output
+functions for reading/writing substates from/to file.
+
+
+\begin{table}
+  \centering
+  \label{tab:types}
+  \begin{tabular}{l|c|c}
+    \hline
+    OpenCAL substate type & OpenCAL basic type & Corresponding basic C type \\
+    \hline
+    \hline
+    \verb'CALSubstate2Db' & \verb'CALbyte' & \verb'char'  \\
+    \verb'CALSubstate2Di' & \verb'CALint'  & \verb'int'   \\
+    \verb'CALSubstate2Dr' & \verb'CALreal' & \verb'double'\\
+    \hline
+  \end{tabular}
+  \caption{Two-dimensional OpenCAL substate types, together with OpenCAL basic types and their correspondent types in C.}
+  \label{tab:speedup}
+\end{table}
+
+%% OpenCAL comes with three different basic numeric
+%% types, which are in lowercase (besides the prefix):
+%% \begin{itemize}
+%% \item \verb'CALbyte', corresponding to the \verb'char' C data type;
+%% \item \verb'CALint', corresponding to the \verb'int' C data type;
+%% \item \verb'CALreal', corresponding to the \verb'double' C data type;
+%% \end{itemize}
+%% which are adopted to define the three predefined substates types:
+%% \begin{itemize}
+%% \item \verb'CALSubstate2Db', corresponding to a \verb'CALbyte' based substate;
+%% \item \verb'CALSubstate2Di', corresponding to a \verb'CALint' based substate;
+%% \item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate.
+%% \end{itemize}
 
 While statements at lines 9-11 just declare the required objects, they
 are defined later in the \verb'main' function. In particular, the life
@@ -163,26 +195,25 @@ The complete definition of \verb'calCADef2D()' is provided in Listing
 \ref{lst:calCADef2D}, here reported together with few other OpenCAL
 key functions and data types. In particular, the
 \verb'CALNeighborhood2D' enum type (Listing
-\ref{lst:CALNeighborhood2D}) allows to select one of the square or
-hexagonal predefined neighborhoods, or a custom neighborhood, whose
-pattern must be defined in the application. In particular,
+\ref{lst:CALNeighborhood2D}) allows to select a predefined or a custom
+neighborhood to be defined in the application. In particular,
 \verb'CAL_VON_NEUMANN_NEIGHBORHOOD_2D' corresponds to the von Neumann
-neighboring pattern, \verb'CAL_MOORE_NEIGHBORHOOD_2D' to the Moore
-neighboring pattern, \verb'CAL_HEXAGONAL_NEIGHBORHOOD_2D' to the
-hexagonal neighboring pattern, and
-\verb'CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D' to the alternative hexagonal
-neighboring pattern (cf. Figure \ref{fig:2Dneighborhood}, Section
-\ref{sec:CAInformaDef}). As regards 3D neighborhoods patterns, they
-are defined by means of the \verb'CALNeighborhood3D' enum type
-(Listing \ref{lst:CALNeighborhood3D}). Here, we can find the 3D
-equivalent versions of the von Neumann and Moore neighborhoods, while
-hexagonal neighborhoods are (obviously) not defined. Custom
-neighborhoods will be discussed later in Section
+pattern, \verb'CAL_MOORE_NEIGHBORHOOD_2D' to the Moore one,
+\verb'CAL_HEXAGONAL_NEIGHBORHOOD_2D' and
+\verb'CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D' to the hexagonal and
+alternative hexagonal patterns, respectively (cf. Figure
+\ref{fig:2Dneighborhood}, Section \ref{sec:CAInformaDef}). As regards
+3D neighborhoods patterns, they are defined by means of the
+\verb'CALNeighborhood3D' enum type (Listing
+\ref{lst:CALNeighborhood3D}). Here, we can find the 3D equivalent
+versions of the von Neumann and Moore neighborhoods, while hexagonal
+neighborhoods are (obviously) not defined. Custom neighborhoods will
+be discussed later in Section
 \ref{sec:CustomNeiughbourhoods}. Similarly, the
 \verb'CALSpaceBoundaryCondition' enum type (Listing
-\ref{lst:CALSpaceBoundaryCondition}) allows you to set cyclic
+\ref{lst:CALSpaceBoundaryCondition}) allows to set cyclic
 condition at boundaries. Eventually, the \verb'CALOptimization' enum
-type (Listing \ref{lst:CALOptimization}) allows you to consider the
+type (Listing \ref{lst:CALOptimization}) allows to consider the
 \emph{active cells optimization}, discussed later in this Chapter.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood2D, caption=The CALNeighborhood2D enum type., numbers=none]
@@ -253,31 +284,30 @@ in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type
 
 Line 33 allocates memory and registers the \verb'Q' substate to the
 \verb'life' CA, while line 36 registers an elementary process to the
-cell transition function. The \verb'calAddSubstate2Di()' function is
-very simple and self-explanatory. At the contrary,
-\verb'calAddElementaryProcess2D()' must be discussed more in
-detail. In particular, it takes the handle to the CA model to which
-the elementary process must be registered and a pointer to a callback
-function, that defines the elementary process itself. In our example,
-we specified \verb'lifeTransitionFunction' as second parameter, being
-it the name of a developer-defined function (cf. lines 14-24). As you
-can see, the elementary process callback function returns
-\verb'void'. Moreover, it takes a pointer to a CA object as first
-parameter, followed by a couple of integers, representing the
-coordinates of the generic cell in the CA space. This is the function
-prototype which is common to each elementary process. Note that, each
-elementary process is applied by OpenCAL simultaneously to each cell
-of the cellular space in a computational step. This characteristic is
-called \emph{implicit parallelism} and is obtained in OpenCAL by
-considering two different working planes for each registered substate,
-namely \emph{current} and \emph{next}. The \emph{current} working
-plane is used to read current values for the cells, while the
-\emph{next} working plane is used to write updated values\footnote{The
-  \emph{implicit parallelism} is also used in the parallel versions of
-  OpenCAL, with the difference that more than one cell can be
-  processed and updated concurrently by exploiting more than one
-  processing unit.}. Note that, besides specific cases, working
-planes are completely transparent to the user.
+transition function. The \verb'calAddSubstate2Di()' function is
+self-explanatory, while \verb'calAddElementaryProcess2D()' must be
+discussed more in detail. In particular, it takes the handle to the CA
+model to which the elementary process must be registered and a pointer
+to a callback function, that defines the elementary process itself. In
+our example, we specified \verb'lifeTransitionFunction' as second
+parameter, being it the name of a developer-defined function
+(cf. lines 14-24). As you can see, the elementary process callback
+function returns \verb'void'. Moreover, it takes a pointer to a CA
+object as first parameter, followed by a couple of integers,
+representing the coordinates of the generic cell in the CA space. This
+is the function prototype which is common to each elementary
+process. Note that, each elementary process is applied by OpenCAL
+simultaneously to each cell of the cellular space in a computational
+step. This characteristic is called \emph{implicit parallelism} and is
+obtained in OpenCAL by considering two different working planes for
+each registered substate, namely \emph{current} and \emph{next}. The
+\emph{current} working plane is used to read current values for the
+cells, while the \emph{next} working plane is used to write updated
+values\footnote{The \emph{implicit parallelism} is also used in the
+  parallel versions of OpenCAL, with the difference that more than one
+  cell can be processed and updated concurrently by exploiting more
+  than one processing unit.}. Note that, besides specific cases,
+working planes are completely transparent to the user.
 
 When the user implements an elementary process, by defining its
 callback function, he can rely on a set of OpenCAL functions that
@@ -344,25 +374,11 @@ As noted from the previous example, OpenCAL statements are
 characterized by a prefix and a suffix.
 
 In particular, all data types have the \verb'CAL' prefix, and an
-optional suffix that identifies the CA dimension (e.g. 2D for a
-two-dimensional model) and the basic type. For instance, in the case
-of Life's \verb'Q' substate, the 2Di suffix of the
-\verb'CALSubstate2Di' type specifies that it is a two-dimensional
-substate in which each element is of type integer.
+optional suffix that identifies the CA dimension and the basic
+type. For instance, in the case of Life's \verb'Q' substate, the 2Di
+suffix of the \verb'CALSubstate2Di' type specifies that it is a
+two-dimensional substate in which each element is of type integer.
 
-More in detail, OpenCAL comes with three different basic numeric
-types, which are in lowercase (besides the prefix):
-\begin{itemize}
-\item \verb'CALbyte', corresponding to the \verb'char' C data type;
-\item \verb'CALint', corresponding to the \verb'int' C data type;
-\item \verb'CALreal', corresponding to the \verb'double' C data type;
-\end{itemize}
-which are adopted to define the three predefined substates types:
-\begin{itemize}
-\item \verb'CALSubstate2Db', corresponding to a \verb'CALbyte' based substate;
-\item \verb'CALSubstate2Di', corresponding to a \verb'CALint' based substate;
-\item \verb'CALSubstate2Dr', corresponding to a \verb'CALreal' based substate.
-\end{itemize}
 Furthermore, each OpenCAL constants have the \verb'CAL_' prefix, which
 is followed by at least one uppercase keyword. In case of more
 keywords, they are separated by the \verb'_' character. Eventually,
@@ -394,14 +410,15 @@ definition of custom neighborhood patterns (cf. Listings
 \end{lstlisting}
 
 
-In order to define a custom neighborhood pattern, you need to specify
+In order to define a custom neighborhood pattern,
 \verb'CAL_CUSTOM_NEIGHBORHOOD_2D' (or
-\verb'CAL_CUSTOM_NEIGHBORHOOD_3D' in case of a 3D CA) as the third
-parameter of the \verb'calCADef2D()' function (\verb'calCADef3D()' for
-a 3D CA) (cf. Listing \ref{lst:calAddNeighbor2D-3D}). By doing this,
-you will start with an empty neighboring pattern and can subsequently
-call the \verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D
-CA) function to add a cell to the pattern.
+\verb'CAL_CUSTOM_NEIGHBORHOOD_3D' in case of a 3D CA) must be used as
+the third parameter of the \verb'calCADef2D()' function
+(\verb'calCADef3D()' for a 3D CA) (cf. Listing
+\ref{lst:calAddNeighbor2D-3D}). By doing this, you will start with an
+empty neighboring pattern and can subsequently call the
+\verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D CA)
+function to add a cell to the pattern.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:CustomMooreExample, caption=Example of custom neighbourhood pattern; the sequence of calls to the calAddNeighbor2D() function defines the Moore neighbourhood for the Game of Life CA., numbers=none]
   // ...
@@ -655,7 +672,7 @@ final flow path configuration are shown.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=12cm]{./images/OpenCAL/sciddicaT}
+  \includegraphics[width=11.5cm]{./images/OpenCAL/sciddicaT}
   \caption{SciddicaT simulation of the 1992 Tessina (Italy)
     landslide. Topographic altitudes are represented in gray
     scale. Black represents the lower altitude, while the white color
@@ -1129,8 +1146,8 @@ free to re-order the call sequence within the explicit transition
 function callback. In particular, the \verb'sciddicaT_flows()'
 elementary process is applied to each (active) cell into the
 computational domain by means of the
-\verb'calApplyElementaryProcess2D()' function. Then, the set $A$ of
-the active cells and the $Q_h$ substate are updated by means of the
+\verb'calApplyElementaryProcess2D()'. Then, the set $A$ of the active
+cells and the $Q_h$ substate are updated by
 \verb'calUpdateActiveCells2D()' and \verb'calUpdateSubstate2Dr()',
 respectively\footnote{Note that active cells are updated first
   otherwise the subsequent substate update could neglect some cells
@@ -1248,10 +1265,10 @@ parallelepiped having \verb'ROWS' rows, \verb'COLS' columns and
 neighborhood is here set as well as cyclic conditions at
 boundaries. Eventually, no optimizations are considered. Line 31
 defines the simulation object by setting just one step of computation
-and implicit substate's update. Finally, the only substate, $Q$, is
+and implicit substate update. Finally, the only substate, $Q$, is
 defined at line 34. Note that, since it was defined by means of the
 \verb'calInitSubstate3Db()' function, each element $q \in Q$ results
-to be of the CALbyte type. Line 37 registers the one and only CA's elementary
+to be of the CALbyte type. Line 37 registers the one and only CA elementary
 process, namely the \verb'mod2_transition_function()' function, which
 is then implemented at lines 17-25. Line 43 initializes the cell's
 substate $Q$ at coordinates (2, 3, 1) to the state 1. The obtained
@@ -1304,17 +1321,16 @@ simulation. For this purpose, here we re-propose two of the examples
 presented above, namely the SciddicaT debris flow model and the
 \emph{mod2} CA, by adding to them an OpenGL-based viewer in a
 straightforward manner. Note that the graphic outputs for the
-SciddicaT and \emph{mod2} CA shown above, were obtained by means of
-non-integrated \emph{ad hoc} GLUT applications. If you are interested
-in using external graphic API or toolkits, you can take a look at such
-GLUT-based \emph{ad hoc} applications, found in the OpenCAL
-examples, ending with the \verb'-glut' suffix.
+SciddicaT and \emph{mod2} CA shown above, were instead obtained by
+means of non-integrated \emph{ad hoc} GLUT applications, which can be
+found in the OpenCAL examples, together with others, ending with the
+\verb'-glut' suffix.
 
 \subsection{Implementing SciddicaT in OpenCAL and OpenCAL-GL}\label{sec:calgl_sciddicaT}
 
 A new implementation of SciddicaT is presented in Listing
 \ref{lst:calgl_sciddicaT}, which integrates a simple 2D and 3D
-multi-view 2D visualization system based on OpenCAL-GL. The complete
+multi-view visualization system based on OpenCAL-GL. The complete
 implementation is shown for the sake of completeness. A screenshot is
 shown in Figure \ref{fig:calgl_sciddicaT1}.
 
@@ -1336,7 +1352,7 @@ As noticed, the \verb'OpenCAL-GL/calgl2D.h' and
 OpenCAL-GL at lines 7-8, and two visualization objects (of type
 \verb'CALDrawModel2D') are declared into the \verb'main()' function
 at lines 170-171. Each of them allows to define a particular view for
-the CA inside a graphic windows.
+the CA inside a graphic window.
 
 The \verb'calglDefDrawModel2D()' function (lines 200, 218) is used to
 initialize graphic objects. The first parameter specifies the type of
@@ -1373,33 +1389,32 @@ pointer to the corresponding simulation object.
 To build a specific view, we can use the
 \verb'calglAddToDrawModel2Dr()' function (lines 204-208). It adds a
 node into a tree-based representation of the graphic view, where each
-node has a link to a CA substate and specifies how this substate
-have to be considered for representation. Specifically, the first
-parameter is a pointer to a OpenCAL-GL visualization object, while
-the second and third parameters are pointers to the father node and
-the new node to be created, respectively. The fourth parameter
-specifies how substate's data have to be interpreted, if as vertices
-(to be used to geometrically represent the data), normal
-vectors\footnote{Normal vectors are obtained by scalar values
-  representing vertices by means of cross product and normalization
-  operations. They are only used for light calculation and are not
-  displayed.} (to be used for light calculation), or colors (to be
-used for shading purposes - cf. Table
+node has a link to a CA substate and specifies how this substate have
+to be considered for representation. Specifically, the first parameter
+is a pointer to a OpenCAL-GL visualization object, while the second
+and third parameters are pointers to the parent node and the new node
+to be created, respectively. The fourth parameter specifies how
+substate data have to be interpreted, if as vertices (to be used to
+geometrically represent the data), normal vectors\footnote{Normal
+  vectors are obtained by scalar values representing vertices by means
+  of cross product and normalization operations. They are only used
+  for light calculation and are not displayed.} (to be used for light
+calculation), or colors (to be used for shading purposes - cf. Table
 \ref{tab:substate_type_info}). The fifth parameter specifies the color
 scheme to be used. Possible values are listed in Table
 \ref{tab:substate_color_info}. Eventually, the last parameter
 specifies if the substate has to be considered static (i.e. it is not
 updated during the simulation) or dynamic (i.e. values are modified by
 the simulation). Please refer to Table
-\ref{tab:substate_updating_type} for possible values. In general, however, visualization of
-static substates is more efficient.
+\ref{tab:substate_updating_type} for possible values. In general,
+however, visualization of static substates is more efficient.
 
 \begin{table}
   \centering
   \small
   \begin{tabular}{l|l}
     \hline
-    Substate's data interpretation & Meaning\\
+    Substate data interpretation & Meaning\\
     \hline
     \hline
     \verb'CALGL_TYPE_INFO_VERTEX_DATA' & Vertex data\\
@@ -1407,7 +1422,7 @@ static substates is more efficient.
     \verb'CALGL_TYPE_INFO_COLOR_DATA'  & Color data\\
     \hline
   \end{tabular}
-  \caption{Possible OpenCAL-GL graphic interpretation for substate's data.}
+  \caption{Possible OpenCAL-GL graphic interpretation for substate data.}
   \label{tab:substate_type_info}
 \end{table}
 
@@ -1416,7 +1431,7 @@ static substates is more efficient.
   \footnotesize
   \begin{tabular}{l|l}
     \hline
-    Substate's color specification & Meaning \\
+    Substate color specification & Meaning \\
     \hline
     \hline
     \verb'CALGL_TYPE_INFO_USE_CONST_VALUE' & Color is set by using the \verb'calglColor2D()' function\\
@@ -1426,7 +1441,7 @@ static substates is more efficient.
     \verb'CALGL_TYPE_INFO_USE_BLUE_SCALE'  & Blue gradient (blue for the highest value)\\
     \hline
   \end{tabular}
-  \caption{Possible OpenCAL-GL substate's color settings.}
+  \caption{Possible OpenCAL-GL substate color settings.}
   \label{tab:substate_color_info}
 \end{table}
 
@@ -1435,14 +1450,14 @@ static substates is more efficient.
   \small
   \begin{tabular}{l|l}
     \hline
-    Substate's updating type & Meaning \\
+    Substate updating type & Meaning \\
     \hline
     \hline
     \verb'CALGL_DATA_TYPE_DYNAMIC' & Dynamic data\\
     \verb'CALGL_DATA_TYPE_STATIC'  & Static data\\
     \hline
   \end{tabular}
-  \caption{Possible substate's data updating type.}
+  \caption{Possible substate data updating type.}
   \label{tab:substate_updating_type}
 \end{table}
 
@@ -1453,11 +1468,11 @@ first parameter of the \verb'calglDefDrawModel2D()' function is set to
 is interpreted as a 3D surface in which each cell contains an
 altitude. The tree-based graphic representation is initialized at line
 202, where the root node is defined and linked to the \verb'Q.z'
-substate. It is assumed as the root node because its father node is
+substate. It is assumed as the root node because its parent node is
 set to \verb'NULL'. Moreover, the function specifies that the 'Q.z'
 data has to be used as vertices, to be used to build a mesh
 representation of the substate itself. Lines 204-205 attach two new
-\emph{information nodes} to the father, which corresponds to the root
+\emph{information nodes} to the parent, which corresponds to the root
 node in this case, both of them having a link to the \verb'Q.z'
 substate. In particular, line 204 sets the color to be used for
 representing the root node (i.e. the topographic surface defined by
@@ -1470,7 +1485,7 @@ vertices. The hierarchy thus obtained makes that \verb'Q.h' is
 represented above \verb'Q.z', such as two layers. Note that, in some
 cases, due to approximations of the graphic rendering, layers can
 intersect each other. In this cases, you can move up a layer by means of
-the XXX function, as done at line XXX.
+the \verb'calglSetHeightOffset2D()' function, as done at line 205.
 
 Lines 207-208 define
 other information nodes for the \verb'Q.h' substate, specifically for
@@ -1528,7 +1543,7 @@ window in a matrix layout.
     \verb'CALGL_LAYOUT_ORIENTATION_UNKNOW'     & Automatic layout\\
     \hline
   \end{tabular}
-  \caption{Possible OpenCAL-GL graphic interpretation for substate's data.}
+  \caption{Possible OpenCAL-GL graphic interpretation for substate data.}
   \label{tab:calgl_layouts}
 \end{table}
 
@@ -1608,8 +1623,8 @@ elementary processes, but only in the initialization, steering and
 stop condition callback functions. The proper use of global functions
 is your own responsibility.
 
-In order to use global functions in your application, simply include
-the \verb'cal2DReduction.h' header file for 2D CA, or
+In order to use global functions, simply include the
+\verb'cal2DReduction.h' header file for 2D CA, or
 \verb'cal3DReduction.h' for 3D CA. Table \ref{tab:reductions} lists
 the OpenCAL's global reduction functions. All of these functions
 accepts a pointer to a CA object and a pointer to a substate over
@@ -1630,14 +1645,14 @@ you can write something like in Listing \ref{lst:reduction_example}.
     \hline
     \verb'calReductionComputeMax2Dr()'       & Return the maximum value\\
     \verb'calReductionComputeMin2Dr()'       & Return the minimum value\\
-    \verb'calReductionComputeSum2Dr()'       & Return the sum of all substate's elements\\
-    \verb'calReductionComputeProd2Dr()'      & Return the product of all substate's elements\\
-    \verb'calReductionComputeLogicalAnd2Dr'  & Return the logical AND of all substate's elements\\
-    \verb'calReductionComputeBinaryAnd2Dr()' & Return the binary AND of all substate's elements\\
-    \verb'calReductionComputeLogicalOr2Dr()' & Return the logical OR of all substate's elements\\
-    \verb'calReductionComputeBinaryOr2Dr()'  & Return the binary OR of all substate's elements\\
-    \verb'alReductionComputeLogicalXor2Dr()' & Return the logical AND of all substate's elements\\
-    \verb'calReductionComputeBinaryXor2Dr()' & Return the binary AND of all substate's elements\\
+    \verb'calReductionComputeSum2Dr()'       & Return the sum of all substate elements\\
+    \verb'calReductionComputeProd2Dr()'      & Return the product of all substate elements\\
+    \verb'calReductionComputeLogicalAnd2Dr'  & Return the logical AND of all substate elements\\
+    \verb'calReductionComputeBinaryAnd2Dr()' & Return the binary AND of all substate elements\\
+    \verb'calReductionComputeLogicalOr2Dr()' & Return the logical OR of all substate elements\\
+    \verb'calReductionComputeBinaryOr2Dr()'  & Return the binary OR of all substate elements\\
+    \verb'alReductionComputeLogicalXor2Dr()' & Return the logical AND of all substate elements\\
+    \verb'calReductionComputeBinaryXor2Dr()' & Return the binary AND of all substate elements\\
     \hline
   \end{tabular}
   \caption{OpenCAL's global reduction functions for 2D CA and
