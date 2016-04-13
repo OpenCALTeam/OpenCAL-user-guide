@@ -36,7 +36,7 @@ dimension and the basic datatype.
 
 \begin{table}
   \centering
-  \begin{tabular}{ccc}
+  \begin{tabular}{c|c|c}
     \hline
     OpenCAL basic type & Parameters alias & Corresponding C type \\
     \hline
@@ -52,7 +52,7 @@ dimension and the basic datatype.
 
 \begin{table}
   \centering
-  \begin{tabular}{ll}
+  \begin{tabular}{l|l}
     \hline
     OpenCAL substate type & Basic scalar type \\
     \hline
@@ -68,7 +68,7 @@ dimension and the basic datatype.
 
 \begin{table}
   \centering
-  \begin{tabular}{ll}
+  \begin{tabular}{l|l}
     \hline
     OpenCAL substate type & Meaning \\
     \hline
@@ -179,7 +179,7 @@ where:
 \end{itemize}
 
 
-\lstinputlisting[float,floatplacement=H, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL/cal_life/source/life.c}
+\lstinputlisting[float, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL/cal_life/source/life.c}
 
 
 The program in Listing \ref{lst:cal_life} provides a complete
@@ -196,7 +196,7 @@ at line 9, while lines 10 and 11 declare a substate and a simulation
 object, respectively.
 
 While statements at lines 9-11 just declare the required objects, they
-are defined later in the \verb'main' function. In particular, the life
+are defined later in the \verb'main' function. In particular, the $Life$
 CA object is defined at line 29 by the \verb'calCADef2D()'
 function. The first 2 parameters define the CA dimensions (the number
 of rows and columns, respectively), while the third parameter defines
@@ -216,7 +216,7 @@ to use the so called \emph{active cells optimization}, that permits to
 restrict the computation to only \emph{non-stationary cells}. In this
 case, no optimization is considered.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
+\begin{lstlisting}[float, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
   struct CALModel2D* calCADef2D (
     int rows,
     int columns,
@@ -251,7 +251,7 @@ condition at boundaries. Eventually, the \verb'CALOptimization' enum
 type (Listing \ref{lst:CALOptimization}) allows to consider the
 \emph{active cells optimization}, discussed later in this Chapter.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood2D, caption=The CALNeighborhood2D enum type., numbers=none]
+\begin{lstlisting}[float,label=lst:CALNeighborhood2D, caption=The CALNeighborhood2D enum type., numbers=none]
   enum CALNeighborhood2D {
     CAL_CUSTOM_NEIGHBORHOOD_2D,
     CAL_VON_NEUMANN_NEIGHBORHOOD_2D,
@@ -261,7 +261,7 @@ type (Listing \ref{lst:CALOptimization}) allows to consider the
 };
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CALNeighborhood3D, caption=The CALNeighborhood3D enum type., numbers=none]
+\begin{lstlisting}[float, label=lst:CALNeighborhood3D, caption=The CALNeighborhood3D enum type., numbers=none]
   enum CALNeighborhood3D {
     CAL_CUSTOM_NEIGHBORHOOD_3D,
     CAL_VON_NEUMANN_NEIGHBORHOOD_3D,
@@ -270,14 +270,14 @@ type (Listing \ref{lst:CALOptimization}) allows to consider the
 \end{lstlisting}
 
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CALSpaceBoundaryCondition, caption=The CALSpaceBoundaryCondition enum type., numbers=none]
+\begin{lstlisting}[float, label=lst:CALSpaceBoundaryCondition, caption=The CALSpaceBoundaryCondition enum type., numbers=none]
   enum CALSpaceBoundaryCondition{
     CAL_SPACE_FLAT = 0,
     CAL_SPACE_TOROIDAL
   };
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CALOptimization, caption=The CALOptimization enum type., numbers=none]
+\begin{lstlisting}[float, label=lst:CALOptimization, caption=The CALOptimization enum type., numbers=none]
   enum CALOptimization{
     CAL_NO_OPT = 0,
     CAL_OPT_ACTIVE_CELLS
@@ -301,7 +301,7 @@ Chapter. The complete definition of \verb'calRunDef2D()' is provided
 in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type
 (Listing \ref{lst:CALUpdateMode}) enumerates possible update policies.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calRunDef2D(), caption=Definition of the calRunDef2D() function., numbers=none]
+\begin{lstlisting}[float, label=lst:calRunDef2D(), caption=Definition of the calRunDef2D() function., numbers=none]
   struct CALRun2D* calRunDef2D (
     struct CALModel2D* ca2D,
     int initial_step,
@@ -310,7 +310,7 @@ in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type
   )
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CALUpdateMode, caption=The CALUpdateMode enum type., numbers=none]
+\begin{lstlisting}[float, label=lst:CALUpdateMode, caption=The CALUpdateMode enum type., numbers=none]
   enum CALUpdateMode {
     CAL_UPDATE_EXPLICIT = 0,
     CAL_UPDATE_IMPLICIT
@@ -419,7 +419,7 @@ predefined neighborhoods (cf. Listings \ref{lst:CALNeighborhood2D} and
 definition of custom neighborhood patterns.
 
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calAddNeighbor2D-3D, caption=The calAddNeighbor2D() and calAddNeighbor3D() functions to define custom neighborhood patterns., numbers=none]
+\begin{lstlisting}[float, label=lst:calAddNeighbor2D-3D, caption=The calAddNeighbor2D() and calAddNeighbor3D() functions to define custom neighborhood patterns., numbers=none]
   struct CALCell2D*  calAddNeighbor2D(
       struct CALModel2D* ca2D,          // pointer to a 2D CA object
       int i,                            // row coordinate
@@ -445,7 +445,7 @@ empty neighboring pattern and can subsequently call the
 \verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D CA)
 function to add a cell to the pattern.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CustomMooreExample, caption=Example of custom neighbourhood pattern; the sequence of calls to the calAddNeighbor2D() function defines the Moore neighbourhood for the Game of Life CA., numbers=none]
+\begin{lstlisting}[float, label=lst:CustomMooreExample, caption=Example of custom neighbourhood pattern; the sequence of calls to the calAddNeighbor2D() function defines the Moore neighbourhood for the Game of Life CA., numbers=none]
   // ...
   int main ()
   {
@@ -499,9 +499,7 @@ the number of cells you want to add.
 In the previous section we illustrated an OpenCAL implementation of a
 simple cellular automaton, namely the Conway’s Game of Life. Here, we
 will deal with a more complex example concerning the implementations
-of the SciddicaT Cellular Automata model for landslide
-simulation. Different versions will be presented, ranging from a naive
-to a fully optimized implementation.
+of the Sciddica.
 
 Sciddica is a family of two-dimensional XCA (eXtended Cellular
 Automata - see Chapter \ref{ch:CA}) debris flow models, successfully
@@ -509,15 +507,16 @@ applied to the simulation of many real cases, such as the 1988
 Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy) disaster. A
 simplified toy-version of Sciddica (SciddicaT in the following) was
 here considered to be implemented in \verb"OpenCAL", and its
-application to the 1992 Tessina (Italy) landslide shown.
+application to the 1992 Tessina (Italy) landslide shown. Different
+versions will be presented, ranging from a naive to a fully optimized
+implementation.
 
-SciddicaT considers the surface over which the phenomenon evolves as
-subdivided in square cells of uniform size. Each cell changes its
-state by means of the transition function, which takes as input the
-state of the cells belonging to the von Neumann neighborhood. It is
-formally defined as:
+\subsection{SciddicaT naive implementation}
 
-$$SciddicaT = < R, X, Q , P, \sigma  >$$
+The first, naive, version of SciddicaT here considered is formally
+defined as:
+
+$$SciddicaT_{naive} = < R, X, Q , P, \sigma  >$$
 
 where:
 
@@ -629,7 +628,7 @@ respectively), and defined later into the main function (lines 147 and
 of \verb'ROWS' rows times \verb'COLS' columns cells, corresponding to
 $i_{max}$ and $j_{max}$ of the formal definition, respectively
 (cf. lines 10-11), while the von Neumann neighborhood is adopted. The
-cellular space is still toroidal, as in Life, and no optimization is
+cellular space is still toroidal, as in $Life$, and no optimization is
 considered. Regarding the simulation object, a total of \verb'STEPS'
 steps (i.e. 4000 steps - cf. line 14) are set, and implicit substates
 updating considered.
@@ -653,7 +652,7 @@ pointer to a simulation object as parameter. Differently to an
 elementary process, which can only access state values of cells
 belonging to the neighborhood, this function can perform global
 operations over the whole cellular space. In the specific case of the
-SciddicaT model, the \verb'sciddicaTSimulationInit()' function
+$SciddicaT_{naive}$ model, the \verb'sciddicaTSimulationInit()' function
 (lines 104-130) sets the values of all the outflows from the central
 cell to its neighbors to zero, by means of the function
 \verb'calInitSubstate2Dr()' (lines 110-113). Moreover, it sets the
@@ -691,14 +690,14 @@ functions are employed to get substates' values for the central cell and
 its neighbors, respectively. Moreover, the \verb'calSet2Dr()'
 function, updates the central cell's state.
 
-Figure \ref{fig:sciddicaT} shows the SciddicaT simulation of the 1992
+Figure \ref{fig:sciddicaT} shows the $SciddicaT_{naive}$ simulation of the 1992
 Tessina (Italy) landslide. Both the initial landslide source and the
 final flow path configuration are shown.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=11.5cm]{./images/OpenCAL/sciddicaT}
-  \caption{SciddicaT simulation of the 1992 Tessina (Italy)
+  \caption{$SciddicaT_{naive}$ simulation of the 1992 Tessina (Italy)
     landslide. Topographic altitudes are represented in gray
     scale. Black represents the lower altitude, while the white color
     is used for the highest elevation in the study area. Debris
@@ -706,16 +705,17 @@ final flow path configuration are shown.
     values) to yellow (for higher values). (a) Initial
     configuration. (b) Final debris flow path. Note that the graphic
     output was generated by using the \texttt{cal\_sciddicaT-glut}
-    application, that implements the SciddicaT model and provides a
-    minimal visualization system. You can find \texttt{cal\_sciddicaT-glut} in the examples
-    directory.}
+    application, that implements the $SciddicaT_{naive}$ model and
+    provides a minimal visualization system. You can find
+    \texttt{cal\_sciddicaT-glut} in the examples directory.}
   \label{fig:sciddicaT}
 \end{figure}
 
 As regards computational performance, the simulation shown in Figure
 \ref{fig:sciddicaT} was executed on an Intel Core i7-4702HQ CPU @
 2.20GHz by exploiting only a single core. The simulation lasted a
-total of 172 seconds and considered a total of 4000 computational steps.
+total of 172 seconds and considered a total of 4000 computational
+steps.
 
 Figure \ref{fig:opencal_main_loop} shows the OpenCAL main loop. Before
 entering the loop, if defined, the init function is
@@ -739,12 +739,12 @@ the stop condition can be defined.
 \end{figure}
 
 
-\section{SciddicaT with active cells optimization}\label{sec:sciddicaT_active}
-In this section we present a computationally improved version of SciddicaT, which
-takes advantage of the built-in OpenCAL active cells optimization. As
-stated above, this optimization is able to restrict computation to a
-subset of cells which are actually involved in computation, by
-neglecting those cells that will not change state to
+\subsection{SciddicaT with active cells optimization}\label{sec:sciddicaT_active}
+In this section we present a computationally improved version of
+SciddicaT, which takes advantage of the built-in OpenCAL active cells
+optimization. As stated above, this optimization is able to restrict
+computation to a subset of cells which are actually involved in
+computation, by neglecting those cells that will not change state to
 the next step (stationary cells).
 
 In the case of SciddicaT, only cells containing debris and their
@@ -769,7 +769,7 @@ In order to account for these processes, we have to slightly revise
 the SciddicaT definition. In particular we have to add the set of
 active cells, A. The optimized SciddicaT model is now defined as
 
-$$SciddicaT = < R, A, X, Q , P, \sigma >$$
+$$SciddicaT_{ac} = < R, A, X, Q , P, \sigma >$$
 where $A \subseteq R$ is the set of active cells, while the other
 components are defined as before. The transition function is now defined as:
 
@@ -793,155 +793,50 @@ applied.
 \item $\sigma_2: A \times Q_h \times (Q_o^4)^4 \shortrightarrow Q_h$ determines
   the value of debris thickness inside the cell by considering mass
   exchange in the cell neighborhood. This elementary process does not
-  change with respect to the original version of SciddicaT.
+  change with respect to the $SciddicaT_{naive}$ version.
 
 \item $\sigma_3: A \times Q_h \times p_\epsilon \shortrightarrow A$
   removes a cell from $A$ if its debris thickness is lower than or
   equal to the $p_\epsilon$ threshold.
 \end{itemize}
 
-In order to implement the SciddicaT debris flows model in OpenCAL by
-exploiting the active cells optimization, we have to change the
-definition of the CA object, by also adding the third $\sigma_3$
-elementary process. Moreover, the $\sigma_1$ elementary process has to
-be changed. A complete implementation of the active cells optimized
-version of SciddicaT is shown in Listing
-\ref{lst:cal_Sciddicat-activecells} for the sake of completeness, even
-if only the differences with respect to the original implementation
-are commented.
-
-\lstinputlisting[label=lst:cal_Sciddicat-activecells, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal-examples/OpenCAL/cal_sciddicaT-activecells/source/sciddicaT.c}
-
-%% All of this is done in the \verb'sciddicaTCADef()' function,
-%% that you can see in Listing \ref{lst:sciddicaTCADef()}, and on the
-%% $\sigma_1$ and $\sigma_3$ elementary processes, that you can find in
-%% Listing \ref{lst:sciddica_sigma13}.
-
-%% \begin{lstlisting}[float,floatplacement=H, label=lst:sciddicaTCADef(), caption=The sciddicaTCADef() definition function.]
-%%   // define CCA and simulation objects
-%%   sciddicaT = calCADef2D (ROWS, COLS, CAL_VON_NEUMANN_NEIGHBORHOOD_2D, CAL_SPACE_TOROIDAL, CAL_OPT_ACTIVE_CELLS);
-%%   sciddicaTsimulation = calRunDef2D(sciddicaT, 1, CAL_RUN_LOOP, CAL_UPDATE_IMPLICIT);
-
-%%   // add sigma_1, sigma_2 and sigma_3 elementary processes
-%%   calAddElementaryProcess2D(sciddicaT, sciddicaT_flows_computation);
-%%   calAddElementaryProcess2D(sciddicaT, sciddicaT_width_update);
-%%   calAddElementaryProcess2D(sciddicaT, sciddicaT_remove_inactive_cells);
-
-%%   // add substates
-%%   Q.z = calAddSubstate2Dr(sciddicaT);
-%%   Q.h = calAddSubstate2Dr(sciddicaT);
-%%   Q.f[0] = calAddSubstate2Dr(sciddicaT);
-%%   Q.f[1] = calAddSubstate2Dr(sciddicaT);
-%%   Q.f[2] = calAddSubstate2Dr(sciddicaT);
-%%   Q.f[3] = calAddSubstate2Dr(sciddicaT);
-
-%%   //load configuration
-%%   sciddicaTLoadConfig();
-
-%%   //simulation run setup
-%%   calRunAddInitFunc2D(sciddicaTsimulation, sciddicaTSimulationInit);
-%%   calRunInitSimulation2D(sciddicaTsimulation);
-%%   calRunAddSteeringFunc2D(sciddicaTsimulation, sciddicaTSteering);
-%%   calRunAddStopConditionFunc2D(sciddicaTsimulation, sciddicaTSimulationStopCondition);
-%% \end{lstlisting}
+In order to implement the $SciddicaT_{ac}$ debris flows model in
+OpenCAL, we have to change the definition of the CA object, by also
+adding the third $\sigma_3$ elementary process. Moreover, the
+$\sigma_1$ elementary process has to be changed. A complete
+implementation of the active cells optimized version of SciddicaT is
+shown in Listing \ref{lst:cal_Sciddicat-activecells} for the sake of
+completeness, even if only the differences with respect to the
+original implementation are commented.
 
 
-%% Note also that the \verb'calRunInitSimulation2D()' is called at line
-%% 23 to initialize the simulation. It simply calls the simulation
-%% initialization callback function, that is registered by means of the
-%% \verb'calRunAddInitFunc2D()' function at line 22. This is necessary in
-%% this example becaouse we don't use here the \verb'calRun2D()'
-%% simulation loop, but we make the simulation loop explicit into the
-%% idle function of a glut application. If you use the \verb'calRun2D()'
-%% function, as we did before, you don't need to call
-%% \verb'calRunInitSimulation2D()'.
-
-%% As you can see, besides the CA object, also the definition of the
-%% simulation object has changed, being the last step of computation set
-%% to \verb'CAL_RUN_LOOP' (line 3). Using such a pre-defined constant
-%% determines an infinite loop. As a consequence, the
-%% \verb'sciddicaTSimulationStopCondition()' callback has been registered
-%% to the simulation object by means of the
-%% \verb'calRunAddStopConditionFunc2D()' function (line 25) to stop the
-%% simulation\footnote{Such a callback was here introduced to show you
-%%   how to define a generic stoppig criterion for the simulation, even
-%%   the defined stopping creiterion is very trivial. It simply becomes
-%%   true (i.e. the function returns \texttt'CAL\_TRUE', which determines
-%%   the end of the simulation loop) when a predefined number of steps is
-%%   reached (i.e. 4000, as before).}. The
-%% \verb'sciddicaTSimulationStopCondition()' callback function is shown
-%% in Listing \ref{lst:sciddicaTSimulationStopCondition()}.
+\lstinputlisting[label=lst:cal_Sciddicat-activecells, caption=An OpenCAL implementation of the $SciddicaT_{ac}$ debris flows simulation model with the active cells optimization.]{../opencal-examples/OpenCAL/cal_sciddicaT-activecells/source/sciddicaT.c}
 
 
-%% \begin{lstlisting}[float,floatplacement=H, label=lst:sciddicaTSimulationStopCondition(), caption=The sciddicaTSimulationStopCondition() callback function defining the simulation stopping criterion for the SciddicaT optimized model.]
-%%   CALbyte sciddicaTSimulationStopCondition(struct CALModel2D* sciddicaT)
-%%   {
-%%     if (sciddicaTsimulation->step >= STEPS)
-%%       return CAL_TRUE;
-%%     return CAL_FALSE;
-%%   }
-%% \end{lstlisting}
-
-
-%% \begin{lstlisting}[float,floatplacement=H, label=lst:sciddica_sigma13, caption=The $\sigma_1$ and $\sigma_3$ SciddicaT elementary processes with active cells optimization.]
-%%   // <snip>
-
-%%   // The sigma_1 elementary process
-%%   void sciddicaT_flows_computation(struct CALModel2D* sciddicaT, int i, int j)
-%%   {
-%%     // <snip>
-
-%%     for (n=1; n<sciddicaT->sizeof_X; n++)
-%%       if (eliminated_cells[n])
-%%         calSet2Dr(sciddicaT, Q.f[n-1], i, j, 0.0);
-%%       else
-%%       {
-%%         calSet2Dr(sciddicaT, Q.f[n-1], i, j, (average-u[n])*P.r);
-%%         calAddActiveCellX2D(sciddicaT, i, j, n);
-%%       }
-%%   }
-
-%%   // <snip>
-
-%%   // The sigma_3 elementary process
-%%   void sciddicaT_remove_inactive_cells(struct CALModel2D* sciddicaT, int i, int j)
-%%   {
-%%     if (calGet2Dr(sciddicaT, Q.h, i, j) <= P.epsilon)
-%%       calRemoveActiveCell2D(sciddicaT,i,j);
-%%   }
-
-%%   // <snip>
-%% \end{lstlisting}
-
-
-%% The complete source code of the optimized version of SciddicaT can be
-%% found in OpenCAL examples under the name
-%% \verb'cal_sciddicaT-activecells-glut'.
-
-As noted, few modifications to the original source code
-are needed to add the active cells optimization to SciddicaT. In
-particular, the active cells optimization is enabled by means of the
-\verb'CAL_OPT_ACTIVE_CELLS' parameter at line 159, while the third
-elementary process added at line 165. As regards the elementary
-process $\sigma_1$, it is the same of that adopted in the basic SciddicaT
-version, with the exception that when an outflow is generated, the
-cell receiving the flow is added to the set A of the active cells
-(line 88). Moreover, an active cell is eliminated by the set A by
-means of the $\sigma_3$ elementary process in the case its debris
-thickness becomes lower than or equal to the $p_\epsilon$ threshold
-parameter (lines 107-108).
+As noted, few modifications to the original source code are needed to
+add the active cells optimization. In particular, the active cells
+support is enabled by means of the \verb'CAL_OPT_ACTIVE_CELLS'
+parameter at line 159, while the third elementary process added at
+line 165. As regards the elementary process $\sigma_1$, it is the same
+of that adopted in $SciddicaT_{naive}$, with the exception that when
+an outflow is generated, the cell receiving the flow is added to the
+set A of the active cells (line 88). Accordingly, note that the
+\verb'calAddActiveCellX2D()' function at line 87 can be considered as
+an unsafe, as it affects the activation state of a neighbor. Moreover,
+an active cell is eliminated by the set A by means of the $\sigma_3$
+elementary process in the case its debris thickness becomes lower than
+or equal to the $p_\epsilon$ threshold parameter (lines 107-108).
 
 Regarding the computational performance, the same simulation shown in
-Figure \ref{fig:sciddicaT} was executed using the new SciddicaT
-implementation adopting the active cells implementation. Still, only a
-single core of the Intel Core i7-4702HQ CPU was used, as before. The
-simulation lasted a total of 22 seconds, versus 172 seconds obtained
-for the basic (non-optimized) version, which is about 8 times
-faster. Indeed, this can be considered a very good result and can
-easily obtained when the simulation involves only a limited subset of
-the computational domain.
+Figure \ref{fig:sciddicaT} was executed using the $SciddicaT_{ac}$
+implementation. Still, only a single core of the Intel Core i7-4702HQ
+CPU was used, as before. The simulation lasted a total of 22 seconds,
+versus 172 seconds obtained for the naive version, which is about 8
+times faster. Indeed, this can be considered a very good result and
+can easily obtained when the simulation involves only a limited subset
+of the computational domain.
 
-\section{SciddicaT with unsafe operations}\label{sec:sciddicaT_extended}
+\subsection{SciddicaT with direct neighbors update}\label{sec:sciddicaT_extended}
 OpenCAL allows for a further optimization by means of the so called
 \emph{unsafe operations}, i.e. operations that are not strictly
 permitted by the formal definition of Cellular Automata. Obviously, in
@@ -956,17 +851,18 @@ immediately subtracted from the central cell and added to the
 neighbor. This does not change the state of the system at the current
 step, which is defined by the \emph{current} computational plane,
 since updated values are written to the \emph{next} plane. As a
-result, the \emph{current} computational plane is not corrupted by the
-unsafe operation, and the \emph{next} plane is used for progressively
+result, the \emph{current} plane is not corrupted by the unsafe
+operation, and the \emph{next} plane is used for progressively
 accounting mass variation inside the cells. By introducing such
 feature, outflows do not need to be saved (e.g. into additional
 substates) anymore, as they are used to account mass exchange directly
 during outflows computation. As figured out, this can give rise to a
-further performance improvement for the application. The SciddicaT CA
-exploiting unsafe operations is formally defined as:
+further performance improvement for the application. The
+$SciddicaT_{ac+dnu}$ CA exploiting both the active cells optimization
+and unsafe operations is formally defined as:
 
 
-$$SciddicaT = < R, A, X, Q , P, \sigma  >$$
+$$SciddicaT_{ac+dnu} = < R, A, X, Q , P, \sigma  >$$
 
 where:
 
@@ -1046,14 +942,13 @@ $$ q = (q_z, q_h)$$
 \end{itemize}
 
 Note that, only the topographic altitude and the debris thickness are
-now considered as model substates, as the four outflows substates
-are no longer needed. Moreover, the number of elementary process now
+now considered as model substates, as the four outflows substates are
+no longer needed. Moreover, the number of elementary process now
 considered is two, instead of three for the previous versions of
-SciddicaT. The OpenCAL implementation of this further optimized
-SciddicaT debris flows model is shown in Listing
-\ref{lst:cal_sciddicaT-unsafe}.
+SciddicaT. The OpenCAL implementation of $SciddicaT_{ac+dnu}$ is shown
+in Listing \ref{lst:cal_sciddicaT-unsafe}.
 
-\lstinputlisting[label=lst:cal_sciddicaT-unsafe, caption=An OpenCAL implementation of the SciddicaT further optimized debris flows simulation model.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_sciddicaT-unsafe, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with both the active cells optimization and the direct neighbors upddate unsafe operation.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe/source/sciddicaT.c}
 
 As noted, the definitions of CA and simulation objects doesn't
 change from the previous implementation (lines 131-132), while only
@@ -1099,17 +994,15 @@ the $Q_z$ substate), while \verb'calSet2Dr()' would update the
 error.
 
 Regarding the computational performance, the same simulation shown in
-Figure \ref{fig:sciddicaT} was executed by considering the
-implementation of SciddicaT with unsafe operations on a single core of
-the same processor. The simulation lasted a total of 11 seconds,
-versus 22 seconds obtained for the active cells optimized version and
-172 seconds for the basic (non-optimized) version. The new
-implementation resulted 2 times faster than the active cells optimized
-version and about 16 times faster with than the basic one.
+Figure \ref{fig:sciddicaT} was executed by considering
+$SciddicaT_{ac+dnu}$ on a single core of the same Intel core i7
+processor. The simulation lasted a total of 11 seconds, versus 22
+seconds obtained for SciddicaT_{ac} and 172 seconds for
+SciddicaT_{naive}, with speed up of 2 and 16, respectively.
 
 
 
-\section{SciddicaT with explicit simulation loop}
+\subsection{SciddicaT with explicit simulation loop}
 Even if results obtained so far can be considered more than
 satisfying, it is further possible to improve computational
 performance of SciddicaT by avoiding unnecessary substates
@@ -1131,14 +1024,14 @@ a consequence, no substates updating is needed after the application
 of $\sigma_2$. Being substates updating a time consuming operation,
 this can further speed up your simulation.
 
-A new OpenCAL implementation of SciddicaT is presented in Listing
-\ref{lst:cal_sciddicaT-explicit}. It is based on an explicit
-simulation loop and also defines a stopping criterion for the
-simulation termination. The complete implementation is shown for the
-sake of completeness.
+The new $SciddicaT_{ac+dnu+esl}$ OpenCAL implementation of SciddicaT,
+which take adavantage of an explicit simulation loop, avoiding
+unnecessary substate updating, is presented in Listing
+\ref{lst:cal_sciddicaT-explicit}. It also shows how a generic stopping
+criterion can be defined.
 
 
-\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with explicit simulation loop.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the $SciddicaT_{ac+dnu+esl}$ debris flows simulation model with the active cells optimization, the direct neighbors update, and an explicit simulation loop.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 
 As noted, the \verb'calRunAddGlobalTransitionFunc2D()' function is
@@ -1172,14 +1065,14 @@ current computational step, and the set $A$ is accordingly updated.
 As regards the computational performance, execution time of this
 further optimized version lasted 12 seconds to complete the 4000 steps
 required by the simulation on a single core of the same Intel Core i7
-processor used before. The obtained speedup can seem quite small
-(less than the 10\%) with respect to the previous implementation of
+processor used before. The obtained speedup can seem quite small (less
+than the 10\%) with respect to the previous implementation of
 SciddicaT. However, it must be noted that SciddicaT is a very
 simplified model and higher speedups can certainly be obtained for
 more complex CA made up by more elementary processes, these latter
-involving here only a small set of model's substates, or by considering larger CA spaces. Table
-\ref{tab:speedup} resumes computational performance of all the above
-illustrated SciddicaT implementations.
+involving here only a small set of model substates, or by considering
+larger CA spaces. Table \ref{tab:speedup} resumes computational
+performance of all the above illustrated SciddicaT implementations.
 
 \begin{table}
   \centering
@@ -1187,14 +1080,13 @@ illustrated SciddicaT implementations.
     \hline
     CA model & Elapsed time [s] & Speedup \\
     \hline
-    \hline
-    SciddicaT                           & 240 & 1\\
-    SciddicaT with active cells         & 23  & 10.43\\
-    SciddicaT with unsafe operations)   & 13  & 18.46\\
-    SciddicaT with explicit update      & 12  & 20\\
+    $SciddicaT_{naive}$      & 240 & 1\\
+    $SciddicaT_{ac}$         & 23  & 10.43\\
+    $SciddicaT_{ac+dnu}$     & 13  & 18.46\\
+    $SciddicaT_{ac+dnu+esl}$  & 12  & 20\\
     \hline
   \end{tabular}
-  \caption{Computational performance of the four different
+  \caption{Computational performance of four different
     implementations of the SciddicaT debris flows model.}
   \label{tab:speedup}
 \end{table}
@@ -1202,17 +1094,16 @@ illustrated SciddicaT implementations.
 
 \section{A three-dimensional example}\label{sec:mod2}
 
-In order to introduce three-dimensional CA development with
-OpenCAL, this section describes the implementation of a simple 3D
-model, namely the \emph{mod2} 3D CA. In this model, cells can be in
-one of two different states, 0 or 1, as in Game of Life. The cellular
-space is a parallelepiped made by cubic cells, while the cell's
-neighborhood is the 3D Moore one, consisting of the central cell and
-its adjacent cells. The transition function simply evaluates the
-quantity $s$ as the number of neighboring cells which are in the
-state 1 and sets the new state for the central cell as $s\%2$
-(i.e. the remainder of $s$ divided by 2). This simple example of 3D CA
-is formally defined as:
+In order to introduce three-dimensional CA development with OpenCAL,
+this section describes the implementation of a simple 3D model, namely
+the \emph{mod2} 3D CA. In this model, cells can be in one of two
+different states, 0 or 1, as in Game of Life. The cellular space is a
+parallelepiped made by cubic cells, while the cell's neighborhood is
+the 3D Moore one, consisting of the central cell and its adjacent
+cells. The transition function simply evaluates the quantity $s$ as
+the number of neighboring cells which are in the state 1 and sets the
+new state for the central cell as $s\%2$ (i.e. the remainder of $s$
+divided by 2). This simple example of 3D CA is formally defined as:
 
 $$mod2 = < R, X, Q, \sigma >$$
 
@@ -1261,33 +1152,55 @@ source code is shown in Listing \ref{lst:cal_mod2CA3D}.
 
 \lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal-examples/OpenCAL/cal_mod2CA3D/source/mod2CA3D.c}
 
-Even if Listing \ref{lst:cal_mod2CA3D} is concise, it
-completely defines the \emph{mod2} 3D CA and performs a simulation
-(actually, only one step in this example). Lines 3-5 include some
-header files for the 3D version of OpenCAL, while lines 12-14 declare
-CA, substate and simulation objects. These are therefore defined later
-in the main function. In particular, line 30 defines the CA as a
-parallelepiped having \verb'ROWS' rows, \verb'COLS' columns and
-\verb'SLICES' slices (cf. lines 7-9). Moreover, the 3D Moore
-neighborhood is here set as well as cyclic conditions at
-boundaries. Eventually, no optimizations are considered. Line 31
-defines the simulation object by setting just one step of computation
-and implicit substate update. Finally, the only substate, $Q$, is
-defined at line 34. Note that, since it was defined by means of the
-\verb'calInitSubstate3Db()' function, each element $q \in Q$ results
-to be of the CALbyte type. Line 37 registers the one and only CA elementary
-process, namely the \verb'mod2TransitionFunction()' function, which
-is then implemented at lines 17-25. Line 43 initializes the cell's
-substate $Q$ at coordinates (2, 3, 1) to the state 1. The obtained
-initial configuration is then saved at line 46, and the
-simulation executed at line 49. The final configuration is therefore saved
-at line 52 and, eventually, memory previously and implicitly
-allocated is released at lines 55-56. Note that, differently to the
-previous examples, almost all the OpenCAL functions come in the 3D
-flower. For instance, this is the case of the \verb'alGetX3Db()' and
-\verb'calSet3Db()' functions at lines 22 and 24, respectively, which
-take \verb'k' as third cell's coordinate, identifying the cellular
-space's slice.
+\begin{lstlisting}[float, label=lst:calCADef3D, caption=Definition of the calCADef3D() function., numbers=none]
+  struct CALModel3D* calCADef3D(
+    int rows,
+    int columns,
+    int slices,
+    enum CALNeighborhood3D CAL_NEIGHBORHOOD_3D,
+    enum CALSpaceBoundaryCondition CAL_TOROIDALITY,
+    enum CALOptimization CAL_OPTIMIZATION
+  );
+\end{lstlisting}
+
+\begin{lstlisting}[float, label=lst:calRunDef3D, caption=Definition of the calRunDef3D() function., numbers=none]
+  struct CALRun3D* calRunDef3D(
+    struct CALModel3D* ca3D,
+    int initial_step,
+    int final_step,
+    enum CALUpdateMode UPDATE_MODE
+  );	
+\end{lstlisting}
+
+Even if Listing \ref{lst:cal_mod2CA3D} is concise, it completely
+defines the \emph{mod2} 3D CA and performs a simulation (actually,
+only one step in this example). Lines 3-5 include some header files
+for the 3D version of OpenCAL, while lines 12-14 declare CA, substate
+and simulation objects. These are therefore defined later in the main
+function. In particular, line 30 defines the CA as a parallelepiped
+having \verb'ROWS' rows, \verb'COLS' columns and \verb'SLICES' slices
+(cf. lines 7-9). Moreover, the 3D Moore neighborhood is here set as
+well as cyclic conditions at boundaries. Eventually, no optimizations
+are considered. The complete definition of \verb'calCADef3D()' is
+provided in Listing \ref{lst:calCADef3D}. Line 31 defines the
+simulation object by setting just one step of computation and implicit
+substate update. The complete definition of \verb'calRunDef3D' is
+provided in Listing \ref{lst:calRunDef3D}. Finally, the only substate,
+$Q$, is defined at line 34. Note that, since it was defined by means
+of the \verb'calInitSubstate3Db()' function, each element $q \in Q$
+results to be of the CALbyte type. Line 37 registers the one and only
+CA elementary process, namely the \verb'mod2TransitionFunction()'
+function, which is then implemented at lines 17-25. Line 43
+initializes the cell's substate $Q$ at coordinates (2, 3, 1) to the
+state 1. The obtained initial configuration is then saved at line 46,
+and the simulation executed at line 49. The final configuration is
+therefore saved at line 52 and, eventually, memory previously and
+implicitly allocated is released at lines 55-56. Note that,
+differently to the previous examples, almost all the OpenCAL functions
+come in the 3D flower. For instance, this is the case of the
+\verb'alGetX3Db()' and \verb'calSet3Db()' functions at lines 22 and
+24, respectively, which take \verb'k' as third cell's coordinate,
+identifying the cellular space's slice.
 
 Figures \ref{fig:mod2_0000} and \ref{fig:mod2_LAST} show the initial
 and final configuration of \emph{mod2} 3D CA as implemented in Listing
@@ -1384,7 +1297,6 @@ pointer to the corresponding simulation object.
     \hline
     Drawing type & Meaning \\
     \hline
-    \hline
     \verb'CALGL_DRAW_MODE_FLAT'    & Basic substate representation \\
     \verb'CALGL_DRAW_MODE_SURFACE' & DEM-like representation \\
     \hline
@@ -1423,7 +1335,6 @@ however, visualization of static substates is more efficient.
     \hline
     Substate data interpretation & Meaning\\
     \hline
-    \hline
     \verb'CALGL_TYPE_INFO_VERTEX_DATA' & Vertex data\\
     \verb'CALGL_TYPE_INFO_NORMAL_DATA' & Normal data\\
     \verb'CALGL_TYPE_INFO_COLOR_DATA'  & Color data\\
@@ -1439,7 +1350,6 @@ however, visualization of static substates is more efficient.
   \begin{tabular}{l|l}
     \hline
     Substate color specification & Meaning \\
-    \hline
     \hline
     \verb'CALGL_TYPE_INFO_USE_CONST_VALUE' & Color is set by using the \verb'calglColor2D()' function\\
     \verb'CALGL_TYPE_INFO_USE_GRAY_SCALE'  & Gray gradient (white for the highest value)\\
@@ -1459,7 +1369,6 @@ however, visualization of static substates is more efficient.
     \hline
     Substate updating type & Meaning \\
     \hline
-    \hline
     \verb'CALGL_DATA_TYPE_DYNAMIC' & Dynamic data\\
     \verb'CALGL_DATA_TYPE_STATIC'  & Static data\\
     \hline
@@ -1476,7 +1385,7 @@ is interpreted as a 3D surface in which each cell contains an
 altitude. The tree-based graphic representation is initialized at line
 202, where the root node is defined and linked to the \verb'Q.z'
 substate. It is assumed as the root node because its parent node is
-set to \verb'NULL'. Moreover, the function specifies that the 'Q.z'
+set to \verb'NULL'. Moreover, the function specifies that the \verb'Q.z'
 data has to be used as vertices, to be used to build a mesh
 representation of the substate itself. Lines 204-205 attach two new
 \emph{information nodes} to the parent, which corresponds to the root
@@ -1502,7 +1411,7 @@ Listing \ref{lst:calgl_sciddicaT}.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=6cm]{./images/OpenCAL/calgl_sciddicaT_tree_model}
+    \includegraphics[width=5cm]{./images/OpenCAL/calgl_sciddicaT_tree_model}
     \caption{Tree-based representation of the 3D graphic view defined
       in Listing \ref{lst:calgl_sciddicaT} and shown in Figure
       \ref{fig:calgl_sciddicaT1}.}
@@ -1543,7 +1452,6 @@ window in a matrix layout.
   \begin{tabular}{l|l}
     \hline
     Possible values for view layouts & Meaning\\
-    \hline
     \hline
     \verb'CALGL_LAYOUT_ORIENTATION_HORIZONTAL' & Horizontal layout\\
     \verb'CALGL_LAYOUT_ORIENTATION_VERTICAL'   & Vertical layout\\
@@ -1649,7 +1557,6 @@ you can write something like in Listing \ref{lst:reduction_example}.
     \hline
     Reduction Functions & Meaning \\
     \hline
-    \hline
     \verb'calReductionComputeMax2Dr()'       & Return the maximum value\\
     \verb'calReductionComputeMin2Dr()'       & Return the minimum value\\
     \verb'calReductionComputeSum2Dr()'       & Return the sum of all substate elements\\
@@ -1673,7 +1580,7 @@ you can write something like in Listing \ref{lst:reduction_example}.
 \end{table}
 
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:reduction_example, caption=An example of global reduction operation., numbers=none]
+\begin{lstlisting}[float, label=lst:reduction_example, caption=An example of global reduction operation., numbers=none]
   // ...
   #include <cal2DReduction.h>
 

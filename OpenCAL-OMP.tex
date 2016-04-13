@@ -27,19 +27,6 @@ shows how to integrate a basic OpenGL/GLUT visualization system in
 both 2D and 3D applications based on OpenCAL-OMP.
 
 
-%% \section{OpenCAL-OMP statement convention and Custom Neighbourhoods}
-
-%% The OpenCAL-OMP statements' prefix does not change with respect to the
-%% OpenCAL's one (i.e. \verb'cal' for the functions, \verb'CAL' for the
-%% data types, and \verb'CAL_' for the constants). Please, refer to
-%% Section \ref{sec:Conventions} for further details.
-
-%% Similarly to OpenCAL, OpenCAL-OMP allows to define custom
-%% neighbourhoods. Since there are no differences with respect to
-%% OpenCAL, please refer to Section \ref{sec:CustomNeiughbourhoods} for
-%% further details.
-
-
 \section{Conway's Game of Life in OpenCAL-OMP}
 
 In Section \ref{sec:cal_life}, we described Conway's Game of Life and
@@ -64,21 +51,25 @@ to the serial code.
 
 \section{SciddicaT}
 
+In this Section, the OpenCAL-OMP implementations of the four SciddicaT
+versions discussed in Chapter \ref{ch:opencal} are presented.
+
+\subsection{SciddicaT naive implementation}
+
 As for the case of Conway's Game of Life, even the OpenCAL-OMP
 implementation of the SciddicaT cellular automaton, shown in Listing
 \ref{lst:calomp_sciddicaT}, does not significantly differ from the
-serial implementation that you can find in the Section
-\ref{sec:sciddicaT}, Listing \ref{lst:cal_sciddicaT}. As before, the
-only differences regard the included headers (lines 3-5). Even in this
-case, as for the Life cellular automaton, due to the fact we used only
-OpenCAL-OMP safe operations, minimal code change is required, besides
-including the proper OpenCAL-OMP header files instead of the OpenCAL
-ones.
+serial implementation (cf. Section \ref{sec:sciddicaT}, Listing
+\ref{lst:cal_sciddicaT}). As before, the differences only regard the
+included headers (lines 3-5). Even in this case, as for the $Life$
+cellular automaton, due to the fact we used only OpenCAL-OMP safe
+operations, minimal code change is required, besides including the
+proper OpenCAL-OMP header files instead of the OpenCAL ones.
 
-\lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT/source/sciddicaT.c}
+\lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the $SciddicaT_{naive}$ debris flows simulation model.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT/source/sciddicaT.c}
 
-\section{SciddicaT with active cells optimization}
-Here we present an OpenCAL-OMP implementation of SciddicaT, which takes
+\subsection{SciddicaT with active cells optimization}
+Here we present an OpenCAL-OMP implementation of $SciddicaT_{ac}$, which takes
 advantage of the built-in OpenCAL active cells optimization feature. You can
 find the complete source code in Listing
 \ref{lst:calomp_Sciddicat-activecells}, while the corresponding serial
@@ -88,7 +79,7 @@ implementation can be found in Section
 
 \lstinputlisting[label=lst:calomp_Sciddicat-activecells, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows simulation model with the active cells optimization.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-activecells/source/sciddicaT.c}
 
-With respect to the Sciddica implementation shown in Listing
+With respect to the implementation shown in Listing
 \ref{lst:calomp_sciddicaT}, which is exclusively based on safe
 OpenCAL-OMP operations, the active cells management as implemented
 here requires unsafe operations. These operations are performed by
@@ -103,23 +94,21 @@ to \emph{lock} the memory locations involved in the operations so that
 each thread can entirely perform its own task without the risk that
 other threads interfere. In order to do this, it is sufficient to
 place OpenCAL-OMP in \emph{unsafe} state by calling the
-\verb'calSetUnsafe2D()', as done at line 163. No other modifications
-to the serial source code are required.
+\verb'calSetUnsafe2D()', as done at line 163. Unsafe functions are
+provided by the \verb'OpenCAL-OMP/cal2DUnsafe.h' header file (line
+6). No other modifications to the serial source code are required.
 
-\section{SciddicaT as eXtended CA}
-Here we present an OpenCAL-OMP implementation of SciddicaT, which takes
-advantage of the built-in unsafe operations. They belong to the
-eXtended CA definition and allow for further computational
-optimizations. You can find the complete source code of SciddicaT
-implemented as an eXtended CA in Listing
+\subsection{SciddicaT with direct neighbors update}
+Here we present the $SciddicaT_{ac+dnu}$ OpenCAL-OMP implementation of
+SciddicaT. The complete source code is shown in Listing
 \ref{lst:calomp_SciddicaT-unsafe}, while the corresponding serial
 implementation can be found in Section \ref{sec:sciddicaT_extended},
 Listing \ref{lst:cal_sciddicaT-unsafe}.
 
-\lstinputlisting[label=lst:calomp_SciddicaT-unsafe, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows eXtended CA simulation model with unsafe optimization.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe/source/sciddicaT.c}
+\lstinputlisting[label=lst:calomp_SciddicaT-unsafe, caption=An OpenCAL-OMP implementation of the $SciddicaT_{ac+dnu}$ debris flows XCA simulation model with direct neighbors update.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe/source/sciddicaT.c}
 
 First of all note that only the topographic altitude and the debris
-thickness are now considered as model's substates (lines 25-28,
+thickness are now considered as model substates (lines 25-28,
 147-148), as the four outflows substates are no longer
 needed. Moreover, the number of elementary process now considered is
 two (lines 143-144), instead of three for the previous versions of
@@ -177,7 +166,7 @@ performance. In fact, as expected, locks can slow down threads
 execution and therefore the entire simulation.
 
 
-\section{SciddicaT with explicit simulation loop}
+\subsection{SciddicaT with explicit simulation loop}
 
 As for the serial version, also for the OpenMP based release of
 OpenCAL it is further possible to improve computational performances of
@@ -190,24 +179,25 @@ SciddicaT model, no substates updating should be executed after
 the application of the second elementary process, as this just removes
 inactive cells from the set $A$.
 
-Listing \ref{lst:calomp_sciddicaT-explicit} presents a new OpenCAL implementation of SciddicaT, based on an explicit global
-transition function and defined by means of
-\verb'calRunAddGlobalTransitionFunc2D()'. It registers a callback
-function within which you can both reorder the sequence of elementary
-processes to be applied in the generic computational step, and also
-select which substates have to be updated after the execution of the
-different elementary processes. The SciddicaT implementation here
-presented in Listing \ref{lst:calomp_sciddicaT-explicit} also
-makes explicit the simulation loop and defines a stopping criterion for
-the simulation termination.
-
+Listing \ref{lst:calomp_sciddicaT-explicit} presents the
+$SciddicaT_{ac+dnu+esl}$ OpenCAL-OMP implementation of SciddicaT,
+based on an explicit global transition function. This latter is
+defined by means of \verb'calRunAddGlobalTransitionFunc2D()'. It
+registers a callback function within which you can both reorder the
+sequence of elementary processes to be applied in the generic
+computational step, and also select which substates have to be updated
+after the execution of the different elementary processes. The
+$SciddicaT_{ac+dnu+esl}$ implementation presented in Listing
+\ref{lst:calomp_sciddicaT-explicit} also makes the simulation loop
+explicit and defines a stopping criterion for the simulation
+termination.
 
 \lstinputlisting[label=lst:calomp_sciddicaT-explicit, caption=An
   OpenCAL-OMP implementation of the SciddicaT debris flows
   simulation model with explicit simulation
   loop.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
-\section{SciddicaT computational performance}
+\subsection{SciddicaT computational performance}
 
 Table \ref{tab:speedup} resumes computational performance of all the
 above illustrated SciddicaT implementations as implemented in
@@ -226,17 +216,17 @@ simulations are also reported.
   \footnotesize
   \begin{tabular}{l|c|c|c|c|c|c}
     \hline
-    T version & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
+    Version & Serial [s] & 1thr & 2thr & 4thr & 6thr & 8thr\\
     \hline
     \hline
-    naive         & 240s & 0.82 (293s) & 1.22 (196s) & 1.53 (157s) & 1.64 (146s) & 1.6 (150s)\\
-    active cells  & 23s  & 0.77 (30s)  & 1.36 (17s)  & 1.77 (13s)  & 2.09 (11s)  & 2.3 (10s)\\
-    eXtended CA   & 13s  & 0.77 (17s)  & 1.86 (7s)   & 2.6  (5s)   & 2.17  (6s)  & 2.6 (5s)\\
-    explicit loop & 12s  & 0.75 (16s)  & 1.2  (10s)  & 2.4  (5s)   & 2.4  (5s)   & 3.0 (4s)\\
+    $SciddicaT$            & 240s & 0.82 (293s) & 1.22 (196s) & 1.53 (157s) & 1.64 (146s) & 1.6 (150s)\\
+    $SciddicaT_{ac}$       & 23s  & 0.77 (30s)  & 1.36 (17s)  & 1.77 (13s)  & 2.09 (11s)  & 2.3 (10s)\\
+    $SciddicaT_{ac+dnu}$    & 13s  & 0.77 (17s)  & 1.86 (7s)   & 2.6  (5s)   & 2.17  (6s)  & 2.6 (5s)\\
+    $SciddicaT_{ac+dnu+esl}$ & 12s  & 0.75 (16s)  & 1.2  (10s)  & 2.4  (5s)   & 2.4  (5s)   & 3.0 (4s)\\
     \hline
   \end{tabular}
   \caption{Speedup of the four different
-    implementations of the SciddicaS3hex debris flows model accelerated by OpenMP.}
+    implementations of the SciddicaT debris flows model accelerated by OpenMP.}
   \label{tab:speedup}
 \end{table}
 
