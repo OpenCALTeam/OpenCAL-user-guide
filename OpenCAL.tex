@@ -4,7 +4,7 @@ This Chapter introduces the serial implementation of OpenCAL by
 examples. After a brief overview of supported data and name
 conventions, a simple 2D CA is implemented and the main structure of
 the library presented. Subsequently, four different implementations of
-a more complex 2D example are illustrated, to show differet
+a more complex 2D example are illustrated, to show different
 optimizations that can be used to speed up the simulation. The
 implementation of a simple 3D CA is also presented. The last part of
 the Chapter deals with OpenCAL-GL and shows how to integrate a basic
@@ -12,7 +12,7 @@ OpenGL/GLUT visualization system in both 2D and 3D applications based
 on OpenCAL.
 
 
-\section{OpenCAL data types and statements convention}\label{sec:Conventions}
+\section{OpenCAL data types and statements conventions}\label{sec:Conventions}
 
 The current version of OpenCAL provides support for three different
 basic scalar types, substates, CA and simulation objects. Basic types
@@ -338,7 +338,13 @@ obtained in OpenCAL by considering two different working planes for
 each registered substate, namely \emph{current} and \emph{next}. The
 \emph{current} working plane is used to read current values for the
 cells, while the \emph{next} working plane is used to write updated
-values\footnote{The \emph{implicit parallelism} is also used in the
+values. When all the cells have been processed and the new state
+values updated, computing planes are switched, i.e. the \emph{next}
+plane is assumed as \emph{current} and the \emph{current} as
+\emph{next}, and the process is reiterated. In this manner, the
+\emph{current} computing plane is never \emph{corrupted} during a
+computational step, being new values written to the \emph{next}
+plane\footnote{The \emph{implicit parallelism} is also used in the
   parallel versions of OpenCAL, with the difference that more than one
   cell can be processed and updated concurrently by exploiting more
   than one processing unit.}. Note that, besides specific cases,
@@ -716,29 +722,14 @@ entering the loop, if defined, the init function is
 executed. Afterwards, while the current step is lower or equal to the
 final step of computation (or this latter is set to
 \verb'CAL_RUN_LOOP'), elementary processes are executed
-concurrently\footnote{On the serial version of OpenCAL, implicit
-  parallelism is obtained by exploiting the two different computing
-  planes built into OpenCAL substates. The first one, referred as
-  \emph{current}, is used to read substates values for the central
-  cell and its neighbors, while the second, that referred as
-  \emph{next}, is used to update the new state for the central
-  cell. When all the cells have been processed and the new state
-  values updated, computing planes are switched, i.e. the \emph{next}
-  plane is assumed as \emph{current} and the \emph{current} as
-  \emph{next}, and the process is reiterated. In this manner, the
-  \emph{current} computing plane is not \emph{corrupted} during a
-  computational step, being new values written to the \emph{next}
-  plane. Note that, even in the case more processing units are used to
-  compute the next CA state and more cells are updated simultaneously,
-  which is the case of OpenCAL-OMP and OpenCAL-CL, the two computing
-  planes are maintained.}. In this cycle, substates are updated after
-each elementary process has been applied, while just before the end of
-the computational step, the steering function (if defined) is
-executed. At the end of the computational step, a stop condition is
-checked, which can stop the simulation before the last step is
-reached. In order to define such a stop condition, the user can use
-the \verb'stopCondition()' function, which registers a callback in
-which the stop condition can be defined.
+concurrently. In this cycle, substates are updated after each
+elementary process has been applied, while just before the end of the
+computational step, the steering function (if defined) is executed. At
+the end of the computational step, a stop condition is checked, which
+can stop the simulation before the last step is reached. In order to
+define such a stop condition, the user can use the
+\verb'stopCondition()' function, which registers a callback in which
+the stop condition can be defined.
 
 \begin{figure}[htbp]
   \centering
@@ -943,40 +934,36 @@ parameter (lines 107-108).
 Regarding the computational performance, the same simulation shown in
 Figure \ref{fig:sciddicaT} was executed using the new SciddicaT
 implementation adopting the active cells implementation. Still, only a
-single core of the Intel Core i7-4702HQ CPU was used, as before. The simulation lasted a total of 22 seconds, versus 172
-seconds obtained for the basic (non-optimized) version, which is about
-8 times faster. Indeed, this can be considered a very good result and can
+single core of the Intel Core i7-4702HQ CPU was used, as before. The
+simulation lasted a total of 22 seconds, versus 172 seconds obtained
+for the basic (non-optimized) version, which is about 8 times
+faster. Indeed, this can be considered a very good result and can
 easily obtained when the simulation involves only a limited subset of
 the computational domain.
 
-\section{SciddicaT as eXtended CA}\label{sec:sciddicaT_extended}
-OpenCAL allows for an even further optimization of the SciddicaT
-debris flows simulation model by means of the so called \emph{unsafe
-  operations}. In fact, in some cases, it is possible to consider an
-extended definition of the computational model, allowing for
-operations that are not strictly permitted by the formal definition of
-Cellular Automata. In particular, we will permit the transition
-function to update the state of the neighboring cells, while the CA
-formally only allows for state change for the central one. When such
-kind of unsafe operations are adopted, we are in front of an XCA
-eXtended Cellular Automata. Obviously, in order to be well defined,
-the XCA must be equivalent to the original CA model.
+\section{SciddicaT with unsafe operations}\label{sec:sciddicaT_extended}
+OpenCAL allows for a further optimization by means of the so called
+\emph{unsafe operations}, i.e. operations that are not strictly
+permitted by the formal definition of Cellular Automata. Obviously, in
+order to be well defined, a CA exploiting unsafe operations must be
+equivalent to a CA that does not use them.
 
-An XCA equivalent version of SciddicaT can be obtained by observing
-that, when an outflow is computed from the central cell towards a
-neighbor, the flow can be immediately subtracted from the central cell
-and added to the neighbor. This does not change the state of the
-system at the current step, which is defined by the \emph{current}
-computational plane, since updated values are written to the
-\emph{next} computational plane. As a result, the \emph{current}
-computational plane is not corrupted by the extended operation, and
-the \emph{next} plane is used for progressively accounting mass
-variation inside the cells. By introducing such feature, outflows don't
-need to be saved (e.g. into additional substates) anymore, as they are
-used to account mass exchange directly during outflows computation. As
-figured out, this can give rise to a further performance
-improvement for the application. The SciddicaT XCA model is formally
-defined as:
+In the case of SciddicaT, we will permit the transition function to
+update the state of the neighboring cells, while the CA formally only
+allows for state change for the central one. When an outflow is
+computed from the central cell towards a neighbor, the flow can be
+immediately subtracted from the central cell and added to the
+neighbor. This does not change the state of the system at the current
+step, which is defined by the \emph{current} computational plane,
+since updated values are written to the \emph{next} plane. As a
+result, the \emph{current} computational plane is not corrupted by the
+unsafe operation, and the \emph{next} plane is used for progressively
+accounting mass variation inside the cells. By introducing such
+feature, outflows do not need to be saved (e.g. into additional
+substates) anymore, as they are used to account mass exchange directly
+during outflows computation. As figured out, this can give rise to a
+further performance improvement for the application. The SciddicaT CA
+exploiting unsafe operations is formally defined as:
 
 
 $$SciddicaT = < R, A, X, Q , P, \sigma  >$$
@@ -1112,13 +1099,13 @@ the $Q_z$ substate), while \verb'calSet2Dr()' would update the
 error.
 
 Regarding the computational performance, the same simulation shown in
-Figure \ref{fig:sciddicaT} was executed by considering the XCA
-implementation of SciddicaT on a single core of the same
-processor. The simulation lasted a total of 11 seconds, versus 22
-seconds obtained for the active cells optimized version and 172
-seconds for the basic (non-optimized) version. The XCA implementation
-resulted 2 times faster than the active cells optimized version and
-about 16 times faster with than the basic one.
+Figure \ref{fig:sciddicaT} was executed by considering the
+implementation of SciddicaT with unsafe operations on a single core of
+the same processor. The simulation lasted a total of 11 seconds,
+versus 22 seconds obtained for the active cells optimized version and
+172 seconds for the basic (non-optimized) version. The new
+implementation resulted 2 times faster than the active cells optimized
+version and about 16 times faster with than the basic one.
 
 
 
@@ -1126,22 +1113,23 @@ about 16 times faster with than the basic one.
 Even if results obtained so far can be considered more than
 satisfying, it is further possible to improve computational
 performance of SciddicaT by avoiding unnecessary substates
-updating. In fact, in some cases, elementary processes don't affect
-one or more model's substates and therefore their updating can be avoided.
+updating. In fact, in some cases, elementary processes do not affect
+one or more model substates and therefore their updating can be
+avoided.
 
 As we stated above, when we use the implicit \verb'calRun2D()'
 simulation loop, an update of all the defined substates is executed at
 the end of each elementary process. However, this behavior can be
 modified by making the OpenCAL simulation loop explicit.
 
-In the specific case of the SciddicaT XCA model, the second elementary
-process, $\sigma_2$, just removes cells that became inactive from the
-set $A$ of active cells and doesn't affect the mode's
-substates\footnote{Actually, only $Q.h$ can be update by the
-  transition function, since $Q.z$ is a single-layered substate.}. As a
-consequence, no substates updating is needed after the application of
-$\sigma_2$. Being substates updating a time consuming operation, this
-can further speed up your simulation.
+In the specific case of the above implementation of SciddicaT, the
+second elementary process, $\sigma_2$, just removes cells that became
+inactive from the set $A$ of active cells and doesn't affect the
+mode's substates\footnote{Actually, only $Q.h$ can be update by the
+  transition function, since $Q.z$ is a single-layered substate.}. As
+a consequence, no substates updating is needed after the application
+of $\sigma_2$. Being substates updating a time consuming operation,
+this can further speed up your simulation.
 
 A new OpenCAL implementation of SciddicaT is presented in Listing
 \ref{lst:cal_sciddicaT-explicit}. It is based on an explicit
@@ -1150,7 +1138,7 @@ simulation termination. The complete implementation is shown for the
 sake of completeness.
 
 
-\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT XCA debris flows simulation model with explicit simulation loop.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
+\lstinputlisting[label=lst:cal_sciddicaT-explicit, caption=An OpenCAL implementation of the SciddicaT debris flows simulation model with explicit simulation loop.]{../opencal-examples/OpenCAL/cal_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
 
 As noted, the \verb'calRunAddGlobalTransitionFunc2D()' function is
@@ -1200,10 +1188,10 @@ illustrated SciddicaT implementations.
     CA model & Elapsed time [s] & Speedup \\
     \hline
     \hline
-    SciddicaT                     & 240 & 1\\
-    SciddicaT with active cells   & 23  & 10.43\\
-    SciddicaT XCA (eXtended CA)   & 13  & 18.46\\
-    SciddicaT XCA explicit update & 12  & 20\\
+    SciddicaT                           & 240 & 1\\
+    SciddicaT with active cells         & 23  & 10.43\\
+    SciddicaT with unsafe operations)   & 13  & 18.46\\
+    SciddicaT with explicit update      & 12  & 20\\
     \hline
   \end{tabular}
   \caption{Computational performance of the four different
@@ -1363,7 +1351,7 @@ shown in Figure \ref{fig:calgl_sciddicaT1}.
 \end{figure}
 
 \lstinputlisting[label=lst:calgl_sciddicaT, caption=An OpenCAL
-  implementation of the sciddicaT 3D CA with openCAL-GL graphic
+  implementation of the sciddicaT CA with openCAL-GL graphic
   output.]{../opencal-examples/OpenCAL-GL/calgl_sciddicaT/source/sciddicaT.c}
 
 As noticed, the \verb'OpenCAL-GL/calgl2D.h' and

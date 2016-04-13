@@ -1,31 +1,44 @@
 \chapter{OpenCAL OpenMP version}\label{ch:opencal-omp}
 
-Nowadays, parallel computing is the most effective solution to
-overcome temporal limits of sequential computation.  With the name
-OpenCAL-OMP, we identify the OpenMP implementation of the software
-library, that can run on all cores of your CPU. If you are lucky and
-have a shared memory multiprocessor system, OpenCAL-OMP can also
-exploit all the cores of all your CPUs.
+OpenCAL-OMP is the parallel OpenMP-based implementation OpenCAL, able
+to expoit all the processing elements on a shared memory
+machine. OpenCAL-OMP statements convention and custom neighbourhoods
+remain unchanged with respect to OpenCAL. Moreover, similarly to the
+serial version, OpenCAL-OMP allows for some \emph{unsafe operations},
+which can significantly speed up the application. Here, the utmost
+attention must be paid to avoid\textsl{race condition}
+issues\footnote{For instance, when many threads perform concurrent
+  operations on the same memory locations and such operations are made
+  by more than one atomic machine instruction, it can happen that they
+  can interleave, giving rise to wrong (i.e., non consistent)
+  results. Furthermore, even in the case of atomic operations, the
+  logic order of execution could not be respected. Thus, for instance,
+  a read-write logic sequence of atomic operations can actually become
+  a write-read (wrong) sequence due to the fact that the thread
+  performing the write operation is executed first.}. In the following
+Sections we will introduce OpenCAL-OMP by examples, highlighting
+differences with respect to the serial implementations presented in
+Chapter \ref{ch:opencal}. In particular, Game of Life is firstly
+implemented. Subsequently, four different implementations of SciddicaT
+are illustrated, to show different optimizations that can be used to
+speed up the simulation. The implementation of a simple 3D CA is also
+presented. The last part of the Chapter deals with OpenCAL-GL and
+shows how to integrate a basic OpenGL/GLUT visualization system in
+both 2D and 3D applications based on OpenCAL-OMP.
 
-Similarly to the serial version, OpenCAL-OMP allows for some
-\emph{unsafe operations}, which can significantly speed up your
-application. However, when you use OpenCAL-OMP in \emph{unsafe mode}
-you must give the utmost attention to avoid\textsl{race condition}
-issues. For instance, when many threads perform concurrent operations
-on the same memory locations and such operations are made by more than
-one atomic machine instruction, it can happen that they can
-interleave, giving rise to wrong (i.e., non consistent)
-results. Furthermore, even in the case of atomic operations, the logic
-order of execution could not be respected. Thus, for instance, a
-read-write logic sequence of atomic operations can actually become a
-write-read (wrong) sequence due to the fact that the thread performing
-the write operation is executed first.
 
-In the following sections we will introduce OpenCAL-OMP by examples,
-highlighting source code the differences with respect to the serial
-implementations shown in Chapter \ref{ch:opencal}. In the first part of
-the Chapter, we will deal with the OpenCAL's \emph{safe mode}, while in
-the last one, we will discuss unsafe operations.
+%% \section{OpenCAL-OMP statement convention and Custom Neighbourhoods}
+
+%% The OpenCAL-OMP statements' prefix does not change with respect to the
+%% OpenCAL's one (i.e. \verb'cal' for the functions, \verb'CAL' for the
+%% data types, and \verb'CAL_' for the constants). Please, refer to
+%% Section \ref{sec:Conventions} for further details.
+
+%% Similarly to OpenCAL, OpenCAL-OMP allows to define custom
+%% neighbourhoods. Since there are no differences with respect to
+%% OpenCAL, please refer to Section \ref{sec:CustomNeiughbourhoods} for
+%% further details.
+
 
 \section{Conway's Game of Life in OpenCAL-OMP}
 
@@ -48,17 +61,6 @@ OpenCAL-OMP is used in safe mode, besides including the proper OpenCAL-OMP
 header files instead of the OpenCAL ones, minimal changes are required
 to the serial code.
 
-\section{OpenCAL-OMP statement convention and Custom Neighbourhoods}
-
-The OpenCAL-OMP statements' prefix does not change with respect to the
-OpenCAL's one (i.e. \verb'cal' for the functions, \verb'CAL' for the
-data types, and \verb'CAL_' for the constants). Please, refer to
-Section \ref{sec:Conventions} for further details.
-
-Similarly to OpenCAL, OpenCAL-OMP allows to define custom
-neighbourhoods. Since there are no differences with respect to
-OpenCAL, please refer to Section \ref{sec:CustomNeiughbourhoods} for
-further details.
 
 \section{SciddicaT}
 
@@ -89,17 +91,17 @@ implementation can be found in Section
 With respect to the Sciddica implementation shown in Listing
 \ref{lst:calomp_sciddicaT}, which is exclusively based on safe
 OpenCAL-OMP operations, the active cells management as implemented
-here requires an unsafe operations. Such unsafe operations are
-performed by means of the \verb'calAddActiveCellX2D()' function (line
-87), which adds a cell belonging to the neighbourhood to the set $A$
-of active cells. As evident, such an operation is considered unsafe
-because it can give rise to a race condition. In fact, if more threads
-try to add the same cell to the set $A$ at the same time, being this a
-non-atomic operation, threads' operations can interleave and the
-outcome be not consistent. In order to avoid this possible error, OpenCAL-OMP
-is able to \emph{lock} the memory locations involved in the operations
-so that each thread can entirely perform its own task without the risk
-that other threads interfere. In order to do this, it is sufficient to
+here requires unsafe operations. These operations are performed by
+means of the \verb'calAddActiveCellX2D()' function (line 87), which
+adds a cell belonging to the neighbourhood to the set $A$ of active
+cells. As evident, such an operation is considered unsafe because it
+can give rise to a race condition. In fact, if more threads try to add
+the same cell to the set $A$ at the same time, being this a non-atomic
+operation, threads operations can interleave and the outcome be not
+consistent. In order to avoid this possible error, OpenCAL-OMP is able
+to \emph{lock} the memory locations involved in the operations so that
+each thread can entirely perform its own task without the risk that
+other threads interfere. In order to do this, it is sufficient to
 place OpenCAL-OMP in \emph{unsafe} state by calling the
 \verb'calSetUnsafe2D()', as done at line 163. No other modifications
 to the serial source code are required.
@@ -116,12 +118,12 @@ Listing \ref{lst:cal_sciddicaT-unsafe}.
 
 \lstinputlisting[label=lst:calomp_SciddicaT-unsafe, caption=An OpenCAL-OMP implementation of the SciddicaT debris flows eXtended CA simulation model with unsafe optimization.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe/source/sciddicaT.c}
 
-First of all - from a XCA modeling point of view - note that only the
-topographic altitude and the debris thickness are now considered as
-model's substates (lines 25-28, 147-148), as the four outflows
-substates are no longer needed. Moreover, the number of elementary
-process now considered is two (lines 143-144), instead of three for
-the previous versions of SciddicaT.
+First of all note that only the topographic altitude and the debris
+thickness are now considered as model's substates (lines 25-28,
+147-148), as the four outflows substates are no longer
+needed. Moreover, the number of elementary process now considered is
+two (lines 143-144), instead of three for the previous versions of
+SciddicaT.
 
 The call to the \verb'calSetUnsafe2D()' function (line 139) places
 OpenCAL-OMP in unsafe mode, allowing to lock memory locations
@@ -184,7 +186,7 @@ SciddicaT by avoiding unnecessary substates updating.
 As already reported, the \verb'calRun2D()' function used so far to
 run the simulation loop updates all the defined substates at the end
 of each elementary process. However, in the specific case of the
-SciddicaT XCA model, no substates updating should be executed after
+SciddicaT model, no substates updating should be executed after
 the application of the second elementary process, as this just removes
 inactive cells from the set $A$.
 
@@ -201,7 +203,7 @@ the simulation termination.
 
 
 \lstinputlisting[label=lst:calomp_sciddicaT-explicit, caption=An
-  OpenCAL-OMP implementation of the SciddicaT XCA debris flows
+  OpenCAL-OMP implementation of the SciddicaT debris flows
   simulation model with explicit simulation
   loop.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT-unsafe-explicit/source/sciddicaT.c}
 
