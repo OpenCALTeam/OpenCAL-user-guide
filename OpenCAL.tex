@@ -1,38 +1,24 @@
 \chapter{OpenCAL}\label{ch:opencal}
 
 This Chapter introduces the serial implementation of OpenCAL by
-examples. After a brief overview of supported data and name
-conventions, a simple 2D CA is implemented and the main structure of
-the library presented. Subsequently, four different implementations of
-a more complex 2D example are illustrated, to show different
-optimizations that can be used to speed up the simulation. The
-implementation of a simple 3D CA is also presented. The last part of
+examples. After a brief overview about supported data, main structure
+and adopted conventions, a simple 2D CA is implemented and the main
+structure of the library presented. Subsequently, four different
+implementations of a more complex 2D example are illustrated, to show
+simulation efficiency can be improved. The implementation of a simple
+3D CA is also presented for the sake of completeness. The last part of
 the Chapter deals with OpenCAL-GL and shows how to integrate a basic
-OpenGL/GLUT visualization system in both 2D and 3D applications based
-on OpenCAL.
+OpenGL/GLUT visualization system in both 2D and 3D OpenCAL-based
+applications.
 
 
-\section{OpenCAL data types and statements conventions}\label{sec:Conventions}
+\section{Basic data types and main loop structure}
 
 The current version of OpenCAL provides support for three different
-basic scalar types, substates, CA and simulation objects. Basic types
-are listed in Table \ref{tab:basic_types}, while supported substates
-in Table \ref{tab:substate_types}; Table \ref{tab:ca_sim_types} lists
-OpenCAL data types for CA and simulation objects.
-
-Data types are characterized by the \verb'CAL' prefix, and an optional
-suffix identifying the CA dimension or the basic type, or both of
-them. For instance, the 2Di suffix specifies a two-dimensional object
-in which each element is of type integer (cf. Table
-\ref{tab:substate_types}).
-
-Predefined numerical constants start with the \verb'CAL_' prefix,
-followed by at least one uppercase keyword. In case of more keywords,
-they are separated by the \verb'_' character.
-
-Eventually, functions start with the \verb'cal' suffix, followed by at
-least one capitalized keyword, and end with a suffix specifying the CA
-dimension and the basic datatype.
+basic scalar types and substates, besides CA and simulation
+objects. Supported scalar types and substates are listed in Table
+\ref{tab:basic_types} and \ref{tab:substate_types}, respectively,
+while Table \ref{tab:ca_sim_types} lists CA and simulation data types.
 
 \begin{table}
   \centering
@@ -81,12 +67,50 @@ dimension and the basic datatype.
 \end{table}
 
 
+Figure \ref{fig:opencal_main_loop} shows the OpenCAL main simulation
+loop. Before entering the loop, if defined, the init function is
+executed once and a substates update performed. Afterwards, while the
+current step is lower or equal to the final step of computation (or
+this latter is set to \verb'CAL_RUN_LOOP', which defines an infinite
+loop), elementary processes are executed once at a time, in the order
+they have been registered to the CA. Here, note that a substates
+update is performed after each elementary process. Moreover, just
+before the end of the computational step, the steering function (if
+defined) is applied and a substates update performed. At the end of
+the computational step, a stop condition is checked, which can stop
+the simulation even before the last step is reached.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9.5cm]{./images/OpenCAL/opencal_main_loop.pdf}
+  \caption{OpenCAL main loop chart.}
+  \label{fig:opencal_main_loop}
+\end{figure}
+
+
+\section{Statements conventions}\label{sec:Conventions}
+
+As can be seen, data types have the same \verb'CAL' prefix, and an
+optional suffix identifying the CA dimension or the basic scalar type,
+or both of them. For instance, the 2Di suffix specifies a
+two-dimensional object in which each element is of type integer
+(cf. Table \ref{tab:substate_types}).
+
+Predefined numerical constants start with the \verb'CAL_' prefix,
+followed by at least one uppercase keyword. In case of more keywords,
+they are separated by the \verb'_' character.
+
+Eventually, functions start with the \verb'cal' suffix, followed by at
+least one capitalized keyword, and end with a suffix specifying the CA
+dimension and the basic datatype.
+
+
 \section{Conway's Game of Life}\label{sec:cal_life}
 
-In order to introduce model development with OpenCAL, this section
-starts by implementing the Conway's Game of Life. It represents one of
-the most simple, yet powerful examples of CA, devised by mathematician
-John Horton Conway in 1970.
+In order to introduce OpenCAL, this section starts by implementing the
+Conway's Game of Life, one of the most simple, yet powerful examples
+of CA, devised by mathematician John Horton Conway in 1970.
 
 The Game of Life can be thought as an infinite two-dimensional
 orthogonal grid of square cells, each of which is in one of two
@@ -195,45 +219,33 @@ reading/writing substates from/to file. The CA object is then declared
 at line 9, while lines 10 and 11 declare a substate and a simulation
 object, respectively.
 
-While statements at lines 9-11 just declare the required objects, they
-are defined later in the \verb'main' function. In particular, the $Life$
-CA object is defined at line 29 by the \verb'calCADef2D()'
-function. The first 2 parameters define the CA dimensions (the number
-of rows and columns, respectively), while the third parameter defines
-the neighborhood pattern. Here, the predefined Moore neighborhood is
-selected (cf. Figure \ref{fig:LifeNeighborhood}), among those provided
-by OpenCAL. See Listings \ref{lst:CALNeighborhood2D} and
-\ref{lst:CALNeighborhood3D} for a list of OpenCAL's predefined 2D and
-3D neighborhoods, respectively. Custom neighborhoods can also be
-defined by means of the \verb'calAddNeighbor2D()' function. In both
-cases, indices are assigned progressively, starting from 0, each time
-a new cell is added to the neighborhood.
-
-The fourth parameter specifies the boundary conditions. In this case,
-the CA cellular space is considered as a torus, with cyclic conditions
-at boundaries. The last parameter allows to specify if the model has
-to use the so called \emph{active cells optimization}, that permits to
-restrict the computation to only \emph{non-stationary cells}. In this
-case, no optimization is considered.
-
-\begin{lstlisting}[float, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
-  struct CALModel2D* calCADef2D (
-    int rows,
-    int columns,
-    enum CALNeighborhood2D CAL_NEIGHBORHOOD_2D,
-    enum CALSpaceBoundaryCondition CAL_TOROIDALITY,
-    enum CALOptimization CAL_OPTIMIZATION
-  )
-\end{lstlisting}
-
-The complete definition of \verb'calCADef2D()' is provided in Listing
-\ref{lst:calCADef2D}, here reported together with few other OpenCAL
-key functions and data types. In particular, the
-\verb'CALNeighborhood2D' enum type (Listing
-\ref{lst:CALNeighborhood2D}) allows to select a predefined or a custom
-neighborhood to be defined in the application. In particular,
-\verb'CAL_VON_NEUMANN_NEIGHBORHOOD_2D' corresponds to the von Neumann
-pattern, \verb'CAL_MOORE_NEIGHBORHOOD_2D' to the Moore one,
+Objects declared at lines 9-11 are defined later in the \verb'main'
+function. In particular, the $Life$ CA object is defined at line 29 by
+the \verb'calCADef2D()' function. The first 2 parameters define the CA
+dimensions (the number of rows and columns, respectively), while the
+third parameter defines the neighborhood pattern. Here, the predefined
+Moore neighborhood is selected (cf. Figure
+\ref{fig:LifeNeighborhood}), among those provided by OpenCAL. See
+Listings \ref{lst:CALNeighborhood2D} and \ref{lst:CALNeighborhood3D}
+for a list of OpenCAL's predefined 2D and 3D neighborhoods,
+respectively. Custom neighborhoods can also be defined by means of the
+\verb'calAddNeighbor2D()' function. In both cases, indices are
+assigned progressively, starting from 0, each time a new cell is added
+to the neighborhood. The fourth parameter specifies the boundary
+conditions. In this case, the CA cellular space is considered as a
+torus, with cyclic conditions at boundaries. The last parameter allows
+to specify if the model has to use the so called \emph{active cells
+  optimization}, that permits to restrict the computation to only
+\emph{non-stationary cells}. In this case, no optimization is
+considered. The complete definition of \verb'calCADef2D()' is provided
+in Listing \ref{lst:calCADef2D}. The \verb'calCADef3D()' 3D CA
+definition function is also shown in Listing \ref{lst:calCADef2D} for
+the sake of completeness. In particular, the \verb'CALNeighborhood2D'
+enum type (Listing \ref{lst:CALNeighborhood2D}) allows to select a
+predefined or a custom neighborhood to be defined in the
+application. In particular, \verb'CAL_VON_NEUMANN_NEIGHBORHOOD_2D'
+corresponds to the von Neumann pattern,
+\verb'CAL_MOORE_NEIGHBORHOOD_2D' to the Moore one,
 \verb'CAL_HEXAGONAL_NEIGHBORHOOD_2D' and
 \verb'CAL_HEXAGONAL_NEIGHBORHOOD_ALT_2D' to the hexagonal and
 alternative hexagonal patterns, respectively (cf. Figure
@@ -246,10 +258,32 @@ neighborhoods are (obviously) not defined. Custom neighborhoods will
 be discussed later in Section
 \ref{sec:CustomNeiughbourhoods}. Similarly, the
 \verb'CALSpaceBoundaryCondition' enum type (Listing
-\ref{lst:CALSpaceBoundaryCondition}) allows to set cyclic
-condition at boundaries. Eventually, the \verb'CALOptimization' enum
-type (Listing \ref{lst:CALOptimization}) allows to consider the
-\emph{active cells optimization}, discussed later in this Chapter.
+\ref{lst:CALSpaceBoundaryCondition}) allows to set cyclic condition at
+boundaries. Eventually, the \verb'CALOptimization' enum type (Listing
+\ref{lst:CALOptimization}) allows to consider the \emph{active cells
+  optimization}, discussed later in this Chapter.
+
+
+\begin{lstlisting}[float, floatplacement=H, label=lst:calCADef2D, caption=Definition of the calCADef2D() function., numbers=none]
+  struct CALModel2D* calCADef2D (
+    int rows,
+    int columns,
+    enum CALNeighborhood2D CAL_NEIGHBORHOOD_2D,
+    enum CALSpaceBoundaryCondition CAL_TOROIDALITY,
+    enum CALOptimization CAL_OPTIMIZATION
+  )
+\end{lstlisting}
+
+\begin{lstlisting}[float, label=lst:calCADef3D, caption=Definition of the calCADef3D() function., numbers=none]
+  struct CALModel3D* calCADef3D(
+    int rows,
+    int columns,
+    int slices,
+    enum CALNeighborhood3D CAL_NEIGHBORHOOD_3D,
+    enum CALSpaceBoundaryCondition CAL_TOROIDALITY,
+    enum CALOptimization CAL_OPTIMIZATION
+  );
+\end{lstlisting}
 
 \begin{lstlisting}[float,label=lst:CALNeighborhood2D, caption=The CALNeighborhood2D enum type., numbers=none]
   enum CALNeighborhood2D {
@@ -284,23 +318,6 @@ type (Listing \ref{lst:CALOptimization}) allows to consider the
   };
 \end{lstlisting}
 
-The CA simulation object is defined at line 30 by the
-\verb'calRunDef2D()' function. The first parameter is a pointer to a
-CA object (\verb'life' in our case), while the second and third
-parameters specify the initial and last simulation step,
-respectively. In this case, we just perform one step of computation,
-being both the first and last step set to 1. The last parameter allows
-you to specify the substate update policy, which can be implicit or
-explicit (Listing \ref{lst:CALUpdateMode}). In the first case, OpenCAL
-performs substates update automatically, while in the second the user
-must explicitly specify which substates have to be updated. Note that,
-in case implicit update policy is applied, all the CA substates are
-updated after the execution of each elementary process composing the
-CA transition function. We will discuss update policies later in this
-Chapter. The complete definition of \verb'calRunDef2D()' is provided
-in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type
-(Listing \ref{lst:CALUpdateMode}) enumerates possible update policies.
-
 \begin{lstlisting}[float, label=lst:calRunDef2D(), caption=Definition of the calRunDef2D() function., numbers=none]
   struct CALRun2D* calRunDef2D (
     struct CALModel2D* ca2D,
@@ -310,12 +327,43 @@ in Listing \ref{lst:calRunDef2D()}. The \verb'CALUpdateMode' type
   )
 \end{lstlisting}
 
+\begin{lstlisting}[float, label=lst:calRunDef3D(), caption=Definition of the calRunDef3D() function., numbers=none]
+  struct CALRun3D* calRunDef3D(
+    struct CALModel3D* ca3D,
+    int initial_step,
+    int final_step,
+    enum CALUpdateMode UPDATE_MODE
+  );	
+\end{lstlisting}
+
 \begin{lstlisting}[float, label=lst:CALUpdateMode, caption=The CALUpdateMode enum type., numbers=none]
   enum CALUpdateMode {
     CAL_UPDATE_EXPLICIT = 0,
     CAL_UPDATE_IMPLICIT
   };
 \end{lstlisting}
+
+
+The CA simulation object is defined at line 30 by the
+\verb'calRunDef2D()' function. The first parameter is a pointer to a
+CA object (\verb'life' in our case), while the second and third
+parameters specify the initial and last simulation step,
+respectively. In this case, we just perform one step of computation,
+being both the first and last step set to 1. The last parameter allows
+to specify the substate update policy, which can be implicit or
+explicit. The \verb'CALUpdateMode' enumeration, shown in Listing
+\ref{lst:CALUpdateMode}, defines possible update policies. In the
+first case, OpenCAL performs substates update automatically, while in
+the second the user must explicitly specify which substates have to be
+updated. Note that, in case implicit update policy is applied, all the
+CA substates are updated after the execution of each elementary
+process composing the CA transition function. We will discuss update
+policies later in this Chapter. The complete definition of
+\verb'calRunDef2D()' is provided in Listing \ref{lst:calRunDef2D()},
+while the 3D version of the same function can be found in Listing
+\ref{lst:calRunDef3D()}. The \verb'CALUpdateMode' type, shown in
+Listing \ref{lst:CALUpdateMode}, enumerates possible update policies.
+
 
 Line 33 allocates memory and registers the \verb'Q' substate to the
 \verb'life' CA, while line 36 registers an elementary process to the
@@ -326,69 +374,80 @@ model to which the elementary process must be registered and a pointer
 to a callback function, that defines the elementary process itself. In
 our example, we specified \verb'lifeTransitionFunction' as second
 parameter, being it the name of a developer-defined function
-(cf. lines 14-24). As you can see, the elementary process callback
-function returns \verb'void'. Moreover, it takes a pointer to a CA
-object as first parameter, followed by a couple of integers,
-representing the coordinates of the generic cell in the CA space. This
-is the function prototype which is common to each elementary
-process. Note that, each elementary process is applied by OpenCAL
-simultaneously to each cell of the cellular space in a computational
-step. This characteristic is called \emph{implicit parallelism} and is
-obtained in OpenCAL by considering two different working planes for
-each registered substate, namely \emph{current} and \emph{next}. The
-\emph{current} working plane is used to read current values for the
-cells, while the \emph{next} working plane is used to write updated
-values. When all the cells have been processed and the new state
-values updated, computing planes are switched, i.e. the \emph{next}
-plane is assumed as \emph{current} and the \emph{current} as
-\emph{next}, and the process is reiterated. In this manner, the
-\emph{current} computing plane is never \emph{corrupted} during a
-computational step, being new values written to the \emph{next}
-plane\footnote{The \emph{implicit parallelism} is also used in the
-  parallel versions of OpenCAL, with the difference that more than one
-  cell can be processed and updated concurrently by exploiting more
-  than one processing unit.}. Note that, besides specific cases,
-working planes are completely transparent to the user.
+implementing the transition function roles (cf. lines 14-24). As can
+be seen, the elementary process callback function returns
+\verb'void'. Moreover, it takes a pointer to a CA object as first
+parameter, followed by a couple of integers, representing the
+coordinates of the generic cell in the CA space. This is the function
+prototype which is common to each elementary process.
+
+Note that, for each computational step, each elementary process is
+applied simultaneously to each cell. This characteristic is known as
+\emph{implicit parallelism} and is obtained in OpenCAL by considering
+two different working planes, namely \emph{current} and \emph{next},
+for each registered substate. The \emph{current} plane is used to read
+cells state at the current CA step, while the \emph{next} to store
+updated values. In this manner, the \emph{current} plane remains
+unchanged for the overall current CA step. As a consequence, even in
+the case of serial computation, in which cells are updated once at a
+time, the resulting effect is that all the cells are updated
+simultaneously on the basis of their sates at the current
+computational step. At the contrary, if updated states would be stored
+in the \verb'current' computing plane, such updated values would
+affect the state change of neighboring cells even in the current
+computational step, and the computation would result actually
+serial. When all the cells have been processed and their states
+updated, computing planes are switched (i.e. \emph{next} becomes the
+new \emph{current} and \emph{current} the new \emph{next}), and the
+process is reiterated. \footnote{The \emph{implicit parallelism} is
+  also used in the parallel versions of OpenCAL, with the difference
+  that more than one cell can be processed and updated concurrently by
+  exploiting more than one processing unit.}. Note that, besides
+specific cases, working planes are completely transparent to the user.
 
 When the user implements an elementary process, by defining its
-callback function, he can rely on a set of OpenCAL functions that
-allow to retrieve the substates values for both the central and the
-neighboring cells, and to update the central cell state. In the
-specific case of the Game of Life, we used the \verb'calGet2Di()'
-function to get the central cell's value of the substate \verb'Q'
-(remember that the central cell is identified by the coordinates (i,
-j), coming from the parameters of the callback function), the
-\verb'calGetX2Di()' function to get the value of the n-th neighbor's
-substate \verb'Q', and the \verb'calSet2Di()' function to update the
-value of the substate \verb'Q' for the central cell. In the Game of
-Life example, we defined just one elementary process, that therefore
-represents the whole cell transition function. However, as we will see
-later, many elementary processes can be defined in OpenCAL by simply
-calling the \verb'calAddElementaryProcess2D()' function many times. If
-the user defines more than one elementary process, these will be
-executed in the same order they were registered to the CA.
+callback function, a set of OpenCAL functions can be used to retrieve
+the substates values for both the central and the neighboring cells,
+and to update the central cell state. In the specific case of the Game
+of Life, the \verb'calGet2Di()' function gets the central cell value
+of the substate \verb'Q' (note that the central cell is identified by
+the coordinates (i, j), coming from the parameters of the callback
+function), the \verb'calGetX2Di()' function gets the value of the
+\verb'Q' substate for the n-th neighbor, and the \verb'calSet2Di()'
+function updates the value of the \verb'Q' substate \verb for the
+central cell. In the Game of Life example, we defined just one
+elementary process, that therefore represents the whole cell
+transition function. However, as we will see later, many elementary
+processes can be defined in OpenCAL by simply calling the
+\verb'calAddElementaryProcess2D()' function many times. If the user
+defines more than one elementary process, these will be applied in
+the same order they were registered to the CA.
 
 The \verb'calInitSubstate2Di()' function at line 39 sets the whole
-substate \verb'Q' to the value 0, i.e. the value of the substate
-\verb'Q' is set to 0 in each cell of the cellular space. The following
-lines, from 42 to 46, set the value of the substate \verb'Q' for some
-cells to 1, in order to define the well known and so called
-\emph{glider} pattern. In this case, we provided the cells coordinates
-as the third and fourth parameters, while the substate value was set
-through the fourth parameter. In this way, we define the initial
-condition of the system directly inside the \verb'main'
-function. However, as we will see later in this Chapter, such kind of
-initialization can be performed by means of a specific function.
+\verb'Q' substate to the value 0 (for both the current and next
+working planes), i.e. the value of the \verb'Q' substate is set to 0
+in each cell of the cellular space. Lines 42-46, set the value of the
+\verb'Q' substate for some cells to 1, in order to define a so called
+\emph{glider} pattern. In this case, the \verb'calInit2Di()' function,
+used for this porpose, takes the cells coordinates as the third and
+fourth parameters, while the value 1 to be set was specified through
+the last parameter. In this way, the initial condition of the system
+was defined within the \verb'main' function, even if, as we will see
+later in this Chapter, OpenCAL allows for registering an
+initialization function, to be executed once before the simulation
+loop.
 
-The \verb'calSaveSubstate2Di()' function (line 49) saves the substate
-\verb'Q' to file, while the \verb'calRun2D()' function (line 52)
+The \verb'calSaveSubstate2Di()' function (line 49) saves the \verb'Q'
+substate to file, while the \verb'calRun2D()' function (line 52)
 enters the simulation loop (actually, only one computational step in
 this example), and returns to the \verb'main' function when the
-simulation is complete. The \verb'calSaveSubstate2Di()' is thus called
+simulation is complete. The \verb'calSaveSubstate2Di()' is called
 again at line 55 to save the new (last) configuration of the CA
-(represented by the only defined substate \verb'Q') to file, while the
-last two functions at lines 58 and 59 release previously allocated
-memory. The \verb'return' statement at line 61 ends our first example.
+(represented by the only defined \verb'Q' substate) to file, while the
+last two functions at lines 58 and 59 release memory previosuly
+automatically allocated by OpenCAL for CA, substates (actually, only
+\verb'Q' in this case) and simulation objects. The \verb'return'
+statement at line 61 ends the program.
 
 Figures \ref{fig:life_0000} and \ref{fig:life_LAST} show the initial
 and final configuration of Game of Life, respectively, as implemented
@@ -400,15 +459,21 @@ in Listing \ref{lst:cal_life}.
     \caption{Initial configuration of Game of Life, as implemented in Listing \ref{lst:cal_life}.}
     \label{fig:life_0000}
   \end{center}
-\end{figure}
 
-\begin{figure}
-  \begin{center}
+    \begin{center}
     \includegraphics[width=7cm]{./images/OpenCAL/life_LAST}
     \caption{Final configuration of Game of Life (actually, just one step of computation), as implemented in Listing \ref{lst:cal_life}.}
     \label{fig:life_LAST}
   \end{center}
 \end{figure}
+
+%% \begin{figure}
+%%   \begin{center}
+%%     \includegraphics[width=7cm]{./images/OpenCAL/life_LAST}
+%%     \caption{Final configuration of Game of Life (actually, just one step of computation), as implemented in Listing \ref{lst:cal_life}.}
+%%     \label{fig:life_LAST}
+%%   \end{center}
+%% \end{figure}
 
 
 \section{Custom Neighborhoods}\label{sec:CustomNeiughbourhoods}
@@ -419,13 +484,31 @@ predefined neighborhoods (cf. Listings \ref{lst:CALNeighborhood2D} and
 definition of custom neighborhood patterns.
 
 
-\begin{lstlisting}[float, label=lst:calAddNeighbor2D-3D, caption=The calAddNeighbor2D() and calAddNeighbor3D() functions to define custom neighborhood patterns., numbers=none]
+%% \begin{lstlisting}[float, label=lst:calAddNeighbor2D-3D, caption=The calAddNeighbor2D() and calAddNeighbor3D() functions to define custom neighborhood patterns., numbers=none]
+%%   struct CALCell2D*  calAddNeighbor2D(
+%%       struct CALModel2D* ca2D,          // pointer to a 2D CA object
+%%       int i,                            // row coordinate
+%%       int j                             // column coordinate
+%%   );
+
+%%   struct CALCell3D*  calAddNeighbor3D(
+%%       struct CALModel3D* ca3D,          // pointer to a 3D CA object
+%%       int i,                            // row coordinate
+%%       int j,                            // column coordinate
+%%       int k                             // slice coordinate
+%%   );
+%% \end{lstlisting}
+
+
+\begin{lstlisting}[float, label=lst:calAddNeighbor2D(), caption=The calAddNeighbor2D() functions to define custom neighborhood patterns in 2D CA., numbers=none]
   struct CALCell2D*  calAddNeighbor2D(
       struct CALModel2D* ca2D,          // pointer to a 2D CA object
       int i,                            // row coordinate
       int j                             // column coordinate
   );
+\end{lstlisting}
 
+\begin{lstlisting}[float, label=lst:calAddNeighbor3D(), caption=The calAddNeighbor3D() function to define custom neighborhood patterns in 3D CA., numbers=none]
   struct CALCell3D*  calAddNeighbor3D(
       struct CALModel3D* ca3D,          // pointer to a 3D CA object
       int i,                            // row coordinate
@@ -439,11 +522,11 @@ In order to define a custom neighborhood pattern,
 \verb'CAL_CUSTOM_NEIGHBORHOOD_2D' (or
 \verb'CAL_CUSTOM_NEIGHBORHOOD_3D' in case of a 3D CA) must be used as
 the third parameter of the \verb'calCADef2D()' function
-(\verb'calCADef3D()' for a 3D CA) (cf. Listing
-\ref{lst:calAddNeighbor2D-3D}). By doing this, you will start with an
+(\verb'calCADef3D()' for a 3D CA). By doing this, you will start with an
 empty neighboring pattern and can subsequently call the
 \verb'calAddNeighbor2D()' (\verb'calAddNeighbor3D()' for 3D CA)
-function to add a cell to the pattern.
+function to add a cell to the pattern (cf. Listings
+\ref{lst:calAddNeighbor2D()} and \ref{lst:calAddNeighbor3D()}).
 
 \begin{lstlisting}[float, label=lst:CustomMooreExample, caption=Example of custom neighbourhood pattern; the sequence of calls to the calAddNeighbor2D() function defines the Moore neighbourhood for the Game of Life CA., numbers=none]
   // ...
@@ -475,25 +558,25 @@ sequence of nine calls to the \verb'calAddNeighbor2D()' function. The
 first time the function is called, it adds the relative coordinates
 (0,0) to the neighboring pattern. This first set of coordinates
 receives the subscript identifier 0 and therefore can be used later to
-refer the central cell. For instance, when you call
-\verb'calSet2Di(life,Q,i,j,0);' (see e.g. line 23, Listing
-\ref{lst:cal_life}), the relative coordinates of the neighbor 0
+refer the central cell. For instance, if
+\verb'calSet2Di(life,Q,i,j,0)' is called, as at line 23 of Listing
+\ref{lst:cal_life}, the relative coordinates of the neighbor 0
 (specified as last parameters), i.e. (0,0), are added to the
 coordinates of the cells the elementary process is applying to,
 i.e. (i,j) (cf. second and third to last parameters), by obtaining the
 cell (i,j) itself, which corresponds to the central cell by
 definition. The subsequent calls to \verb'calAddNeighbor2D()' add
 further couples of coordinates to the neighboring pattern, by
-progressively assigning an integer subscript identifier to each of
+progressively assigning an integer subscript handle to each of
 them.
 
-Eventually, note that you can define custom neighborhoods starting
-from a predefined one. For instance, by considering the above
-Game of Life example, you can enrich the Moore neighborhood pattern
-by simply specifying the value \verb'CAL_MOORE_NEIGHBORHOOD_2D' as
-parameter for the \verb'calCADef2D' function) and then add further
-neighbors by calling \verb'calAddNeighbor2D()' as many times the as
-the number of cells you want to add.
+Eventually, note that it is possible to define custom neighborhoods
+starting from a predefined one. For instance, by considering the above
+Game of Life example, it is possible to specify the value
+\verb'CAL_MOORE_NEIGHBORHOOD_2D' as parameter for the
+\verb'calCADef2D' function and then add further neighbors by calling
+\verb'calAddNeighbor2D()' as many times the as the number of cells
+have to be added.
 
 \section{SciddicaT}\label{sec:sciddicaT}
 In the previous section we illustrated an OpenCAL implementation of a
@@ -501,15 +584,14 @@ simple cellular automaton, namely the Conway’s Game of Life. Here, we
 will deal with a more complex example concerning the implementations
 of the Sciddica.
 
-Sciddica is a family of two-dimensional XCA (eXtended Cellular
-Automata - see Chapter \ref{ch:CA}) debris flow models, successfully
-applied to the simulation of many real cases, such as the 1988
-Mt. Ontake (Japan) landslide and the 1998 Sarno (Italy) disaster. A
-simplified toy-version of Sciddica (SciddicaT in the following) was
-here considered to be implemented in \verb"OpenCAL", and its
-application to the 1992 Tessina (Italy) landslide shown. Different
-versions will be presented, ranging from a naive to a fully optimized
-implementation.
+Sciddica is a family of two-dimensional XCA (cf. Chapter \ref{ch:CA})
+debris flow models, successfully applied to the simulation of many
+real cases, such as the 1988 Mt. Ontake (Japan) landslide and the 1998
+Sarno (Italy) disaster. A simplified toy-version of Sciddica
+(SciddicaT in the following) was here considered to be implemented in
+\verb"OpenCAL", and its application to the 1992 Tessina (Italy)
+landslide shown. Different versions will be presented, ranging from a
+naive to a fully optimized implementation.
 
 \subsection{SciddicaT naive implementation}
 
@@ -624,10 +706,10 @@ implementation of SciddicaT is shown.
 As for the case of Game of Life, the CA model and the simulation
 objects are declared as global variables (lines 22 and 35,
 respectively), and defined later into the main function (lines 147 and
-148, respectively). As you can see, the 2D cellular space is a grid
+148, respectively). As can be seen, the 2D cellular space is a grid
 of \verb'ROWS' rows times \verb'COLS' columns cells, corresponding to
 $i_{max}$ and $j_{max}$ of the formal definition, respectively
-(cf. lines 10-11), while the von Neumann neighborhood is adopted. The
+(cf. lines 10-11), and the von Neumann neighborhood is adopted. The
 cellular space is still toroidal, as in $Life$, and no optimization is
 considered. Regarding the simulation object, a total of \verb'STEPS'
 steps (i.e. 4000 steps - cf. line 14) are set, and implicit substates
@@ -652,30 +734,31 @@ pointer to a simulation object as parameter. Differently to an
 elementary process, which can only access state values of cells
 belonging to the neighborhood, this function can perform global
 operations over the whole cellular space. In the specific case of the
-$SciddicaT_{naive}$ model, the \verb'sciddicaTSimulationInit()' function
-(lines 104-130) sets the values of all the outflows from the central
-cell to its neighbors to zero, by means of the function
+$SciddicaT_{naive}$ model, the \verb'sciddicaTSimulationInit()'
+function (lines 104-130) sets the values of all the outflows from the
+central cell to its neighbors to zero, by means of the function
 \verb'calInitSubstate2Dr()' (lines 110-113). Moreover, it sets the
 values of the P.r and P.epsilon parameters (lines 116-117) and
 initializes the debris flow source by simply subtracting the source's
 debris thickness to the topographic altitude. For this purpose, a
-nested double \verb'for' is executed to check the debris thickness in each
-cell of the cellular space. Here, the \verb'sciddicaT->rows' and
+nested double \verb'for' is executed to check the debris thickness in
+each cell of the cellular space. Here, the \verb'sciddicaT->rows' and
 \verb'sciddicaT->cols' members of the CA object are used, which
 represent the cellular space values of rows and columns,
 respectively. Still, the \verb'calGet2Dr()' and \verb'calSet2Dr()'
 functions are here employed to read/update substates' values inside
 the cells.
 
-Line 168 defines a \emph{steering} callback by
-the \verb'calRunAddSteeringFunc2D()' function. Steering is executed at
-the end of each computational step (i.e. after all the elementary
+Line 168 registers a \emph{steering} callback by means of the
+\verb'calRunAddSteeringFunc2D()' function. Steering is executed at the
+end of each computational step (i.e. after all the elementary
 processes have been applied to each cell of the cellular space), and
-can perform global operations over the cellular space. In this case,
-the \verb'sciddicaTSteering()' callback is registered; it must
-return void and takes a pointer to a simulation object as function
-parameter. It simply resets (to zero) outflows everywhere through
-the \verb'calInitSubstate2Dr()' function.
+can perform global operations over the whole cellular space. The
+steering callback prototype must return void and take a pointer to a
+simulation onject, as for the \verb'sciddicaTSteering()' callback
+(lines 132-140). In the specific case of $SciddicaT_{naive}$, the
+steering callback simply sets to zero outflows everywhere through the
+\verb'calInitSubstate2Dr()' function.
 
 The function \verb'calRun2D()' (line 171) enters the OpenCAL
 simulation loop, which executes a total of 4000 steps (cf. lines 14
@@ -686,9 +769,9 @@ previously allocated memory is released (lines 179-180).
 As regards the elementary processes, the first one, $\sigma_1$, is
 defined at lines 38-88, while the second, $\sigma_2$, at lines
 91-101. In both cases, the \verb'calGet2Dr()' \verb'calGetX2Dr()'
-functions are employed to get substates' values for the central cell and
-its neighbors, respectively. Moreover, the \verb'calSet2Dr()'
-function, updates the central cell's state.
+functions are employed to get values for the central cell and its
+neighbors, respectively. Moreover, the \verb'calSet2Dr()' function,
+updates the central cell state.
 
 Figure \ref{fig:sciddicaT} shows the $SciddicaT_{naive}$ simulation of the 1992
 Tessina (Italy) landslide. Both the initial landslide source and the
@@ -716,27 +799,6 @@ As regards computational performance, the simulation shown in Figure
 2.20GHz by exploiting only a single core. The simulation lasted a
 total of 172 seconds and considered a total of 4000 computational
 steps.
-
-Figure \ref{fig:opencal_main_loop} shows the OpenCAL main loop. Before
-entering the loop, if defined, the init function is
-executed. Afterwards, while the current step is lower or equal to the
-final step of computation (or this latter is set to
-\verb'CAL_RUN_LOOP'), elementary processes are executed
-concurrently. In this cycle, substates are updated after each
-elementary process has been applied, while just before the end of the
-computational step, the steering function (if defined) is executed. At
-the end of the computational step, a stop condition is checked, which
-can stop the simulation before the last step is reached. In order to
-define such a stop condition, the user can use the
-\verb'stopCondition()' function, which registers a callback in which
-the stop condition can be defined.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=9.5cm]{./images/OpenCAL/opencal_main_loop.pdf}
-  \caption{OpenCAL main loop chart.}
-  \label{fig:opencal_main_loop}
-\end{figure}
 
 
 \subsection{SciddicaT with active cells optimization}\label{sec:sciddicaT_active}
@@ -1150,27 +1212,9 @@ As imagined, the OpenCAL implementation of the \emph{mod2} 3D
 CA is very simple as the Conway's game of Life. The complete
 source code is shown in Listing \ref{lst:cal_mod2CA3D}.
 
-\lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the mod2 3D CA.]{../opencal-examples/OpenCAL/cal_mod2CA3D/source/mod2CA3D.c}
 
-\begin{lstlisting}[float, label=lst:calCADef3D, caption=Definition of the calCADef3D() function., numbers=none]
-  struct CALModel3D* calCADef3D(
-    int rows,
-    int columns,
-    int slices,
-    enum CALNeighborhood3D CAL_NEIGHBORHOOD_3D,
-    enum CALSpaceBoundaryCondition CAL_TOROIDALITY,
-    enum CALOptimization CAL_OPTIMIZATION
-  );
-\end{lstlisting}
+\lstinputlisting[label=lst:cal_mod2CA3D, caption=An OpenCAL implementation of the \emph{mod2} 3D CA.]{../opencal-examples/OpenCAL/cal_mod2CA3D/source/mod2CA3D.c}
 
-\begin{lstlisting}[float, label=lst:calRunDef3D, caption=Definition of the calRunDef3D() function., numbers=none]
-  struct CALRun3D* calRunDef3D(
-    struct CALModel3D* ca3D,
-    int initial_step,
-    int final_step,
-    enum CALUpdateMode UPDATE_MODE
-  );	
-\end{lstlisting}
 
 Even if Listing \ref{lst:cal_mod2CA3D} is concise, it completely
 defines the \emph{mod2} 3D CA and performs a simulation (actually,
@@ -1185,7 +1229,7 @@ are considered. The complete definition of \verb'calCADef3D()' is
 provided in Listing \ref{lst:calCADef3D}. Line 31 defines the
 simulation object by setting just one step of computation and implicit
 substate update. The complete definition of \verb'calRunDef3D' is
-provided in Listing \ref{lst:calRunDef3D}. Finally, the only substate,
+provided in Listing \ref{lst:calRunDef3D()}. Finally, the only substate,
 $Q$, is defined at line 34. Note that, since it was defined by means
 of the \verb'calInitSubstate3Db()' function, each element $q \in Q$
 results to be of the CALbyte type. Line 37 registers the one and only
