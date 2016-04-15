@@ -66,7 +66,7 @@ code is unchanged.
 \lstinputlisting[label=lst:calomp_sciddicaT, caption=An OpenCAL-OMP implementation of the $SciddicaT_{naive}$ debris flows simulation model.]{../opencal-examples/OpenCAL-OMP/calomp_sciddicaT/source/sciddicaT.c}
 
 \subsection{SciddicaT with active cells optimization}
-Th OpenCAL-OMP implementation of $SciddicaT_{ac}$, which takes
+The OpenCAL-OMP implementation of $SciddicaT_{ac}$, which takes
 advantage of the built-in OpenCAL active cells optimization, can be
 found in Listing \ref{lst:calomp_Sciddicat-activecells}. The
 corresponding serial implementation can be found in Section
@@ -81,7 +81,7 @@ exploited due to the active cells optimization. Indeed, the
 belonging to the neighborhood to the set $A$ of active cells. As
 evident, being it a non-atomic operation, more threads can try to add
 the same cell to the same location of the set $A$ at the same time, by
-giving rise to race condition. In order to avoid race condition
+giving rise to a race condition. In order to avoid race condition
 issues, OpenCAL-OMP is able to \emph{lock} memory locations involved
 in concurrent non-atomic operations so that each thread can complete
 its own task without the risk other threads interfere. In order to do
@@ -119,7 +119,7 @@ the already discussed \verb'calAddActiveCellX2D()' function, the
 \verb'calAddNext2Dr()' and \verb'calAddNextX2Dr()' unsafe functions
 are here employed (lines 88-89), in place of the combination of
 get-set operations, as done in the corresponding serial implementation
-(Listing \ref{lst:cal_sciddicaT-unsafe}, lines 84-85). In fact, let
+(Listing \ref{lst:cal_sciddicaT-unsafe}, lines 84-85). In fact, let's
 consider the source code snippet in Listing \ref{lst:get-set} (checked
 out by Listing \ref{lst:cal_sciddicaT-unsafe}). As it can be seen, for
 each not-eliminated cell, the algorithm computes a flow, $f$ (line 5)
@@ -178,7 +178,7 @@ based on an explicit global transition function, besides active cells
 optimization and direct neighbors update. The explicit global
 transition function is defined by means of
 \verb'calRunAddGlobalTransitionFunc2D()'. It registers a callback
-function within which can be used to both reorder the sequence of
+function within which it can be used to both reorder the sequence of
 elementary processes to be applied in the generic computational step,
 and also to perform only necessary substates updates. The
 $SciddicaT_{ac+dnu+esl}$ implementation presented in Listing
@@ -323,5 +323,5 @@ OpenCAL-GL. Therefore, please refer to this section for major details.
 Similarly, you can also use the same global reduction functions
 described in Section \ref{sec:redution} in OpenCAL-OMP, by considering
 the OpenCAL-OMP \verb'cal2DReduction.h' and \verb'cal3DReduction.h'
-specific header for 2D and 3D CA, respectively. Please refer to that
+specific header for 2D and 3D CA, respectively. Please refer to this
 section for further details.

@@ -202,7 +202,7 @@ where:
 \end{itemize}
 
 
-\lstinputlisting[float, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL/cal_life/source/life.c}
+\lstinputlisting[float, label=lst:cal_life, caption=An OpenCAL implementation of the Conway's Game of Life.]{../opencal-examples/OpenCAL/cal_life/source/life.c}
 
 
 The program in Listing \ref{lst:cal_life} provides a complete
@@ -398,7 +398,7 @@ computational step, and the computation would result actually
 serial. When all the cells have been processed and their states
 updated, computing planes are switched (i.e. \emph{next} becomes the
 new \emph{current} and \emph{current} the new \emph{next}), and the
-process is reiterated. \footnote{The \emph{implicit parallelism} is
+process is reiterated \footnote{The \emph{implicit parallelism} is
   also used in the parallel versions of OpenCAL, with the difference
   that more than one cell can be processed and updated concurrently by
   exploiting more than one processing unit.}. Note that, besides
@@ -413,7 +413,7 @@ of the substate \verb'Q' (note that the central cell is identified by
 the coordinates (i, j), coming from the parameters of the callback
 function), the \verb'calGetX2Di()' function gets the value of the
 \verb'Q' substate for the n-th neighbor, and the \verb'calSet2Di()'
-function updates the value of the \verb'Q' substate \verb for the
+function updates the value of the \verb'Q' substate for the
 central cell. In the Game of Life example, we defined just one
 elementary process, that therefore represents the whole cell
 transition function. However, as we will see later, many elementary
@@ -428,7 +428,7 @@ working planes), i.e. the value of the \verb'Q' substate is set to 0
 in each cell of the cellular space. Lines 42-46, set the value of the
 \verb'Q' substate for some cells to 1, in order to define a so called
 \emph{glider} pattern. In this case, the \verb'calInit2Di()' function,
-used for this porpose, takes the cells coordinates as the third and
+used for this purpose, takes the cells coordinates as the third and
 fourth parameters, while the value 1 to be set was specified through
 the last parameter. In this way, the initial condition of the system
 was defined within the \verb'main' function, even if, as we will see
@@ -443,7 +443,7 @@ this example), and returns to the \verb'main' function when the
 simulation is complete. The \verb'calSaveSubstate2Di()' is called
 again at line 55 to save the new (last) configuration of the CA
 (represented by the only defined \verb'Q' substate) to file, while the
-last two functions at lines 58 and 59 release memory previosuly
+last two functions at lines 58 and 59 release memory previously
 automatically allocated by OpenCAL for CA, substates (actually, only
 \verb'Q' in this case) and simulation objects. The \verb'return'
 statement at line 61 ends the program.
@@ -1058,10 +1058,8 @@ Regarding the computational performance, the same simulation shown in
 Figure \ref{fig:sciddicaT} was executed by considering
 $SciddicaT_{ac+dnu}$ on a single core of the same Intel core i7
 processor. The simulation lasted a total of 11 seconds, versus 22
-seconds obtained for SciddicaT_{ac} and 172 seconds for
-SciddicaT_{naive}, with speed up of 2 and 16, respectively.
-
-
+seconds obtained for $SciddicaT_{ac}$ and 172 seconds for
+$SciddicaT_{naive}$, with speed up of 2 and 16, respectively.
 
 \subsection{SciddicaT with explicit simulation loop}
 Even if results obtained so far can be considered more than
@@ -1077,16 +1075,16 @@ the end of each elementary process. However, this behavior can be
 modified by making the OpenCAL simulation loop explicit.
 
 In the specific case of the above implementation of SciddicaT, the
-second elementary process, $\sigma_2$, just removes cells that became
+second elementary process, $\sigma_2$, just removes cells that become
 inactive from the set $A$ of active cells and doesn't affect the
-mode's substates\footnote{Actually, only $Q.h$ can be update by the
+model's substates\footnote{Actually, only $Q.h$ can be updated by the
   transition function, since $Q.z$ is a single-layered substate.}. As
 a consequence, no substates updating is needed after the application
 of $\sigma_2$. Being substates updating a time consuming operation,
 this can further speed up your simulation.
 
 The new $SciddicaT_{ac+dnu+esl}$ OpenCAL implementation of SciddicaT,
-which take adavantage of an explicit simulation loop, avoiding
+which take advantage of an explicit simulation loop, avoiding
 unnecessary substate updating, is presented in Listing
 \ref{lst:cal_sciddicaT-explicit}. It also shows how a generic stopping
 criterion can be defined.
@@ -1119,7 +1117,7 @@ respectively\footnote{Note that active cells are updated first
   inactive during the current step and their value will not be
   updated, by losing debris flow mass.}. Eventually, the
 \verb'sciddicaTRemoveInactiveCells()' elementary process is
-applied, which only removes cells that became inactive during the
+applied, which only removes cells that become inactive during the
 current computational step, and the set $A$ is accordingly updated.
 
 
@@ -1284,7 +1282,7 @@ simulation. For this purpose, here we re-propose two of the examples
 presented above, namely the SciddicaT debris flow model and the
 \emph{mod2} CA, by adding to them an OpenGL-based viewer in a
 straightforward manner. Note that the graphic outputs for the
-SciddicaT and \emph{mod2} CA shown above, were instead obtained by
+SciddicaT and \emph{mod2} CA shown above were instead obtained by
 means of non-integrated \emph{ad hoc} GLUT applications, which can be
 found in the OpenCAL examples, together with others, ending with the
 \verb'-glut' suffix.
@@ -1351,7 +1349,7 @@ pointer to the corresponding simulation object.
 To build a specific view, we can use the
 \verb'calglAddToDrawModel2Dr()' function (lines 204-208). It adds a
 node into a tree-based representation of the graphic view, where each
-node has a link to a CA substate and specifies how this substate have
+node has a link to a CA substate and specifies how this substate has
 to be considered for representation. Specifically, the first parameter
 is a pointer to a OpenCAL-GL visualization object, while the second
 and third parameters are pointers to the parent node and the new node
@@ -1513,7 +1511,7 @@ result, the application's execution flow never returns to the
 and other possible operations, a callback function is defined and
 executed just before program termination, namely \verb'exitFunction()'
 (lines 157-165). It was registered at line 173 through the
-\verb'atexit()' function. Note that, if you do not want visualize all
+\verb'atexit()' function. Note that, if you do not want to visualize all
 the computational steps, you can call the \verb'calglSetDisplayStep()'
 function to specify a refreshing interval in steps (cf. line 224).
 
@@ -1569,14 +1567,14 @@ sections, are here in their 3D form (see, e.g., the
 completely equivalents to the 2D versions and therefore they will not
 be commented. Eventually, note that statements at lines 86-91 are
 commented. If you remove the comments, you will end with some parts of
-the cellular space cut down form visualization.
+the cellular space cut down from visualization.
 
 
 \section{OpenCAL Global Operation Functions}\label{sec:redution}
 
 OpenCAL comes with some functions you can use to perform global
 operations over the cellular space, which essentially are reduction
-function. Note that such functions should not be used within
+functions. Note that such functions should not be used within
 elementary processes, but only in the initialization, steering and
 stop condition callback functions. The proper use of global functions
 is your own responsibility.
@@ -1585,7 +1583,7 @@ In order to use global functions, simply include the
 \verb'cal2DReduction.h' header file for 2D CA, or
 \verb'cal3DReduction.h' for 3D CA. Table \ref{tab:reductions} lists
 the OpenCAL's global reduction functions. All of these functions
-accepts a pointer to a CA object and a pointer to a substate over
+accept a pointer to a CA object and a pointer to a substate over
 which execute the global operation as parameters, and return the value
 corresponding to the performed reduction. For instance, if you want to
 know the maximum value of the substate \verb'Q.h' of the SciddicaT CA,
