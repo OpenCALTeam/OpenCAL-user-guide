@@ -23,6 +23,7 @@
 *.pdf
 *.bak
 *.synctex.gz
+*.ps
 
 # other stuff to be ignored
 build/

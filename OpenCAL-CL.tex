@@ -17,7 +17,7 @@ OpenCAL-CL based applications are subdivided in two parts: the
 Nvidia or AMD GPU). The CA object is still defined host-side, as in
 OpenCAL and OpenCAL-OMP, while elementary processes, and possibly
 other global functions like init, steering, and stop condition
-function, are defined device-side, due to their \textsl{parallel
+functions, are defined device-side, due to their \textsl{parallel
   nature} in the CA context. Accordingly, they must be defined
 as OpenCL \emph{kernels} in order to be executed in parallel. As a
 consequence, developers have to be able to write some minimal OpenCL
@@ -44,8 +44,8 @@ implementation of OpenCAL (cf. Chapter \ref{ch:opencal}). However,
 elementary processes and other global functions (i.e. init, steering
 and stop condition functions) are implemented as OpenCL kernels, to be
 executed in parallel on compliant device. For this reason, they are
-not added to the host-side CA model anymore. At the contrary, they are
-added to a \emph{device-side CA model}, that also embeds the
+not registered to the host-side CA model anymore. At the contrary, they are
+registered to a \emph{device-side CA model}, that also embeds the
 simulation execution features and is responsible for data exchange
 between host and device in a transparent manner to the user.
 
@@ -67,7 +67,7 @@ particular, the host application links kernels into one or more
 containers, called \emph{programs}. The program therefore connects
 kernels with the data to be processed and dispatches them to a special
 OpenCL structure called \emph{command queue}. This is necessary
-because only enqueued kernel are actually executed. Figure
+because only enqueued kernels are actually executed. Figure
 \ref{fig:GeneralStructure} shows the general structure of an OpenCL
 application. Context contains all the devices, command queues and
 kernels, each device has its own command queue and each command queue
@@ -78,14 +78,14 @@ programming are briefly introduced. The 2D version of OpenCAL-CL is
 here considered for the proposed examples and discussions. However,
 note that the same considerantion also holds for the 3D and also any
 data type, constant and function presented for the 2D case have a 3D
-equivalent.
+equivalent version.
 
 
 \subsection{OpenCAL-CL device-side Programming}
 
-As stated above, functions that can be executed on an OpenCL compliant
-device are called kernels. In order to explain ho to write an
-OpenCAL-CL based kernel, let us condider the example in Listing
+As already mentioned, functions that can be executed on an OpenCL
+compliant device are called kernels. In order to explain ho to write
+an OpenCAL-CL based kernel, let us condider the example in Listing
 \ref{lst:OpenCAL-CL-kernel}.
 
 First of all, the \verb'calcl2D.h' header file must be included (line
@@ -98,8 +98,8 @@ needed to let the kernel to know any data about the CA model, like
 subates and neighbourhood, beside others. Kenerls can also take other
 parameters, as in the example in Listing
 \ref{lst:Another-OpenCAL-CL-kernel}. In the specific case, the
-\verb'Pepsilon' parameter is allocated into the compliant device's
-global memory. It is also possible to allocate kernel parameters in
+\verb'Pepsilon' parameter is allocated in the global memory of the
+compliant device. It is also possible to allocate kernel parameters in
 the faster local memory, which is shared by threads belonging to the
 same work group, by means of the OpenCL \verb'__local'
 keyyword. Eventually, kernel parameters can also be private to the
@@ -140,12 +140,12 @@ as private, as in the case of variables at lines 15 and 16 of Listing
   }
 \end{lstlisting}
 
-The \verb'calclThreadCheck2D()' function in Listing
+The \verb'calclThreadCheck2D()' function at line 11 of Listing
 \ref{lst:OpenCAL-CL-kernel} must be the first to be called into the
 kernel, as it prevents the execution of a number of threads exceeding
 the number of CA cells\footnote{In fact, OpenCAL-CL adopts the
   one-thread/one-cell policy.} (Listing \ref{lst:OpenCAL-CL-kernel},
-line 11). If the active cells optimization is considered, the
+line 11). In the case the active cells optimization is considered, the
 \verb'calclActiveThreadCheck2D()' must be called instead of
 \verb'calclThreadCheck2D()', to prevent the execution of a number of
 threads exceeding the number of CA cells actually involved in
@@ -155,8 +155,11 @@ computation. The \verb'calclGlobalRow()' and
 cell coordinates within the cellular space. OpenCAL-CL also provides
 the \verb'calclLocalRow()' and \verb'calclLocalColumn()' functions,
 which provide the cell coordinates with respect the cellular space
-subset assigned to the OpenCL (local) work group. Oter functions that
-can be used within an OpenCAL-CL kernel are listed in Table
+subset assigned to the OpenCL (local) work group. The
+\verb'calclSet2Dr()' function at line 23 updates the substate value
+for the central cell. It is the kernel-side counterpart of the OpenCAL
+\verb'calSet2Dr()' cell update functions. A complete list of functions
+that can be used within OpenCAL-CL kernels are listed in Table
 \ref{tab:kernel-utility-function}.
 
 
@@ -167,30 +170,37 @@ can be used within an OpenCAL-CL kernel are listed in Table
     \hline
     Function & Brief description\\
     \hline
-    \hline
-    calclGetRows()                 & Get the number of CA rows \\
-    calclGetColumns()              & Get the number of CA columns \\
-    calclGetSlices()               & Get the number of CA columns \\
-    calclGlobalRow()               & Get the row coordinate for the current cell \\
-    calclGlobalColumn()            & Get the column coordinate for the current cell \\
-    calclGlobalSlice()             & Get the slice coordinate for the current cell \\
-    calclgGetByteSubstatesNum()    & Get the number of substates of \verb'CALbyte' type \\
-    calclGetIntSubstatesNum()      & Get the number of substates of \verb'CALint' type \\
-    calclGetRealSubstatesNum()     & Get the number of substates of \verb'CALreal' type \\
-    calclGetCurrentByteSubstates() & Get a pointer to the set of current layer of \verb'CALbyte' substates \\
-    calclGetCurrentIntSubstates()  & Get a pointer to the set of current layer of \verb'CALint' substates \\
-    calclGetCurrentRealSubstates() & Get a pointer to the set of current layer of \verb'CALreal' substates \\
-    calclGetNextByteSubstates()    & Get a pointer to the set of next layer of \verb'CALbyte' substates \\
-    calclGetNextIntSubstates()     & Get a pointer to the set of next layer of \verb'CALint' substates \\
-    calclGetNnextRealSubstates()   & Get a pointer to the set of next layer of \verb'CALreal' substates \\
-    %% calclGetActiveCells()          & Get a pointer to the set of active cells \\
-    %% calclGetActiveCellsNum()       & Get the number of active cells \\
-    %% calclGetActiveCellsFlags()     & Get a pointer to the set of active cells flags \\
-    calclGetNeighborhood()         & Get a pointer to the set of neighboring cells \\
-    calclGetNeighborhoodID()       & Get the neighbourhood ID (e.g. von Neumann, Moore, etc.) \\
-    calclGetNeighborhoodSize()     & Get the neighbourhood size \\
-    calclGetBoundaryCondition()    & Get the boundary condition (simple or cyclic) \\
-    calclRunStop()                 & Stops the simulation \\
+    \verb'calclGlobalRow()'               & Get the row coordinate for the current cell \\
+    \verb'calclGlobalColumn()'            & Get the column coordinate for the current cell \\
+    \verb'calclGlobalSlice()'             & Get the slice coordinate for the current cell \\
+    \verb'calclLocalRow() '               & Get the local cell row coordinate within the OpenCL work group\\
+    \verb'calclLocalColumn()'             & Get the local cell column coordinate within the OpenCL work group\\
+    \verb'calclLocalSlice()'              & Get the local cell slice coordinate within the OpenCL work group\\
+    \verb'calclGet[2D|3D][b|i|r]()'       & Get the substate value for the central cell\\
+    \verb'calclGetX[2D|3D][b|i|r]()'      & Get the substate value for a neighboring cell\\
+    \verb'calclGetRows()'                 & Get the number of CA rows \\
+    \verb'calclGetColumns()'              & Get the number of CA columns \\
+    \verb'calclGetSlices()'               & Get the number of CA slices \\
+    \verb'calclgGetByteSubstatesNum()'    & Get the number of substates of \verb'CALbyte' type \\
+    \verb'calclGetIntSubstatesNum()'      & Get the number of substates of \verb'CALint' type \\
+    \verb'calclGetRealSubstatesNum()'     & Get the number of substates of \verb'CALreal' type \\
+    \verb'calclGetCurrentByteSubstates()' & Get a pointer to the set of current layer of \verb'CALbyte' substates \\
+    \verb'calclGetCurrentIntSubstates()'  & Get a pointer to the set of current layer of \verb'CALint' substates \\
+    \verb'calclGetCurrentRealSubstates()' & Get a pointer to the set of current layer of \verb'CALreal' substates \\
+    \verb'calclGetNextByteSubstates()'    & Get a pointer to the set of next layer of \verb'CALbyte' substates \\
+    \verb'calclGetNextIntSubstates()'     & Get a pointer to the set of next layer of \verb'CALint' substates \\
+    \verb'calclGetNnextRealSubstates()'   & Get a pointer to the set of next layer of \verb'CALreal' substates \\
+    %% \verb'calclGetActiveCells()'          & Get a pointer to the set of active cells \\
+    %% \verb'calclGetActiveCellsNum()'       & Get the number of active cells \\
+    %% \verb'calclGetActiveCellsFlags()'     & Get a pointer to the set of active cells flags \\
+    \verb'calclGetNeighborhood()'         & Get a pointer to the set of neighboring cells \\
+    \verb'calclGetNeighborhoodID()'       & Get the neighbourhood ID (e.g. von Neumann, Moore, etc.) \\
+    \verb'calclGetNeighborhoodSize()'     & Get the neighbourhood size \\
+    \verb'calclGetBoundaryCondition()'    & Get the boundary condition (simple or cyclic) \\
+    \verb'calclRunStop()'                 & Stops the simulation \\
+    \verb'calclSet[2D|3D][b|i|r]()'       & Set the substate value for the central cell\\
+    \verb'calclThreadCheck[2D|3D]()'      & Prevents unnecessary thread execution for 3D CA\\
+    \verb'calclActiveThreadCheck[2D|3D]()'& Prevents unnecessary thread execution for 2D CA with active cells\\
     \hline
     \end{tabular}
     \end{footnotesize}
@@ -199,13 +209,14 @@ can be used within an OpenCAL-CL kernel are listed in Table
 \end{table}
 
 Note that, functions that in OpenCAL were requiring a pointer to a CA
-object, here take the \verb'MODEL_2D' macro-like C object in its place
-(line 23), which implicitly defines a list of prefixed parameters
-needed by the function. Moreover, substates are accessed by means of
-numerical handles (cf. Listing \ref{lst:OpenCAL-CL-kernel}, line 23),
-which have to be previously defined into the kernel (Listing
-\ref{lst:OpenCAL-CL-kernel}, line 6). The criterion to be adopted is
-very simple. Handels are zero-based IDs. Zero is used to link the
+object, here take the \verb'MODEL_2D' macro-like C object in its
+place, which implicitly defines a list of prefixed parameters needed
+by the function. See e.g. line 23 of Listing
+\ref{lst:OpenCAL-CL-kernel}. Moreover, substates are accessed by means
+of numerical handles (cf. the second parameter of the
+\verb'calclSet2Dr()' function at line 23), which have to be previously
+defined in the kernel (cf. line 6). The criterion to be adopted
+is very simple. Handels are zero-based IDs. Zero is used to link the
 first host-side substate, i.e. the first substate added to the
 host-side CA, one is used to link the second substate added to the
 host-side CA, and so on.
@@ -237,8 +248,8 @@ host-side CA, and so on.
 %% \subsection{Selection of the OpenCL compliant device}
 \subsection{OpenCAL-CL host-side Programming}
 
-An OpenCAL-CL host application is typically
-subdivided in the following parts:
+An OpenCAL-CL host application is typically subdivided in the
+following parts, which are described in the following sections:
 \begin{itemize}
 \item Definition of the host-side CA model;
 \item Selection of the OpenCL compliant device;
@@ -249,7 +260,6 @@ subdivided in the following parts:
   device.
 \end{itemize}
 
-All these phases are described below.
 
 \subsubsection{Definition of the host-side CA model}
 
@@ -261,7 +271,7 @@ and then initialized by means of the \verb'calCADef2D()' function
 (line 11), exactly as in the serial version of OpenCAL. Note that the
 \verb'calcl2D.h' OpenCAL-CL specific header file is included at line
 1. It, in turn, includes the \verb'cal2D.h' header, so that it is
-possible to use OpenCAL's data types and functions from an OpenCAL-CL
+possible to use OpenCAL data types and functions from an OpenCAL-CL
 host application.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:host-side-application, caption={An example of OpenCAL-CL host-side application.}]
@@ -319,17 +329,16 @@ OpenCAL-CL.
   }
 \end{lstlisting}
 
-The \verb'calcl2D.h' header file is included at line 1. Line 7
-declares a pointer to \verb'CALCLManager', and initializes it through
-the \verb'calclCreateManager()' function. This object, named
-\verb'calcl_manager', is then used as parameter for the
-\verb'calclInitializePlatforms()' function (line 10), which fills the
-object with the platforms available on the machine. Line 13 calls the
-\verb'calclInitializeDevices()' function, that initializes the
-available devices, while line 20 selects one of them for kernel
+Line 7 declares a pointer to the \verb'CALCLManager' OpenCAL-CL data
+type, and initializes it through the \verb'calclCreateManager()'
+function. This object, \verb'calcl_manager', is then used as parameter
+for the \verb'calclInitializePlatforms()' function (line 10), which
+fills the object with the platforms available on the machine. Line 13
+calls the \verb'calclInitializeDevices()' function, that initializes
+the available devices, while line 20 selects one of them for kernel
 execution. Specifically, an object of type \verb'CALCLdevice' is
 declared ad initialized by the function \verb'calclGetDevice()'. This
-latter takes a pointer to a \verb'CALOpenCL' object as first
+latter takes a pointer to a \verb'CALManager' object as first
 parameter, while the second and third parameters specify the platform
 and device to be selected, respectively. Since both platforms and
 devices are identified by a 0-based index\footnote{In OpenCAL-CL
@@ -344,7 +353,7 @@ devices are identified by a 0-based index\footnote{In OpenCAL-CL
   program using the third AMD GPU, we can specify 1 and 2 as
   indices.}, statement at line 20 selects the first device belonging
 to the first platform (e.g. a GTX 980 belonging to the NVIDIA CUDA
-platform). If system's platforms and devices are unknown, the
+platform). If system platforms and devices are unknown, the
 \verb'calclGetPlatformAndDeviceFromStdIn()' function can be used
 alternatively to \verb'calclGetDevice()'. It prints all the available
 platforms and devices to standard outpunt and permits for their
@@ -358,18 +367,18 @@ by means of the \verb'calclCreateContext()' function.
 After the compliant device has been selected and elementary processes
 (and possibly other functions) implemented as kernels, these latter
 can automatically be read and compiled through the
-\verb'calclLoadProgram2D()' function (cf. Listing
-\ref{lst:calclLoadProgram}). It takes both the context and device, and
-also the paths to directories containing the user defined kernels and
-related headers (if any) as parameters, and returns an OpenCL
-program\footnote{\texttt{CALCLprogram} redefines the
+\verb'calclLoadProgram2D()' and \verb'calclLoadProgram3D()' functions
+(cf. Listing \ref{lst:calclLoadProgram}). They take both the context
+and device, and also the paths to directories containing the user
+defined kernels and related headers (if any) as parameters, and
+returns an OpenCL program\footnote{\texttt{CALCLprogram} redefines the
   \texttt{cl\_program} OpenCL type.}. All the files in the kernel
 source directory are automatically considered, indipendently from
 their name. Note that, since kernel headers are optional, the last
 parameter can be \verb'NULL'.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgram, caption={The calclLoadProgramLib function. It loads and compiles kernels by returning an OpenCL program.}, numbers=none]
-  CALCLprogram calclLoadProgram2D (
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclLoadProgram, caption={The calclLoadProgram function. It loads and compiles kernels by returning an OpenCL program.}, numbers=none]
+  CALCLprogram calclLoadProgram[2D|3D] (
     CALCLcontext context ,
     CALCLdevice device ,
     char * kernel_source_directory ,
@@ -384,11 +393,12 @@ device-side. Such a device-side CA is declared as a
 \verb'CALCLModel2D' object and, beside managing all the CA components
 device-side, it also provides simulation execution features. Note
 that, this is a main difference with respect to OpenCAL serial
-version, where the simulation execution is managed by a complementary
-object, specifically of type \verb'CALRun2D'.
+version, where the simulation execution is managed by a
+\verb'CALRun2D' complementary object.
 
 To initialize the device-side CA object, the \verb'calclCADef2D'
-function can be used (cf. Listing \ref{lst:calclCADef2D}). The first
+function can be used (cf. Listing \ref{lst:calclCADef2D}; cf. also
+Listing \ref{lst:calclCADef3D} for its 3D version). The first
 parameter is a pointer to a \verb'CALModel2D', defined host side as in
 the case of the serial implementation of OpenCAL (cf. Chapter
 \ref{ch:opencal}). The second one is an OpenCL context, as well as the
@@ -397,9 +407,18 @@ device, respectively.
 
 %% The device-side CA object permits to equeue the defined kernels
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclCADef2D, caption=The calclCADef2D data structure., numbers=none]
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclCADef2D, caption=The calclCADef2D function., numbers=none]
   CALCLModel2D * calclCADef2D(
                    struct CALModel2D * host-model,
+                   CALCLcontext context,
+                   CALCLprogram program,
+                   CALCLdevice device
+  )
+\end{lstlisting}
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclCADef3D, caption=The calclCADef3D function., numbers=none]
+  CALCLModel3D * calclCADef3D(
+                   struct CALModel3D * host-model,
                    CALCLcontext context,
                    CALCLprogram program,
                    CALCLdevice device
@@ -409,11 +428,11 @@ device, respectively.
 
 \subsubsection{Kernels enqueuing}
 
-Once compiled and grouped into an OpenCL program, kernels can be
+Once compiled and grouped in a program, kernels can be
 extracted in order to be attached to a command queue for
-execution. Specifically, the \verb'calclGetKernelFromProgram()'
-function extracts a kernel from an OpenCL program, taking a pointer to
-the program and the kernel name (cf. Listing
+execution. The \verb'calclGetKernelFromProgram()' function can be used
+to extract a kernel from an OpenCL program. It takes a pointer to the
+program and the kernel name (cf. Listing
 \ref{lst:calclGetKernelFromProgram}).
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclGetKernelFromProgram, caption={The calclGetKernelFromProgram kernel extraction function}., numbers=none]
@@ -425,14 +444,24 @@ the program and the kernel name (cf. Listing
 
 The function \verb'calclAddElementaryProcess2D' adds a new kernel to
 the execution queue (cf. Listing
-\ref{lst:calclAddElementaryProcess2D}), in a transparent manner to the
-user. The function takes both a pointer to host and device CA as
-parameter and also a pointer to an OpenCL kernel.
+\ref{lst:calclAddElementaryProcess2D}; cf also Listing
+\ref{lst:calclAddElementaryProcess3D} for the 3D version), in a
+transparent manner to the user. The function takes both a pointer to
+host and device CA as parameter and also a pointer to an OpenCL
+kernel.
 
-\begin{lstlisting}[float,floatplacement=TH, label=lst:calclAddElementaryProcess2D, caption=The calclAddElementaryProcess2D function., numbers=none]
+\begin{lstlisting}[float,floatplacement=TH, label=lst:calclAddElementaryProcess2D, caption=The calclAddElementaryProcess2D() function., numbers=none]
   void calclAddElementaryProcess2D(
                CALCLModel2D * deviceCA,
                struct CALModel2D * hostCA,
+               CALCLkernel * kernel
+  );
+\end{lstlisting}
+
+\begin{lstlisting}[float,floatplacement=TH, label=lst:calclAddElementaryProcess3D, caption=The calclAddElementaryProcess3D() function., numbers=none]
+  void calclAddElementaryProcess3D(
+               CALCLModel3D * deviceCA,
+               struct CALModel3D * hostCA,
                CALCLkernel * kernel
   );
 \end{lstlisting}
@@ -445,36 +474,38 @@ if as a pointer or not.
 
 Let as consider the example in Listing
 \ref{lst:Another-OpenCAL-CL-kernel}, where a parameter is declared as
-a pointer to be stored into the device's global memory. A double step
+a pointer to be stored into the device global memory. A double step
 procedure must be used in this case. Fist, the
 \verb'calclCreateBuffer()' function must be called. It takes the
 OpenCL context, the address of the host parameter to be passed to the
 kernel, and the dimension of the host parameter type, and returns an
 object of type \verb'CALCLmem', which is a buffer containing the value
 of the host-side parameter. This buffer is therefore used by the
-\verb'calclSetKernelArg2D()' function, which actually perform the data
-transmission to the device. It takes the kernel to which send the
-parameter, the parameter position within the kernel parameter list (0
-for the first one after the mandatory \verb'__CALCL_MODEL_2D'
+\verb'calclSetKernelArg[2D|3D]()' functions, which actually perform
+the data transmission to the device. They take the kernel to which send
+the parameter, the parameter position within the kernel parameter list
+(0 for the first one after the mandatory \verb'__CALCL_MODEL_2D'
 parameter, 1 for the second, and so on), the \verb'CALCLmem'
 dimension, and the address of the buffer containing the value for the
-kernel parameter (cf. Listing \ref{lst:calclKernelParameters}).
+kernel parameter (cf. Listing \ref{lst:calclSetKernelArg2D}). Listing
+Listing \ref{lst:calclKernelParameters} shows an example of how
+parameters can be passed to a kernel with the above described method.
 
 At the contrary, if the kernel parameter is not declared as a pointer,
 like in the example in Listing \ref{lst:kernel-private-parameter}, the
 above double step process is no longer necessary, since it is
-sufficient to call the \verb'calclSetKernelArg2D()' by specifying as
-third parameter the dimension of the actual type of the variable to be
-passed to the kernel.
+sufficient to call the \verb'calclSetKernelArg[2D|3D]()' by specifying
+the dimension of the actual type of the variable to be passed to the
+kernel as third parameter .
 
 %% calclSetKernelArg2D(&kernel_elem_proc_flow_computation, 1, sizeof(CALParameterr), &P.r);
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclSetKernelArg2D, caption=The calclSetKernelArg2D() function., numbers=none]
-  calclSetKernelArg2D(&kernel_elem_proc_flow_computation,
-                      1,
-                      sizeof(CALParameterr),
-                      &P.r
-  );
+  int calclSetKernelArg[2D|3D](CALCLkernel* kernel,
+                               cl_uint arg_index,
+                               size_t arg_size,
+                               const void *arg_value
+  )
 \end{lstlisting}
 
 
@@ -502,22 +533,6 @@ passed to the kernel.
 \end{lstlisting}
 
 
-\subsubsection{Simulation execution on the compliant device}
-
-The \verb'calclRun()' function (cf. Listing \ref{lst:calclRun2D}) runs
-the CA simulation by executing all the defined kernels on the selected
-compliant device. The first two parameters are pointers to a device
-and host CA, respectively, while the last two are the initial and
-final step for the simulation execution. If the last parameter is set
-to \verb'CAL_RUN_LOOP', simulation never ends. In this case, to stop
-the simulation, the user must define a stop condition criterion
-through the \verb'calclAddStopConditionFunc2D()' function
-(cf. \ref{lst:calclAddStopConditionFunc2D}). Note that, since the stop
-condition must be evaluated host side, it must be implemented as a
-kernel. For this reason, the tird parameter is a pointer to an OpenCL
-kernel. Other kernel can be registered to the device-side CA. Table
-\ref{tab:XXX} list all the register functions to the device-side CA.
-
 
 \begin{table}
   \centering
@@ -526,21 +541,19 @@ kernel. Other kernel can be registered to the device-side CA. Table
     \hline
     Function & Brief description\\
     \hline
-    \hline
-    calclAddInitFunc2D             & register a global kernel to be executed once before simulation loop \\
-    calclAddElementaryProcess2D()  & register an cell elementary process \\
-    calclAddSteeringFunc2D         & register a global kernel to be executed after each simulation step \\
-    calclAddStopConditionFunc2D()  & register a global stop condition kernel callback \\
+    \verb'calclAddInitFunc[2D|3D]'             & register a global kernel to be executed once before simulation loop \\
+    \verb'calclAddElementaryProcess[2D|3D]()'  & register an cell elementary process \\
+    \verb'calclAddSteeringFunc[2D|3D]'         & register a global kernel to be executed after each simulation step \\
+    \verb'calclAddStopConditionFunc[2D|3D]()'  & register a global stop condition kernel callback \\
     \hline
     \end{tabular}
     \end{footnotesize}
-  \caption{}
+  \caption{OpenCAL-CL host-side functions used to register elementary processes and global functions to the device-side CA.}
   \label{tab:XXX}
 \end{table}
 
 
-
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclRun2D, caption=The calclRun2D function., numbers=none]
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclRun2D, caption=The calclRun2D() function., numbers=none]
   void calclRun2D(CALCLModel2D* deviceCA,
                   struct CALModel2D * hostCA,
                   unsigned int initialStep,
@@ -548,11 +561,47 @@ kernel. Other kernel can be registered to the device-side CA. Table
   );
 \end{lstlisting}
 
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclRun3D, caption=The calclRun3D() function., numbers=none]
+  void calclRun3D(CALCLModel3D* deviceCA,
+                  struct CALModel3D * hostCA,
+                  unsigned int initialStep,
+                  unsigned maxStep
+  );
+\end{lstlisting}
+
+
+\subsubsection{Simulation execution on the compliant device}
+
+The \verb'calclRun2D()' function (cf. Listing \ref{lst:calclRun2D};
+cf. also Listing \ref{lst:calclRun2D} for the 3D version) runs the CA
+simulation by executing all the defined kernels on the selected
+compliant device. The first two parameters are pointers to a device
+and host CA, respectively, while the last two are the initial and
+final step for the simulation execution. If the last parameter is set
+to \verb'CAL_RUN_LOOP', simulation never ends. In this case, to stop
+the simulation, the user must define a stop condition criterion
+through the \verb'calclAddStopConditionFunc2D()' function
+(cf. \ref{lst:calclAddStopConditionFunc2D}, cf. also Listing
+\ref{lst:calclAddStopConditionFunc3D} for the 3D version). Note that,
+since the stop condition must be evaluated host side, it must be
+implemented as a kernel. For this reason, the tird parameter is a
+pointer to an OpenCL kernel. Other kernel can be registered to the
+device-side CA. Table \ref{tab:XXX} list the OpenCAL-CL that can be
+used to register kernels to the device-side CA.
+
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclAddStopConditionFunc2D, caption=The calclAddStopConditionFunc2D function., numbers=none]
   void calclAddStopConditionFunc2D(
                  CALCLModel2D * deviceCA,
                  struct CALModel2D * hostCA,
+                 CALCLkernel * kernel
+  );
+\end{lstlisting}
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclAddStopConditionFunc3D, caption=The calclAddStopConditionFunc3D function., numbers=none]
+  void calclAddStopConditionFunc3D(
+                 CALCLModel3D * deviceCA,
+                 struct CALModel3D * hostCA,
                  CALCLkernel * kernel
   );
 \end{lstlisting}
