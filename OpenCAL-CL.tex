@@ -1,17 +1,17 @@
 \chapter{OpenCAL OpenCL version}\label{ch:opencal-cl}
 
 This chapter introduces OpenCAL-CL, a porting of OpenCAL in
-OpenCL. OpenCL is an open standard for parallel programming defined by
+OpenCL. OpenCL is an open standard for parallel programming defined by the
 Khronos Group, that also defines other open standards like OpenGL and
 Vulkan. Besides computational efficiency, one of the main advantages
-of OpenCL is portability. In fact, it allows to run programs across
+of OpenCL is portability. In fact, OpenCL allows to run programs across
 heterogeneous processors, like Central Processing Units (CPUs),
 Graphics Processing Units (GPUs), Digital Signal Processors (DSPs),
 and Field-Programmable Gate Arrays (FPGAs).
 
 OpenCAL-CL inherits many OpenCAL features, by also adding parallel
 computation capability thanks to the adoption of OpenCL. Statements
-convention, is similar to the one adopted in OpenCAL and OpenCAL-OMP,
+convention is similar to the one adopted in OpenCAL and OpenCAL-OMP,
 with the peculiarity that the \verb'calcl' and \verb'CALCL' prefixes
 are adopted for functions and data types, respectively, while the
 \verb'CALCL_' prefix is used for constants. The active cells
@@ -20,9 +20,8 @@ to OpenCAL and OpenCAL-OMP is that OpenCAL-CL does not support unsafe
 operations in the current version. Another main difference is that the
 application is subdivided in two parts, one running on the CPU and one
 running in parallel on a so called compliant device, like the ones
-cited above. Parallelism is however almost transparent to the
-user. Eventually, note that reduction operations are currently under
-development.
+cited above. However, parallelism is almost transparent to the
+user.
 
 This Chapter introduces OpenCAL-CL by examples. After a brief
 introduction to both OpenCL and OpenCAL-CL, in which both host and
@@ -44,8 +43,8 @@ kernels with the data to be processed and dispatches them to a special
 OpenCL structure called \emph{command queue}. This is necessary
 because only enqueued kernels are actually executed. Figure
 \ref{fig:GeneralStructure} shows the general structure of an OpenCL
-application. Context contains all the devices, command queues and
-kernels, each device has its own command queue and each command queue
+application. The context contains all the devices, command queues and
+kernels; each device has its own command queue and each command queue
 contains the kernels to be executed on the corresponding device.
 
 \begin{figure}[tp]
@@ -75,7 +74,7 @@ the user (e.g., the simulation loop is internally managed by the
 library) and also simplifies data exchange between host and device.
 
 As regards computational aspects, a number of threads equal to the
-number odìf CA cells are executed in parallel for each computational
+number of CA cells are executed in parallel for each computational
 step. Each thread applies the CA elementary processes on a specific
 cell, in the order they have been registered to the device-side CA. In
 other words, OpenCAL-CL adopts the so called one thread-one cell
@@ -91,7 +90,7 @@ In OpenCAL-CL many of the above aspects are completely transparent to
 the user. In particular, the number of threads to be executed is set
 by the library, as well as threads grouping into
 workgroups. Eventually, even data exchange between host and device is
-completely transparent to the user, with the exceptions kernels have
+completely transparent to the user, with the exception that kernels have
 to receive data which was not registered into the host-side CA model.
 
 %% In the following sections, both device- and host-side OpenCAL-CL
@@ -105,8 +104,8 @@ to receive data which was not registered into the host-side CA model.
 \subsection{OpenCAL-CL device-side Programming}
 
 As already mentioned, functions that can be executed on an OpenCL
-compliant device are called kernels. In order to explain ho to write
-an OpenCAL-CL based kernel, let us condider the example in Listing
+compliant device are called kernels. In order to explain how to write
+an OpenCAL-CL based kernel, let's consider the example in Listing
 \ref{lst:OpenCAL-CL-kernel}.
 
 First of all, the \verb'calcl2D.h' header file must be included (line
@@ -116,14 +115,14 @@ where a kernel can have no parameters, each OpenCAL-CL kernel must
 have at least the \verb'__CALCL_MODEL_2D' parameter. Actually, it is a
 macro-like C object defining a list of pre-fixed typed parameters,
 needed to let the kernel to know any data about the CA model, like
-subates and neighbourhood, beside others. Kenerls can also take other
+substates and the neighbourhood, beside others. Kernels can also take other
 parameters, as in the example in Listing
 \ref{lst:Another-OpenCAL-CL-kernel}. In the specific case, the
 \verb'Pepsilon' parameter is allocated in the global memory of the
 compliant device. It is also possible to allocate kernel parameters in
 the faster local memory, which is shared by threads belonging to the
 same work group, by means of the OpenCL \verb'__local'
-keyyword. Eventually, kernel parameters can also be private to the
+keyword. Eventually, kernel parameters can also be private to the
 current thread by means of the \verb'__private' keyword, as shown in
 Listing \ref{lst:kernel-private-parameter}. The same holds for
 variables defined inside the kernel body where the above cited
@@ -165,8 +164,8 @@ The \verb'calclThreadCheck2D()' function at line 11 of Listing
 \ref{lst:OpenCAL-CL-kernel} must be the first to be called into the
 kernel, as it prevents the execution of a number of threads exceeding
 the number of CA cells (Listing \ref{lst:OpenCAL-CL-kernel}, line
-11). This is due to the fact that OpenCAL-CL can executes more threads
-than the number of CA cells for better performace purposes. In the
+11). This is due to the fact that OpenCAL-CL can execute more threads
+than the number of CA cells for better performance purposes. In the
 case the active cells optimization is considered, the
 \verb'calclActiveThreadCheck2D()' must be called instead of
 \verb'calclThreadCheck2D()', to prevent the execution of a number of
@@ -230,14 +229,14 @@ that can be used within OpenCAL-CL kernels are listed in Table
 Note that, functions that in OpenCAL were requiring a pointer to a CA
 object, here take the \verb'MODEL_2D' macro-like C object in its
 place, which implicitly defines a list of prefixed parameters needed
-by the function. See e.g. line 23 of Listing
-\ref{lst:OpenCAL-CL-kernel}. Moreover, substates are accessed by means
+by the function (see e.g. line 23 of Listing
+\ref{lst:OpenCAL-CL-kernel}). Moreover, substates are accessed by means
 of numerical handles (cf. the second parameter of the
 \verb'calclSet2Dr()' function at line 23), which have to be previously
 defined in the kernel (cf. line 6). The criterion to be adopted
-is very simple. Handels are zero-based IDs. Zero is used to link the
+is very simple: handles are zero-based IDs. That is, zero (0) is used to link the
 first host-side substate, i.e. the first substate added to the
-host-side CA, one is used to link the second substate added to the
+host-side CA, one (1) is used to link the second substate added to the
 host-side CA, and so on.
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:Another-OpenCAL-CL-kernel, caption={Another example of OpenCAL-CL kernel, with an additional global parameter.}]
@@ -289,7 +288,7 @@ declared by using the \verb'CALModel2D' OpenCAL data type (line 4),
 and then initialized by means of the \verb'calCADef2D()' function
 (line 11), exactly as in the serial version of OpenCAL. Note that the
 \verb'calcl2D.h' OpenCAL-CL specific header file is included at line
-1. It, in turn, includes the \verb'cal2D.h' header, so that it is
+1. This, in turn, includes the \verb'cal2D.h' header, so that it is
 possible to use OpenCAL data types and functions from an OpenCAL-CL
 host application.
 
@@ -356,7 +355,7 @@ fills the object with the platforms available on the machine. Line 13
 calls the \verb'calclInitializeDevices()' function, that initializes
 the available devices, while line 20 selects one of them for kernel
 execution. Specifically, an object of type \verb'CALCLdevice' is
-declared ad initialized by the function \verb'calclGetDevice()'. This
+declared and initialized by the function \verb'calclGetDevice()'. This
 latter takes a pointer to a \verb'CALManager' object as first
 parameter, while the second and third parameters specify the platform
 and device to be selected, respectively. Since both platforms and
@@ -375,10 +374,10 @@ to the first platform (e.g. a GTX 980 belonging to the NVIDIA CUDA
 platform). If system platforms and devices are unknown, the
 \verb'calclGetPlatformAndDeviceFromStdIn()' function can be used
 alternatively to \verb'calclGetDevice()'. It prints all the available
-platforms and devices to standard outpunt and permits for their
+platforms and devices to standard output and permits for their
 interactive selection from standard input. Eventually, line 23 creates
 an OpenCL context, based on the device previously selected. For this
-porpose, an object of \verb'CALCLcontext' type is declared and defined
+purpose, an object of \verb'CALCLcontext' type is declared and defined
 by means of the \verb'calclCreateContext()' function.
 
 \subsubsection{Kernels reading and program generation}
@@ -392,7 +391,7 @@ and device, and also the paths to directories containing the user
 defined kernels and related headers (if any) as parameters, and
 returns an OpenCL program\footnote{\texttt{CALCLprogram} redefines the
   \texttt{cl\_program} OpenCL type.}. All the files in the kernel
-source directory are automatically considered, indipendently from
+source directory are automatically considered, independently from
 their name. Note that, since kernel headers are optional, the last
 parameter can be \verb'NULL'.
 
@@ -410,7 +409,7 @@ parameter can be \verb'NULL'.
 OpenCAL-CL allows for having a counterpart of the host-side CA to
 device-side. Such a device-side CA is declared as a
 \verb'CALCLModel2D' object and, beside managing all the CA components
-device-side, it also provides simulation execution features. Note
+device-side, also provides simulation execution features. Note
 that, this is a main difference with respect to OpenCAL serial
 version, where the simulation execution is managed by a
 \verb'CALRun2D' complementary object.
@@ -463,7 +462,7 @@ program and the kernel name (cf. Listing
 
 The function \verb'calclAddElementaryProcess2D' adds a new kernel to
 the execution queue (cf. Listing
-\ref{lst:calclAddElementaryProcess2D}; cf also Listing
+\ref{lst:calclAddElementaryProcess2D}; cf. also Listing
 \ref{lst:calclAddElementaryProcess3D} for the 3D version), in a
 transparent manner to the user. The function takes both a pointer to
 host and device CA as parameter and also a pointer to an OpenCL
@@ -488,13 +487,13 @@ kernel.
 Note that, if the kernel to be added has one or more parameters
 (beside the mandatory \verb'__CALCL_MODEL_2D' one), they must be
 passed to the device-side application. Passing a parameter to a
-kernels is a operation which depends on how the parameter is declared:
-if as a pointer or not.
+kernel is a operation which depends on how the parameter is declared, i.e., 
+whether if as a pointer or not.
 
 Let as consider the example in Listing
 \ref{lst:Another-OpenCAL-CL-kernel}, where a parameter is declared as
 a pointer to be stored into the device global memory. A double step
-procedure must be used in this case. Fist, the
+procedure must be used in this case. First, the
 \verb'calclCreateBuffer()' function must be called. It takes the
 OpenCL context, the address of the host parameter to be passed to the
 kernel, and the dimension of the host parameter type, and returns an
@@ -506,8 +505,7 @@ the parameter, the parameter position within the kernel parameter list
 (0 for the first one after the mandatory \verb'__CALCL_MODEL_2D'
 parameter, 1 for the second, and so on), the \verb'CALCLmem'
 dimension, and the address of the buffer containing the value for the
-kernel parameter (cf. Listing \ref{lst:calclSetKernelArg2D}). Listing
-Listing \ref{lst:calclKernelParameters} shows an example of how
+kernel parameter (cf. Listing \ref{lst:calclSetKernelArg2D}). Listing \ref{lst:calclKernelParameters} shows an example of how
 parameters can be passed to a kernel with the above described method.
 
 At the contrary, if the kernel parameter is not declared as a pointer,
@@ -603,8 +601,8 @@ through the \verb'calclAddStopConditionFunc2D()' function
 (cf. \ref{lst:calclAddStopConditionFunc2D}, cf. also Listing
 \ref{lst:calclAddStopConditionFunc3D} for the 3D version). Note that,
 since the stop condition must be evaluated host side, it must be
-implemented as a kernel. For this reason, the tird parameter is a
-pointer to an OpenCL kernel. Other kernel can be registered to the
+implemented as a kernel. For this reason, the third parameter is a
+pointer to an OpenCL kernel. Other kernels can be registered to the
 device-side CA. Table \ref{tab:XXX} list the OpenCAL-CL that can be
 used to register kernels to the device-side CA.
 
@@ -628,7 +626,7 @@ used to register kernels to the device-side CA.
 
 \section{Conway's Game of Life with OpenCAL-CL}\label{sec:calcl_life}
 
-As already done in previuous Chapters about OpenCAL and OpenCAL-OMP,
+As already done in previous Chapters about OpenCAL and OpenCAL-OMP,
 here we introduce OpenCAL-CL programming by implementing Conway's Game
 of Life. The application is subdivided in two parts, one for the host
 and one for the compliant device.
@@ -642,7 +640,7 @@ computation on the compliant device (e.g. a GPU), is shown in Listing
   host-side implementation of the Conway's Game of
   Life.]{../opencal-examples/OpenCAL-CL/calcl_life/source/life.c}
 
-Differently from the serial implentation, discussed in Section
+Differently from the serial implementation, discussed in Section
 \ref{sec:cal_life}, the OpenCAL-CL \verb'calcl2D.h' header file is
 include at line 3. It, in turn, includes the \verb'cal2D.h' header,
 needed to define the host-side CA model. The OpenCAL \verb'cal2DIO.h'
@@ -651,19 +649,19 @@ header is also included at line 4 for I/O operations.
 At line 7, the path containing the kernels to be executed in parallel
 on the compliant device is defined, while the name of the single
 kernel considered in this example is defined at line 8. Lines 9-10
-define the IDs of the OpenCL platform and device to be considered. In
-this example, the first device belonging to the first platform is
-considered, for the sake of simplicity.
+define the IDs of the OpenCL platform and device to be considered. For the sake of simplicity, in
+this example the first device belonging to the first platform is
+considered.
 
 Lines 15-18 are needed to select the compliant device and to create an
-OpenCL context. These statements widely simplyfy the device management
+OpenCL context. These statements widely simplify the device management
 and can be considered as a kind of template to be used in each
 OpenCAL-CL application. Indeed, they will also be adopted in the
 subsequent examples.
 
 Line 21 reads kernels (actually, just one in this example) from file
 (contained in the directory specified at line 7), compile and groups
-them into an OpenCL program, to be used later to exctract kernels for
+them into an OpenCL program, to be used later to extract kernels for
 execution.
 
 Lines 24-38 are equivalent to the serial implementation of $Life$. The
@@ -675,14 +673,14 @@ the host-side CA at line 28. Eventually, a glider is defined at lines
 Line 41 defines the \verb'device_CA' device-side object. The
 \verb'calclCADef2D()' function initializes the device-side CA, by
 performing data transfer from host to device, in a transparent way to
-the user. Note that this function implicitly register each host-side
+the user. Note that this function implicitly registers each host-side
 defined substate to the device object. However, to access the substate
 device-side, the user have to define a numeric handle, as discussed
 below.
 
 In order to register an elementary process to the device-side CA,
 where computation will take place, a preliminary operation must be
-perfomed. The elementary process, which actually is an OpenCL kernel,
+performed: the elementary process, which actually is an OpenCL kernel,
 must be extracted from the previously compiled program. This operation
 is done at line 44 by means of the
 \verb'calclGetKernelFromProgram()'. It returns an OpenCL kernel which
@@ -699,7 +697,7 @@ process is executed in parallel on the compliant device, in a
 transparently way to the user.
 
 Eventually, lines 59-61 perform memory deallocation for the previously
-defined objets.
+defined objects.
 
 \lstinputlisting[label=lst:calcl_life_kernel, caption=The OpenCAL-CL kernel
   implementing the Conway's Game of Life elementary
@@ -710,7 +708,7 @@ implementing the Conway's Game of Life transition function.
 
 The \verb'calcl2D.h' is included at line 3, while the numeric \verb'Q'
 handle is defined at line 5 to access the the \verb'Q' substate,
-registerd to the host CA and, implicitly, to the device CA at line 50
+registered to the host CA and, implicitly, to the device CA at line 50
 of Listing \ref{lst:calcl_life}. In this case, the handle takes the
 value 0, being \verb'Q' the only considered substate. If more
 substates would be considered, other numeric handles would be defined,
@@ -721,21 +719,21 @@ The elementary process is implemented within the
 previously evidenced, it takes the \verb'__CALCL_MODEL_2D' macro,
 which implicitly defines a set of parameters for the kernel.
 
-Line 9 assure the execution of a number of cocnurrent treads equal to
+Line 9 assures the execution of a number of concurrent threads equal to
 the number of cells in the CA cellular space, while lines 11-12 get the
-indexes correnspondig to the integer coordinates of the cell the
+indexes corresponding to the integer coordinates of the cell the
 kernel is going to process. In this way, the one thread-one cell
 policy is simply obtained.
 
-Line 14 get the neighborhood size, while line 16 declares some
+Line 14 gets the neighborhood size, while line 16 declares some
 variables to be used later.
 
-Lines 18-24 implement the $life$ transition roules. Note that, the
+Lines 18-24 implement the $life$ transition rules. Note that, the
 \verb'calclGetX2Di()' and \verb'calclSet2Di()' functions are here used
 to access the substate values for the neighbouring cells and to set
 the new state for the central cell. They correspond to the
 \verb'calGetX2Di()' and \verb'calSet2Di()' OpenCAL functions, with the
-difference that, inspite of taking a CA model as parameter, they take
+difference that, in spite of taking a CA model as parameter, they take
 the \verb'MODEL_2D' OpenCAL-CL macro.
 
 Figures \ref{fig:life_0000} and \ref{fig:life_LAST} in Chapter
@@ -749,7 +747,7 @@ a simple cellular automaton, namely the Conway’s Game of Life. Here,
 we will deal with a more complex example, concerning the the
 $SciddicaT_{naive}$ Cellular Automata model for landslide simulation,
 already presented in Section \ref{sec:sciddicaT} together with its
-serial implementation. Eventually, we will show you how to combine the
+serial implementation. Eventually, we will show how to combine the
 OpenCAL-CL and OpenCAL-GL libraries to integrate an OpenGL/GLUT
 visualization system.
 
@@ -759,7 +757,7 @@ visualization system.
   simulation.]{../opencal-examples/OpenCAL-CL/calcl_gl_sciddicaT/source/sciddicaT.c}
 
 The host-side implementation of $SciddicaT_{naive}$ is shown in
-Listing \ref{lst:calcl_gl_sciddicaT}. Lines 4-9 inlcude some
+Listing \ref{lst:calcl_gl_sciddicaT}. Lines 4-9 include some
 headers. In particular, the \verb'cal2DIO.h' OpenCAL header is
 included for I/O purposes, while the \verb'calcl2D.h' and
 \verb'calgl2DRunCL.h' headers provide CA definition and graphic
@@ -767,16 +765,16 @@ rendering support for the OpenCAL-CL library. Eventually, the
 \verb'calgl2D.h' and \verb'calgl2DWindow.h' OpenCAL-GL headers are
 included, to complete the application support for 2D and 3D rendering.
 
-Lines 12-21 provide defininitions. They are almost the same of the
+Lines 12-21 provide definitions and are almost the same of the
 serial implementation shown in Listing \ref{lst:cal_sciddicaT}. In
 addition, \verb'GRAPHIC_UPDATE_INTERVAL' defines the interval (in
-terms of computational steps) to be used for both data retrival from
+terms of computational steps) to be used for both data retrieval from
 the OpenCL compliant device and visualization purposes.
 
 Lines 24-34 provide other definitions, specifying kernels paths and
 names. Note that, different paths are here defined, depending whether
 the active cells optimization is considered or not
-(cf. \verb'ACTIVE_CELLS', line 24). In the firs case, an additional
+(cf. \verb'ACTIVE_CELLS', line 24). In the first case, an additional
 kernel is defined at line 33.
 
 Lines 37-47 define two data types for grouping CA substates and
@@ -807,7 +805,7 @@ to substate handles to refer related data device-side.
 
 The initial configuration is defined at lines 148-152. The
 \verb'calLoadSubstate2Dr()' function is here used to initialize two
-substates from file, while the others are initilized through the
+substates from file, while the others are initialized through the
 \verb'sciddicaTSimulationInit()' function at line 151. Note that, in
 order to apply the initialization performed before to the substates
 \emph{next working planes}, it is necessary to call
@@ -817,11 +815,11 @@ order to apply the initialization performed before to the substates
 
 The device-side CA is defined at line 155. As for the case of Conway's
 Game of Life, the \verb'calclCADef2D()' function initializes the
-object, by performing data tranfer from the host to the device memory,
+object, by performing data transfer from the host to the device memory,
 in a transparent way to the user.
 
 In order to be able to execute a simulation, transition function
-elementary processes and global fuctions must be registered to the
+elementary processes and global functions must be registered to the
 device-side CA object. This is a two-step process: at first, kernels
 are extracted from the OpenCL program by means of the
 \verb'calclGetKernelFromProgram()' function (cf. e.g. line 158) and
@@ -855,7 +853,7 @@ line 218 by means of the \verb'calglMainLoop2D()' function. This
 latter executes kernels in parallel on the device by considering the
 one thread-one cell policy, manages data retrieval from compliant
 device to host at prefixed intervals (in terms of computational steps
-- cf. the \verb'GRAPHIC_UPDATE_INTERVAL' deinition at line 21), and
+- cf. the \verb'GRAPHIC_UPDATE_INTERVAL' definition at line 21), and
 performs the graphic rending.
 
 For further details about OpenCAL-GL, please refer Section \ref{sec:calgl_sciddicaT}.
@@ -875,7 +873,7 @@ the active cells optimization is shown in Listings
 respectively. Non-optimized versions are here omitted for the sake of
 shortness.
 
-Line 3 includes the \verb'calcl2D.h' header while line 6 define the
+Line 3 includes the \verb'calcl2D.h' header, while line 6 define the
 number of outflows considered in SciddicaT. Eventually, lines 7-12
 define the substates handles. Here, handles are assigned by taking
 into account the order in which they have been registered to the
@@ -885,18 +883,17 @@ host-side CA (cf. Listing \ref{lst:calcl_gl_sciddicaT}, lines
 As regards the kernels shown in Listings
 \ref{lst:calcl_gl_sciddicaT_kernels}, they do not differ from that of
 the Game of Life (cf. \ref{lst:calcl_life}). In fact, each kernel is
-identified by the \verb'__kernel' keyword and, with the exeption of
+identified by the \verb'__kernel' keyword and, with the exception of
 the first one, do not take any parameter, besides the mandatory
 implicit macro-like \verb'__CALCL_MODEL_2D' one. Concerning the
 \verb'flowsComputation()' kernel, it takes two additional parameters,
 namely \verb'Pepsilon' and \verb'Pr', both of type
 \verb'CALParameterr'. They are declared by means of the
 \verb'__global' OpenCL keyword, meaning that they will be stored in
-the device global memory. Setting the values for these parameters, is
-a host-side application responsability. In the specific case of the
-OpenCAL-CL implementation of SciddicaT, this opration is done at lines
-166-169 of Listing \ref{lst:calcl_gl_sciddicaT}. Note that,
-differently from the case of Life, the
+the device global memory. Setting the values for these parameters is
+a host-side application responsibility. Note that in the specific case of the
+OpenCAL-CL implementation of SciddicaT, this operation is done at lines
+166-169 of Listing \ref{lst:calcl_gl_sciddicaT}. Differently from the case of Life, the
 \verb'calclActiveThreadCheck2D();' function is used in each kernel to
 prevent the computation for threads that do not correspond to active
 cells. For the remaining code, the OpenCAL-CL functions already
@@ -923,8 +920,8 @@ This section describes the implementation of a simple 3D model, namely
 the \emph{mod2} 3D CA, already presented and implemented by means of
 the serial version of OpenCAL in Section \ref{sec:mod2}. As for the
 previous example about SciddicaT, the \emph{mod2} application comes
-togeter with an OpenCAL-GL-based GUI and 3D rendering system. The
-complete source codes for host- and device-side application are shown
+together with an OpenCAL-GL-based GUI and 3D rendering system. The
+complete source codes for host- and device-side applications are shown
 in Listings \ref{lst:calcl_gl_mod2} and
 \ref{lst:calcl_gl_mod2_kernel}, respectively .
 
@@ -950,7 +947,7 @@ previously considered 2D headers are included at lines 3-7 and,
 accordingly, the host and device CA, as well as the single model
 substate, are declared as 3D objects at lines 18-21. Eventually, note
 that also library functions are in their 3D versions. Their meaning is
-self-expalining, since they correspond to their 2D couterparts already
+self-explaining, since they correspond to their 2D counterparts already
 seen in previous examples.
 
 Similarly, device-side code is equivalent to that of the Game of
@@ -962,12 +959,12 @@ code, even the device-side library functions come in their 3D version.
 
 \verb'OpenCAL-GL/calgl3D.h' and \verb'OpenCAL-GL/calgl3DWindow.h'
 headers are included. Moreover, the OpenCAL-GL functions, already seen
-in the 2D version in previous Section, are here in theyr 3D form (see,
+in the 2D version in previous Section, are here in their 3D form (see,
 e.g., the \verb'calglAdd3Db()' function at line 80). They
-are completely equivalents to the 2D versions and therefore they will
+are completely equivalent to the 2D versions and therefore will
 not be commented. Eventually, note that statements at lines 86-91 are
-commented. If you remove the comments, you will end with some parts of
-the cellular space cut down form visualization.
+commented. If comments are removed, you will end with some parts of
+the cellular space cut down from the visualization.
 
 Figure \ref{fig:calgl_mod2} shows a screenshot of the \emph{mod2} CA.
 
@@ -981,8 +978,8 @@ Figure \ref{fig:calgl_mod2} shows a screenshot of the \emph{mod2} CA.
 \end{figure}
 
 
-\section{Computational performace}
-Currently under evaliation.
+\section{Computational performance}
+Currently under EVALATE (cit. Beppe Zito).
 
 
 \section{Reduction operations}
