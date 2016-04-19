@@ -935,7 +935,7 @@ in Listings \ref{lst:calcl_gl_mod2} and
   process.]{../opencal-examples/OpenCAL-CL/calcl_gl_mod2CA3D/kernel/source/mod2CA.cl}
 
 
-Host code is quite similar to that of Game of Life (cf. Section
+As noted, the host code is quite similar to that of the Game of Life (cf. Section
 \ref{sec:calcl_life}), with the difference that here some OpenCAL-GL
 code is added for GUI and 3D graphic rendering, as already done for
 the $SciddicaT_{naive}$ example (cf. Section
@@ -986,10 +986,10 @@ Currently under EVALATE (cit. Beppe Zito).
 OpenCAL-CL comes with some predefined global reduction operations. In
 order to use them, each desired reduction must be firstly registered
 to the device-side CA object, by specifying the substate on which the
-reduction have to be performed. Registered reductions are performed by
+reduction has to be performed. Registered reductions are performed by
 OpenCAL-CL device-side in a transparent way to the user at each
 computational step, just after the application of elementary processes
-and before steering. Hence, reduction operation results can are
+and before steering. Hence, reduction operation results are
 retrieved device-side within kernels by means of other predefined
 OpenCAL-CL functions. Host- and device-side reduction registration and
 retrieving functions are listed in Tables
