@@ -973,7 +973,7 @@ Figure \ref{fig:calgl_mod2} shows a screenshot of the \emph{mod2} CA.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=12cm]{./images/OpenCAL/calgl_mod2}
+    \includegraphics[width=10cm]{./images/OpenCAL/calgl_mod2}
     \caption{Screenshot of the \emph{mod2} 3D CA viewer based on
       OpenCAL-GL.}
     \label{fig:calgl_mod2}
@@ -986,4 +986,157 @@ Currently under evaliation.
 
 
 \section{Reduction operations}
-Currently under development.
+OpenCAL-CL comes with some predefined global reduction operations. In
+order to use them, each desired reduction must be firstly registered
+to the device-side CA object, by specifying the substate on which the
+reduction have to be performed. Registered reductions are performed by
+OpenCAL-CL device-side in a transparent way to the user at each
+computational step, just after the application of elementary processes
+and before steering. Hence, reduction operation results can are
+retrieved device-side within kernels by means of other predefined
+OpenCAL-CL functions. Host- and device-side reduction registration and
+retrieving functions are listed in Tables
+\ref{tab:calcl-host-reductions} and \ref{tab:calcl-device-reductions},
+respectively.
+
+
+\begin{table}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|l}
+    \hline
+    Host-side reduction functions & Register a reduction to compute the ... \\
+    \hline
+    \verb'calclAddReductionMax2Dr()'        & maximum of a substate elements\\
+    \verb'calclAddReductionMin2Dr()'        & minimum of a substate elements\\
+    \verb'calclAddReductionSum2Dr()'        & sum of a substate elements\\
+    \verb'calclAddReductionProd2Dr()'       & product of substate elements\\
+    \verb'calclAddReductionLogicalAnd2Dr()' & logical AND of substate elements\\
+    \verb'calclAddReductionBinaryAnd2Dr()'  & binary AND of substate elements\\
+    \verb'calclAddReductionLogicalOr2Dr()'  & logical OR of substate elements\\
+    \verb'calclAddReductionBinaryOr2Dr()'   & binary OR of substate elements\\
+    \verb'calclAddReductionLogicalXOr2Dr()' & logical AND of substate elements\\
+    \verb'calclAddReductionBinaryXor2Dr()'  & binary AND of substate elements\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL-CL host-side reduction registration functions for 2D CA and
+    substates containing floating point values. In order to obtain the
+    corresponding functions for 3D CA, you need to change 2D in 3D
+    into the functions' suffix, while to obtain the equivalent
+    versions for the other supported basic data types, change the last
+    suffix character from r to b or i, for CALbyte- or CALint-based
+    substates, respectively.}
+  \label{tab:calcl-host-reductions}
+\end{table}
+
+
+\begin{table}
+  \centering
+  \footnotesize
+  \begin{tabular}{l|l}
+    \hline
+    Device-side reduction functions & Get the value of a reduction operation for the ... \\
+    \hline
+    \verb'calclGetMax2Dr()'        & maximum of a substate elements\\
+    \verb'calclGetMin2Dr()'        & minimum of a substate elements\\
+    \verb'calclGetSum2Dr()'        & sum of a substate elements\\
+    \verb'calclGetProd2Dr()'       & product of substate elements\\
+    \verb'calclGetLogicalAnd2Dr()' & logical AND of substate elements\\
+    \verb'calclGetBinaryAnd2Dr()'  & binary AND of substate elements\\
+    \verb'calclGetLogicalOr2Dr()'  & logical OR of substate elements\\
+    \verb'calclGetBinaryOr2Dr()'   & binary OR of substate elements\\
+    \verb'calclGetLogicalXor2Dr'   & logical AND of substate elements\\
+    \verb'calclGetBinaryXor2Dr()'  & binary AND of substate elements\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL-CL device-side reduction retrieving functions for 2D CA and
+    substates containing floating point values. In order to obtain the
+    corresponding functions for 3D CA, you need to change 2D in 3D
+    into the functions' suffix, while to obtain the equivalent
+    versions for the other supported basic data types, change the last
+    suffix character from r to b or i, for CALbyte- or CALint-based
+    substates, respectively.}
+  \label{tab:calcl-device-reductions}
+\end{table}
+
+
+Note that, host-side reduction functions return void and accept a
+pointer to a device-side CA object and a 0-based numerical handle
+corresponding to the device-side substate over which the reduction
+must be performed. Instead, device-side reduction retrieving functions
+return a CALreal value and only take the 0-based numerical handle
+corresponding to the device-side substate over which the reduction has
+been performed. Listings \ref{lst:calclAddReductionSum2Dr} and
+\ref{lst:calclGetSum2Dr} show the prototypes of the host- and
+device-side reductions for evaluating the sum of a substate elements,
+respectively. Eventually, Listings
+\ref{lst:calcl_reduction_example_host} and
+\ref{lst:calcl_reduction_example_device} show a host- and device-side
+example codes, respectively, in which a reduction operation is
+considered for evaluating the sum of all the elements within a given
+substate.
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclAddReductionSum2Dr, caption=The calclAddReductionSum2Dr() host-side reduction registration function., numbers=none]
+  void calclAddReductionSum[2D|3D][b|i|r](struct CALCLModel2D * device_CA, int devide_side_substate_handle);
+\end{lstlisting}
+
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetSum2Dr, caption=The calclGetSum2Dr() device-side reduction retriving function., numbers=none]
+  CALreal calclGetSum[2D|3D][b|i|r](int device_side_substate_handle);
+\end{lstlisting}
+
+
+
+\begin{lstlisting}[float, label=lst:calcl_reduction_example_host, caption=An example of global reduction operation in a host-side OpenCAL-CL application.]
+  #include <OpenCAL-CL/calcl2D.h>
+  #include <OpenCAL-CL/calcl2DReduction.h>
+  //...
+
+  // 0-based numerical handle to reger the Q substate device-side
+  #define DEVICE_Q 0
+
+  
+  int main()
+  {
+    // ...
+    
+    // Define a device-side CA
+    struct CALCLModel2D * device_CA = calclCADef2D(host_CA, context, program, device);
+
+    // Extract a kernel from program
+    CALCLkernel kernel_life_transition_function = calclGetKernelFromProgram(&program, KERNEL_LIFE_TRANSITION_FUNCTION);
+
+    // Register a transition function's elementary process kernel
+    calclAddElementaryProcess2D(device_CA, &kernel_life_transition_function);
+
+    // Register reduction operation to be computed after alementary processes and after steering
+    calclAddReductionSum2Di(device_CA, DEVICE_Q);
+
+    //...
+  }
+\end{lstlisting}
+
+
+\begin{lstlisting}[float, label=lst:calcl_reduction_example_device, caption=An example of global reduction operation in a device-side OpenCAL-CL application.]
+  #include <OpenCAL-CL/calcl2D.h>
+  #include <OpenCAL-CL/calcl2DReduction.h>
+  
+
+  // 0-based numerical handle to reger the Q substate device-side
+  #define DEVICE_Q 0
+
+  __kernel void lifeTransitionFunction(__CALCL_MODEL_2D)
+  {
+    calclThreadCheck2D();
+    
+    int i = calclGlobalRow();
+    int j = calclGlobalColumn();
+
+    // retrieve and print the result of the sum reduction
+    // operation registered host-side
+    int sum = calclGetSum2Di(DEVICE_Q);
+    if(i==0 && j==0) 	
+      printf("sum = %f \n", sum);
+
+    //...
+  } 
+\end{lstlisting}
