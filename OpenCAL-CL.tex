@@ -979,7 +979,7 @@ Figure \ref{fig:calgl_mod2} shows a screenshot of the \emph{mod2} CA.
 
 
 \section{Computational performance}
-Currently under EVALATE (cit. Beppe Zito).
+Currently under evaluation.
 
 
 \section{Reduction operations}
@@ -1019,7 +1019,7 @@ respectively.
   \caption{OpenCAL-CL host-side reduction registration functions for 2D CA and
     substates containing floating point values. In order to obtain the
     corresponding functions for 3D CA, you need to change 2D in 3D
-    into the functions' suffix, while to obtain the equivalent
+    into the functions suffix, while to obtain the equivalent
     versions for the other supported basic data types, change the last
     suffix character from r to b or i, for CALbyte- or CALint-based
     substates, respectively.}
@@ -1049,7 +1049,7 @@ respectively.
   \caption{OpenCAL-CL device-side reduction retrieving functions for 2D CA and
     substates containing floating point values. In order to obtain the
     corresponding functions for 3D CA, you need to change 2D in 3D
-    into the functions' suffix, while to obtain the equivalent
+    into the functions suffix, while to obtain the equivalent
     versions for the other supported basic data types, change the last
     suffix character from r to b or i, for CALbyte- or CALint-based
     substates, respectively.}
@@ -1077,7 +1077,7 @@ substate.
   void calclAddReductionSum[2D|3D][b|i|r](struct CALCLModel2D * device_CA, int devide_side_substate_handle);
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetSum2Dr, caption=The calclGetSum2Dr() device-side reduction retriving function., numbers=none]
+\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetSum2Dr, caption=The calclGetSum2Dr() device-side reduction retrieving function., numbers=none]
   CALreal calclGetSum[2D|3D][b|i|r](int device_side_substate_handle);
 \end{lstlisting}
 
@@ -1088,7 +1088,7 @@ substate.
   #include <OpenCAL-CL/calcl2DReduction.h>
   //...
 
-  // 0-based numerical handle to reger the Q substate device-side
+  // 0-based numerical handle to refer the Q substate device-side
   #define DEVICE_Q 0
 
   
@@ -1105,7 +1105,7 @@ substate.
     // Register a transition function's elementary process kernel
     calclAddElementaryProcess2D(device_CA, &kernel_life_transition_function);
 
-    // Register reduction operation to be computed after alementary processes and after steering
+    // Register reduction operation to be computed after elementary processes and after steering
     calclAddReductionSum2Di(device_CA, DEVICE_Q);
 
     //...
@@ -1118,7 +1118,7 @@ substate.
   #include <OpenCAL-CL/calcl2DReduction.h>
   
 
-  // 0-based numerical handle to reger the Q substate device-side
+  // 0-based numerical handle to refer the Q substate device-side
   #define DEVICE_Q 0
 
   __kernel void lifeTransitionFunction(__CALCL_MODEL_2D)

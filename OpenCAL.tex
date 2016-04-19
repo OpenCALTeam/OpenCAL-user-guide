@@ -132,7 +132,7 @@ occur:
 The initial configuration of the system specifies the state (dead or
 alive) of each cell in the cellular space. The evolution of the
 system is thus obtained by applying the above rules (which define the
-cell's transition function) simultaneously to every cell in the
+cell transition function) simultaneously to every cell in the
 cellular space, so that each new configuration is function of the one
 at the previous step. The rules continue to be applied repeatedly to
 create further generations. For more details on the Game of Life,
@@ -142,7 +142,7 @@ please check Wikipedia at the URL
 \begin{figure}
   \begin{center}
     \includegraphics[width=5cm]{./images/OpenCAL/LifeNeighborhood.png}
-    \caption{OpenCAL's 2D cellular space and Moore neighborhood. Cells
+    \caption{OpenCAL 2D cellular space and Moore neighborhood. Cells
       are individuated by a couple of matrix-style integer coordinates
       $(i, j)$, where $i$ represents the row and $j$ the column. Cell
       (0,0) is the one located at the upper-left corner. Moore
@@ -194,7 +194,7 @@ where:
   $N(X, (i, j), 1) = (i-1, j)$, i.e. the first neighbor, and so on
   (cf. Figure \ref{fig:LifeNeighborhood}).
 
-\item $Q = \{0, 1\}$ is the set of cell's states.
+\item $Q = \{0, 1\}$ is the set of cell states.
 
 \item $\sigma : Q^9 \rightarrow Q$ is the deterministic cell
   transition function. It is composed by one elementary process, which
@@ -226,7 +226,7 @@ third parameter defines the neighborhood pattern. Here, the predefined
 Moore neighborhood is selected (cf. Figure
 \ref{fig:LifeNeighborhood}), among those provided by OpenCAL. See
 Listings \ref{lst:CALNeighborhood2D} and \ref{lst:CALNeighborhood3D}
-for a list of OpenCAL's predefined 2D and 3D neighborhoods,
+for a list of OpenCAL predefined 2D and 3D neighborhoods,
 respectively. Custom neighborhoods can also be defined by means of the
 \verb'calAddNeighbor2D()' function. In both cases, indices are
 assigned progressively, starting from 0, each time a new cell is added
@@ -738,14 +738,14 @@ function (lines 104-130) sets the values of all the outflows from the
 central cell to its neighbors to zero, by means of the function
 \verb'calInitSubstate2Dr()' (lines 110-113). Moreover, it sets the
 values of the P.r and P.epsilon parameters (lines 116-117) and
-initializes the debris flow source by simply subtracting the source's
+initializes the debris flow source by simply subtracting the source
 debris thickness to the topographic altitude. For this purpose, a
 nested double \verb'for' is executed to check the debris thickness in
 each cell of the cellular space. Here, the \verb'sciddicaT->rows' and
 \verb'sciddicaT->cols' members of the CA object are used, which
 represent the cellular space values of rows and columns,
 respectively. Still, the \verb'calGet2Dr()' and \verb'calSet2Dr()'
-functions are here employed to read/update substates' values inside
+functions are here employed to read/update substates values inside
 the cells.
 
 Line 168 registers a \emph{steering} callback by means of the
@@ -1022,7 +1022,7 @@ central cell and the neighboring cell receiving a flow (lines
 set A of active cells (line 88) and therefore will be considered for
 elaboration by the subsequent elementary process ($\sigma_2$) in the
 current step of computation\footnote{This is due to the fact that a
-  substates' update is performed after the first elementary process
+  substates update is performed after the first elementary process
   has been applied to all the (active) cells of the cellular
   space. This behavior is set by means of the
   \texttt{CAL\_UPDATE\_IMPLICIT} parameter used in the definition of
@@ -1076,7 +1076,7 @@ modified by making the OpenCAL simulation loop explicit.
 In the specific case of the above implementation of SciddicaT, the
 second elementary process, $\sigma_2$, just removes cells that become
 inactive from the set $A$ of active cells and doesn't affect the
-model's substates\footnote{Actually, only $Q.h$ can be updated by the
+model substates\footnote{Actually, only $Q.h$ can be updated by the
   transition function, since $Q.z$ is a single-layered substate.}. As
 a consequence, no substates updating is needed after the application
 of $\sigma_2$. Being substates updating a time consuming operation,
@@ -1156,7 +1156,7 @@ In order to introduce three-dimensional CA development with OpenCAL,
 this section describes the implementation of a simple 3D model, namely
 the \emph{mod2} 3D CA. In this model, cells can be in one of two
 different states, 0 or 1, as in Game of Life. The cellular space is a
-parallelepiped made by cubic cells, while the cell's neighborhood is
+parallelepiped made by cubic cells, while the cell neighborhood is
 the 3D Moore one, consisting of the central cell and its adjacent
 cells. The transition function simply evaluates the quantity $s$ as
 the number of neighboring cells which are in the state 1 and sets the
@@ -1231,7 +1231,7 @@ of the \verb'calInitSubstate3Db()' function, each element $q \in Q$
 results to be of the CALbyte type. Line 37 registers the one and only
 CA elementary process, namely the \verb'mod2TransitionFunction()'
 function, which is then implemented at lines 17-25. Line 43
-initializes the cell's substate $Q$ at coordinates (2, 3, 1) to the
+initializes the cell substate $Q$ at coordinates (2, 3, 1) to the
 state 1. The obtained initial configuration is then saved at line 46,
 and the simulation executed at line 49. The final configuration is
 therefore saved at line 52 and, eventually, memory previously and
@@ -1239,8 +1239,8 @@ implicitly allocated is released at lines 55-56. Note that,
 differently to the previous examples, almost all the OpenCAL functions
 come in the 3D flower. For instance, this is the case of the
 \verb'alGetX3Db()' and \verb'calSet3Db()' functions at lines 22 and
-24, respectively, which take \verb'k' as third cell's coordinate,
-identifying the cellular space's slice.
+24, respectively, which take \verb'k' as third cell coordinate,
+identifying the cellular space slice.
 
 Figures \ref{fig:mod2_0000} and \ref{fig:mod2_LAST} show the initial
 and final configuration of \emph{mod2} 3D CA as implemented in Listing
@@ -1505,7 +1505,7 @@ window in a matrix layout.
 The \verb'calglMainLoop2D()' function (line 226) enters the
 application main loop. It corresponds to the GLUT main loop and
 executes both the simulation steps and the graphic rendering. As a
-result, the application's execution flow never returns to the
+result, the application execution flow never returns to the
 \verb'main()' function and therefore, to manage memory deallocation
 and other possible operations, a callback function is defined and
 executed just before program termination, namely \verb'exitFunction()'
@@ -1581,7 +1581,7 @@ is your own responsibility.
 In order to use global functions, simply include the
 \verb'cal2DReduction.h' header file for 2D CA, or
 \verb'cal3DReduction.h' for 3D CA. Table \ref{tab:reductions} lists
-the OpenCAL's global reduction functions. All of these functions
+the OpenCAL global reduction functions. All of these functions
 accept a pointer to a CA object and a pointer to a substate over
 which execute the global operation as parameters, and return the value
 corresponding to the performed reduction. For instance, if you want to
@@ -1609,10 +1609,10 @@ you can write something like in Listing \ref{lst:reduction_example}.
     \verb'calReductionComputeBinaryXor2Dr()' & Return the binary AND of all substate elements\\
     \hline
   \end{tabular}
-  \caption{OpenCAL's global reduction functions for 2D CA and
+  \caption{OpenCAL global reduction functions for 2D CA and
     substates containing floating point values. In order to obtain the
     corresponding functions for 3D CA, you need to change 2D in 3D
-    into the functions' suffix, while to obtain the equivalent
+    into the functions suffix, while to obtain the equivalent
     versions for the other supported basic data types, change the last
     suffix character from r to b or i, for CALbyte- or CALint-based
     substates, respectively.}
