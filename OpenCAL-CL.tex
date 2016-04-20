@@ -989,10 +989,12 @@ to the device-side CA object, by specifying the substate on which the
 reduction has to be performed. Registered reductions are performed by
 OpenCAL-CL device-side in a transparent way to the user at each
 computational step, just after the application of elementary processes
-and before steering. Hence, reduction operation results are
-retrieved device-side within kernels by means of other predefined
-OpenCAL-CL functions. Host- and device-side reduction registration and
-retrieving functions are listed in Tables
+and before steering. Hence, reduction operation results are retrieved
+device-side within kernels by means of other predefined OpenCAL-CL
+functions. Note that, since reductions are evaluated after elementary
+processes, the values retrieved during the first computational step
+are equal to zero, which is the default value. Host- and device-side
+reduction registration and retrieving functions are listed in Tables
 \ref{tab:calcl-host-reductions} and \ref{tab:calcl-device-reductions},
 respectively.
 
@@ -1073,14 +1075,19 @@ example codes, respectively, in which a reduction operation is
 considered for evaluating the sum of all the elements within a given
 substate.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclAddReductionSum2Dr, caption=The calclAddReductionSum2Dr() host-side reduction registration function., numbers=none]
-  void calclAddReductionSum[2D|3D][b|i|r](struct CALCLModel2D * device_CA, int devide_side_substate_handle);
+
+\begin{lstlisting}[float, label=lst:calclAddReductionSum2Dr, caption=The calclAddReductionSum2Dr() host-side reduction registration function., numbers=none]
+  void calclAddReductionSum[2D|3D][b|i|r](
+       struct CALCLModel2D * device_CA,
+       int devide_side_substate_handle
+  );
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:calclGetSum2Dr, caption=The calclGetSum2Dr() device-side reduction retrieving function., numbers=none]
-  CALreal calclGetSum[2D|3D][b|i|r](int device_side_substate_handle);
+\begin{lstlisting}[float, label=lst:calclGetSum2Dr, caption=The calclGetSum2Dr() device-side reduction retrieving function., numbers=none]
+  CALreal calclGetSum[2D|3D][b|i|r](
+      int device_side_substate_handle
+  );
 \end{lstlisting}
-
 
 
 \begin{lstlisting}[float, label=lst:calcl_reduction_example_host, caption=An example of global reduction operation in a host-side OpenCAL-CL application.]
