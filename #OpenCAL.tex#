@@ -1300,17 +1300,18 @@ for the 3D version of OpenCAL, while lines 12-14 declare CA, substate
 and simulation objects. These are therefore defined later in the main
 function. In particular, line 30 defines the CA as a parallelepiped
 having \verb'ROWS' rows, \verb'COLS' columns and \verb'SLICES' slices
-(cf. lines 7-9). Moreover, the 3D Moore neighborhood is here set (see Figure \ref{fig:3Dneighborhood}, Chapter \ref{ch:CA}) as
-well as cyclic conditions at boundaries. Eventually, no optimizations
-are considered. The complete definition of \verb'calCADef3D()' is
-provided in Listing \ref{lst:calCADef3D}. Line 31 defines the
-simulation object by setting just one step of computation and implicit
-substate update. The complete definition of \verb'calRunDef3D' is
-provided in Listing \ref{lst:calRunDef3D()}. Finally, the only substate,
-$Q$, is defined at line 34. Note that, since it was defined by means
-of the \verb'calInitSubstate3Db()' function, each element $q \in Q$
-results to be of the CALbyte type. Line 37 registers the one and only
-CA elementary process, namely the \verb'mod2TransitionFunction()'
+(cf. lines 7-9). Moreover, the 3D Moore neighborhood is here set (see
+Figure \ref{fig:3Dneighborhood}, Chapter \ref{ch:CA}) as well as
+cyclic conditions at boundaries. Eventually, no optimizations are
+considered. The complete definition of \verb'calCADef3D()' is provided
+in Listing \ref{lst:calCADef3D}. Line 31 defines the simulation object
+by setting just one step of computation and implicit substate
+update. The complete definition of \verb'calRunDef3D' is provided in
+Listing \ref{lst:calRunDef3D()}. Finally, the only substate, $Q$, is
+defined at line 34. Note that, since it was defined by means of the
+\verb'calInitSubstate3Db()' function, each element $q \in Q$ results
+to be of the CALbyte type. Line 37 registers the one and only CA
+elementary process, namely the \verb'mod2TransitionFunction()'
 function, which is then implemented at lines 17-25. Line 43
 initializes the cell substate $Q$ at coordinates (2, 3, 1) to the
 state 1. The obtained initial configuration is then saved at line 46,

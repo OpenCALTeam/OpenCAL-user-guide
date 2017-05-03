@@ -17,14 +17,15 @@ software and make it working.
 \section{Requirements and dependencies}
 
 In order to build the different libraries, you need a quite recent
-ANSI C compiler (e.g. gcc under Linux/Unix systems or MinGW under
-Windows\footnote{The clang C compiler can also be used, taking in mind
-  that it still does not fully support Open-MP natively.}), and CMake
-(to generate the makefiles, or even project files for several IDEs
-like Eclipse). An OpenCL implementation (e.g. by AMD, Intel or NVIDIA)
-is also needed to build OpenCAL-CL, as well as GLUT (e.g. freeglut) is
-needed to build OpenCAL-GL. Some dependencies must also be satisfied,
-depending on the library to be built:
+ANSI C compiler (e.g. gcc under Linux/Unix systems or Microsoft Visual
+C++ under Windows\footnote{The clang C compiler can also be used,
+  taking in mind that it still does not fully support Open-MP
+  natively.}), and CMake (to generate the makefiles, or even project
+files for several IDEs like Eclipse). An OpenCL implementation
+(e.g. by AMD, Intel or NVIDIA) is also needed to build OpenCAL-CL, as
+well as GLUT (e.g. freeglut) is needed to build OpenCAL-GL. Some
+dependencies must also be satisfied, depending on the library to be
+built:
 
 %% Moreover, still to compile OpenCAL-CL, at least the 3.1 version of
 %% CMake is required. Eventually, a GLUT development library is needed to
@@ -39,11 +40,7 @@ depending on the library to be built:
     following link: \url{http://openmp.org/wp/openmp-compilers/}.},
   and CMake version 2.8 or greater.
 \item[Open-CL: ] A quite recent ANSI C compiler, CMake version 3.1 or
-  grater, and OpenCL version 1.2 or greater\footnote{OpenCAL-CL was
-    tested on the NVIDIA OpenCL implementation. You can find the
-    NVIDIA OpenCL implementation, shipped with the CUDA platform, at
-    the following url:
-    \url{http://docs.nvidia.com/cuda/\#installation-guides}}.
+  greater, and OpenCL version 1.2 or greater}.
 \item[OpenCAL-GL: ] A quite recent ANSI C compiler, CMake version 2.8
   or grater, OpenGL/GLUT headers and libraries \footnote{For
   example \texttt{freeglut-devel} or \texttt{freeglut3-dev} packages
@@ -55,6 +52,15 @@ depending on the library to be built:
 software documentation, which provides specific information about
 implemented data structures and functions.
 
+Note that Visual Studio users under Microsoft Windows have to use the
+the freeglut and pthreads provided with OpenCAL. In this case,
+please copy the libs directory, containing both freeglut and pthreads
+for Microsoft Visual Studio, in the desired path on the local disk
+(e.g. in \verb'C:\'). Moreover, paths containing DLLs
+(e.g. \verb'C:\libs\pthreads\bin' and \verb'C:\libs\freeglut\bin')
+have to be added to the Windows PATH environment variable, in order to
+be found by the loader.
+
 \section{Obtaining OpenCAL}
 
 The stable releases of libraries and examples can be downloaded as source code at the
@@ -63,8 +69,8 @@ following GitHub urls:
 \begin{table}[h]
   \centering
   \begin{tabularx}{\textwidth}{lX}
-    \textbf{opencal-1.0} & \url{https://github.com/OpenCALTeam/opencal/archive/OpenCAL-1.0.zip}\\
-    \textbf{opencal-examples-1.0} & \url{https://github.com/OpenCALTeam/opencal-examples/archive/opencal-examples-1.0.zip}\\
+    \textbf{opencal-1.0} & \url{https://github.com/OpenCALTeam/opencal/archive/1.0.zip}\\
+    \textbf{opencal-examples-1.0} & \url{https://github.com/OpenCALTeam/opencal-examples/archive/1.0.zip}\\
   \end{tabularx}
 \end{table}
 
@@ -79,6 +85,10 @@ user@machine:-$ git clone https://github.com/OpenCALTeam/opencal
 user@machine:-$ git clone https://github.com/OpenCALTeam/opencal-examples
 \end{lstlisting}
 
+Note that, Microsoft Windows users have to set their git client such
+that it does not convert files from the UTF-8 format towards any other
+file format (e.g. ANSI), since OpenCL kernel must currently be of the
+former format.
 
 %% \section{Structure of the Distribution Directory}
 
@@ -126,11 +136,11 @@ user@machine:-$ git clone https://github.com/OpenCALTeam/opencal-examples
 
 \section{Build and Install}
 
-\subsection{Generating makfiles}
+\subsection{Generating project files with CMake}
 
-In order to generate the makefiles (or the project files for Eclipse
-or other IDEs), needed to compile OpenCAL libraries and examples, the
-following steps can be carried out:
+In order to generate the Unix makefiles or project files for Microsoft
+Visual Studio (or other IDEs), needed to compile OpenCAL libraries and
+examples, the following steps can be carried out:
 
 \begin{enumerate}
 \item Enter the OpenCAL source tree root directory (e.g. \verb'~/git/opencal-1.0/');
@@ -183,11 +193,21 @@ following commands:
 %% to build static libraries (.a files under Linux systems) instead of
 %% shared objects (.so files).
 
+Under Windows, freeglut and/or pthreads could not be found by CMake
+modules, depending on the path where they were installed. In this
+case, it is possible to use the CMake GUI and provide the include path
+and libraries explicitly. For instance, if the aforementioned
+dependencies have been satisfied as suggested, pthreads headers could
+be found in \verb'C:\libs\pthreads\include', while the library in
+\verb'C:\libs\pthreads\lib\pthread.lib'. The same holds for the
+freeglut library.
+
 \subsubsection{Custom installation path}
 
 Another useful CMake option is \texttt{CMAKE\_INSTALL\_PREFIX:PATH},
 that allows to change the default installation directory, that is
-\verb'/usr/local' under Linux systems. Therefore, to select
+\verb'/usr/local' under Linux systems and
+\verb'C:\Program Files (x86)' under Windows. Therefore, to select
 \texttt{/opt} as installation target directory, change the above
 invocation of CMake into the one below.
 
@@ -202,11 +222,23 @@ invocation of CMake into the one below.
                             -DCMAKE_INSTALL_PREFIX:PATH=/opt
 \end{lstlisting}
 
+\noindent or, under Microsoft Windows:
+
+\begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:simplebuild}]
+  user@machine:-$ cd C:\git\opencal-1.0\
+  user@machine:-$ mkdir build && cd build
+  user@machine:-$ cmake ../ -DBUILD_OPENCAL_SERIAL=ON \
+                            -DBUILD_OPENCAL_OMP=ON \
+                            -DBUILD_OPENCAL_CL=ON \
+                            -DBUILD_OPENCAL_GL=ON \
+                            -DBUILD_DOCUMENTATION=ON\
+                            -DCMAKE_INSTALL_PREFIX:PATH=C:\libs
+\end{lstlisting}
 
 
 \subsection{Compiling}
 Once makefiles have been produced, everything is set up and ready for
-compiling. To compile use the following command:
+compiling. To compile under Linux, use the following command:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:ebuild}]
   user@machine:-$ make -j n
@@ -214,10 +246,13 @@ compiling. To compile use the following command:
 where \verb'n' is the number of cores of your machine you want to use
 for speeding up the compilation process.
 
+Under Windows it is sufficient to open the OpenCAL-1.0.sln Visual
+Studio solution and press the F7 key to build the libraries.
+
 \subsection{Install}
 
 You can install the compiled libraries, headers and API documentation
-using the following command:
+using the following Linux command:
 
 \begin{lstlisting}[numbers=none,language=bash,label={ch:quickstart:sudoinstall}]
   user@machine:-$ sudo make install
@@ -230,9 +265,8 @@ using the following command:
   root@machine:-$ make install
 \end{lstlisting}
 
-
 \noindent Under Linux systems, files are installed by default in
-\texttt{/usr/local/}. See Table \ref{ch:ddefault_paths} for majour
+\texttt{/usr/local/}. See Table \ref{ch:ddefault_paths} for major
 details.
 
 \begin{table}[h]
@@ -247,6 +281,34 @@ details.
     \verb'/usr/local/opencal-1.0/include/'                & Header files \\
     \verb'/usr/local/opencal-1.0/include/OpenCAL-CL/kernel' & OpenCL kernels \\
     \verb'/usr/local/opencal-1.0/doc/'                   & API documentation \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+
+Under Windows, it is sufficient to compile the INSTALL project, that
+can be found under the Visual Studio solution. Note that, in order to
+install files in the default path, Visual Studio has to be run as
+Administator. In the case the installation path was set to
+\verb'C:\libs', as we suggest, files will be installed as described in
+Table \ref{ch:win_custom_install_paths}. Note that, as for
+dependencies, also the directory containing OpenCAL DLLs
+(e.g. \verb'C:\libs\opencal-1.0\bin') have to be added to the Windows
+PATH environment variable.
+
+\begin{table}[h]
+  \centering
+  \caption{Installation paths for OpenCAL files under Windows systems.}
+  \label{ch:win_custom_install_paths}
+  \begin{tabularx}{\textwidth}{ll}
+    \hline
+    \textbf{Installation path} & \textbf{Installed objects}\\
+    \hline
+    \verb'C:\libs\opencal-1.0\bin'                    & DLLs\\
+    \verb'C:\libs\opencal-1.0\lib'                   & .lib archives\\
+    \verb'C:\libs\opencal-1.0\include'                & Header files \\
+    \verb'C:\libs\opencal-1.0\include\OpenCAL-CL\kernel' & OpenCL kernels \\
+    \verb'C:\libs\opencal-1.0\doc'                   & API documentation \\
     \hline
   \end{tabularx}
 \end{table}
@@ -294,6 +356,10 @@ directory:
   user@machine:-$ sudo cp ~/git/opencal/cmake/FindOpenCAL.cmake /usr/share/cmake/Modules
 \end{lstlisting}
 
+Under Windows, CMake modules can be generally found in the following  
+\verb'C:\Program Files (x86)\CMake\share\cmake-3.5\Modules' directory (or a
+similar path, depending on CMake version).
+
 %% Please, note that even in the case you chose the default installation
 %% path, that locates shared objects in \verb'/usr/local/lib' under Linux
 %% systems, you need to update the loader path and cache by putting the
@@ -338,7 +404,8 @@ In both cases, the \verb'life_0000.txt' and \verb'life_LAST.txt' files
 should be generated. If this is the case, congratulations, you
 installed OpenCAL properly.
 
-
+Under Windows, the same steps have to be performed, by exploiting the
+CMake GUI application in case.
 
 \section{Compiling the examples}
 
@@ -372,6 +439,8 @@ options and their default values):
   \end{tabular}
 \end{table}
 
+Windows users have to refer the opencal-examples-1.0 solution and
+compile the examples within the Visual Studio environment.
 
 To compile a particular example, please follow the steps described in
 Section \ref{sec:installation:test_installation}.
@@ -387,6 +456,8 @@ remove the FindOpenCAL.cmake module, as in the following example:
                        rm -rf /usr/local/opencal-1.0 && \
                        rm /usr/share/cmake/Modules/FindOpenCAL.cmake
 \end{lstlisting}
+
+Under Visual Studio it is sufficient to compile the UNINSTALL project.
 
 \section{Web Page and Bug Reporting}
 

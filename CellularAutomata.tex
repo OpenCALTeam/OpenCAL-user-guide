@@ -5,7 +5,7 @@ is ruled by local rules. They are largely employed in Science and
 Engineering for a wide range of problems, especially when classic
 methods (e.g., based on differential equations) can not be conveniently
 applied. In this Chapter, CA are briefly introduced, together with a
-recent extension of them, known as eXtended Cellular Automata (XCA),
+recent extension of them, known as Extended Cellular Automata (XCA),
 which are widely used for the modeling of physical extended systems.
 
 
@@ -39,14 +39,14 @@ properties:
 \item The evolving cell is called \emph{central cell} and can belong
   to its neighborhood;
 \item The neighboring relationship is local, uniform and invariant
-  over time (see Figures \ref{fig:1Dneighborhood} and
-  \ref{fig:2Dneighborhood} for examples of 1D and 2D neighborhoods,
-  respectively).
+  over time (see Figures \ref{fig:1Dneighborhood},
+  \ref{fig:2Dneighborhood}, and \ref{fig:3Dneighborhood} for examples
+  of 1D, 2D, and 3D neighborhoods, respectively).
 \end{itemize}
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=12cm]{./images/CellularAutomata/cellularspaces.pdf}
+    \includegraphics[width=11.5cm]{./images/CellularAutomata/cellularspaces.pdf}
     \caption{Example of cellular spaces: (a) one-dimensional, (b)
       two-dimensional with square cells, (c) two-dimensional with
       hexagonal cells, (d) three-dimensional with cubic cells.}
@@ -68,19 +68,35 @@ properties:
 
 \begin{figure}
   \begin{center}
-    %\includegraphics[width=12cm]{./images/CellularAutomata/twodimensional.pdf}
-    \includegraphics[width=12cm]{./images/CellularAutomata/2Dneighborhoods.png}
+    \includegraphics[width=11.5cm]{./images/CellularAutomata/2Dneighborhoods.pdf}
     \caption{Examples of von Neumann (a) and Moore (b) neighborhoods
-      for two-dimensional CA with square cells. Examples of (Moore)
-      neighborhoods are also shows for hexagonal CA, both for the
-      cases of horizontal (c) and vertical (d) cells
-      orientation. Central cell is represented in dark gray, while
-      adjacent cells are in light gray. Note that the central cell can
-      optionally belong to its own neighborhood.}
+      for two-dimensional CA with square cells. Examples of Moore
+      neighborhoods are also shown for hexagonal CA, both for the
+      cases of horizontal (c) and vertical (d) orientations. Central
+      cell is represented in dark gray, while adjacent cells are in
+      light gray. A reference system is here considered to evaluate
+      cells coordinates in terms of row and column indices in a
+      matrix-style representation, and a 0-based numerical identifier
+      assigned to each cell in the neighborhood for direct
+      access.}
     \label{fig:2Dneighborhood}
   \end{center}
 \end{figure}
 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=11.5cm]{./images/CellularAutomata/3Dneighborhoods.pdf}
+    \caption{Examples of von Neumann (a) and Moore (b, b')
+      neighborhoods for three-dimensional CA with cubic
+      cells. Central cell is represented in dark gray, while adjacent
+      cells are in light gray. A reference system is here considered
+      to evaluate cells coordinates in terms of row, column and slice
+      indices in a matrix-style representation, and a 0-based
+      numerical identifier assigned to each cell in the neighborhood
+      for direct access.}
+    \label{fig:3Dneighborhood}
+  \end{center}
+\end{figure}
 
 Despite their simple definition, CA can exhibit very interesting
 complex global behaviors. Moreover, from a computational point of
@@ -160,23 +176,21 @@ flows. Besides rheological complex behavior, they generally evolve on
 complex topographies, that can even change during the phenomenon
 evolution, and are often characterized by branching and rejoining of
 the flow. In order to better model such kind of phenomena, an extended
-notion of Cellular Automata (eXtended Cellular Automata, described in
+notion of Cellular Automata (Extended Cellular Automata, described in
 the next Section), can represent a valid alternative to classical CA.
 
-\section{eXtended Cellular Automata}
+\section{Extended Cellular Automata}
 
 As regards the modeling of natural complex phenomena, Prof. Gino
-Miracle Crisci and co-workers from University of Calabria (Italy)
-proposed a method based on an eXtended notion of CA (XCA), firstly
-applied to the simulation of basaltic lava flows in the
+Mirocle Crisci and co-workers from University of Calabria (Italy)
+proposed a method based on an Extended notion of Cellular Automata
+(XCA), firstly applied to the simulation of basaltic lava flows in the
 80's\footnote{XCA are also known as Complex Cellular Automata (CCA),
   Macroscopic Cellular Automata (MCA), and Multicomponent Cellular
   Automata (MCA)}. It was shown that the approach behind XCA can
 greatly make more straightforward the modeling of some complex
-systems.
-
-Informally, XCA, compared to classical CA, are different because of
-the following reasons:
+systems. Compared to classical CA, XCA are different because of the
+following reasons:
 
 \begin{itemize}
 
@@ -211,7 +225,7 @@ the following reasons:
 \end{itemize}
 
 
-\subsection{Formal Definition of eXtended Cellular Automata}
+\subsection{Formal Definition of Extended Cellular Automata}
 
 
 Formally, a XCA is defined as a 7-tuple:
