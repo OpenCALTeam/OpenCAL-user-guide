@@ -1,15 +1,146 @@
 \chapter{OpenCAL}\label{ch:opencal}
 
 This Chapter introduces the serial implementation of OpenCAL by
-examples. After a brief overview about supported data, main structure
-and adopted conventions, the implementation of a simple 2D CA is
-described. Subsequently, four different implementations of a more
-complex 2D example are illustrated, to show how progresively introduce
-OpenCAL features and optimizations. The implementation of a simple 3D
-CA is also presented for the sake of completeness. The last part of
-the Chapter deals with OpenCAL-GL and shows how to integrate a basic
-OpenGL/GLUT visualization system in both 2D and 3D OpenCAL-based
-applications.
+examples. After a brief overview about data types, main structure and
+adopted conventions, the implementation of a simple 2D cellular
+automaton is described. Subsequently, four different implementations
+of a more complex 2D example are illustrated, to show how simulation
+efficiency can progressively be improved. The implementation of a
+simple 3D model is also presented for the sake of completeness. The
+last part of the Chapter deals with OpenCAL-GL and shows how to
+integrate a basic OpenGL/GLUT visualization system in both 2D and 3D
+OpenCAL-based applications.
+
+\section{Statements conventions}\label{sec:Conventions}
+ The OpenCAL API adopts the following conventions:
+  \begin{itemize}
+  \item Derived data types are characterised by the \verb'CAL' prefix,
+    followed by a type identifier formed by one or more capitalised
+    keywords, an optional suffix identifying the model dimension
+    (\verb'2D' or \verb'3D'), and an eventual optional suffix
+    specifying the basic scalar type (\verb'b', \verb'i', or \verb'r',
+    for \verb'CALbyte', \verb'CALint' and \verb'CALreal' derived
+    types, respectivey);
+  \item Constants and enumerals are characterised by the \verb'CAL_'
+    prefix, followed by one or more uppercase keywords separated by
+    the \verb'_' character (e.g. the \verb'CAL_TRUE' and
+    \verb'CAL_FALSE' boolean-type values);
+  \item Functions are characterised by the \verb'cal' prefix, followed
+    by at least one capitalized keyword, and end with a suffix
+    specifying the model dimension (\verb'2D' or \verb'3D') and the
+    basic datatype (\verb'b', \verb'i', or \verb'r', for
+    \verb'CALbyte', \verb'CALint' and \verb'CALreal' derived types,
+    respectively).
+  \end{itemize}
+  Moreover, the \verb'{arg1|arg2|...|argn}' and
+  \verb'[arg1|arg2|...|argn]' conventions are adopted in the
+  following. The first one identifies a list of $n$ mutually exclusive
+  arguments, where one of the arguments is needed, while the second a
+  list of $n$ non-mutually exclusive optional arguments.
+
+
+\section{Basic data types and main loop structure}
+
+The current version of OpenCAL provides support for three different
+scalar data types, namely \verb'CALbyte', \verb'CALint', and
+\verb'CALreal', which redefine the \verb'char', \verb'int' and
+\verb'double' C native scalar types, respectively. For each of them, a
+corresponding substate type is provided, namely
+\verb'CALSubstate{2D|3D}{b|i|r}', as well as more complex objects for
+model and simulation definitions, namely \verb'CALModel{2D|3D}' and
+\verb'CALRun2D{2D|3D}', respectively. Supported scalar types and
+substates are listed in Table \ref{tab:basic_types}, while Table
+\ref{tab:ca_sim_types} lists model and simulation data types.
+
+\begin{table}
+  \centering
+  \begin{tabular}{c|c|c|c}
+    \hline
+    OpenCAL basic type & Basic type alias & C type & Substate type\\
+    \hline
+    \verb'CALbyte' & \verb'CALParameterb' & \verb'char'   &  \verb'CALSubstate{2D|3D}b'\\
+    \verb'CALint'  & \verb'CALParameteri' & \verb'int'   &  \verb'CALSubstate{2D|3D}i'\\
+    \verb'CALreal' & \verb'CALParameterr' & \verb'double' &  \verb'CALSubstate{2D|3D}r'\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL basic scalar and substate types.}
+  \label{tab:basic_types}
+\end{table}
+
+\begin{table}
+  \centering
+  \begin{tabular}{c|c}
+    \hline
+    OpenCAL substate type & Meaning \\
+    \hline
+    \verb'CALModel{2D|3D}' & CA data type\\
+    \verb'CALRun2D{2D|3D}' & Simulation data type\\
+    \hline
+  \end{tabular}
+  \caption{OpenCAL types for CA and simulation objects.}
+  \label{tab:ca_sim_types}
+\end{table}
+
+The model object essetially allows to define the XCA dimension, the
+neighbourhood (which can be predefined or custom - for maximum
+flexibility), the cellular space boundary behaviour and if the active
+cell optimization has to be employed.
+
+Substates and elementary processes must be registered to the model
+object to be transparently processed. For this purtpose, the
+\verb'calAddSubstate{2D|3D}{b|i|r}()' and
+\verb'calAddElementaryProcess{2D|3D}{b|i|r}()' API functions can be
+adopted. Specifically, substates are composed by two computational
+layes, namely the \emph{current} and \emph{next} ones. Both of them
+are implemented by means of linearised arrays, even if they represent
+2D and 3D domain data. Nevertheless, a transparent multi indices-based
+access is guarantied by specific API functions. If unsafe operations
+are not considered (see below in this Chapter), the current layer is
+used as a read-only memory, while the next one for updating the velues
+for the central cell, by guarantying the implicit
+parallelism. Single-layer substates are also implemented, whcih have
+the current layer only. This latter can be used for internal
+transformation processing and, obviusly, do not need to be
+updated. Instead, elementary processes are defined by means of
+callback functions. Theese latter must return void and take a pointer
+to the model object as first parameter, followed by a list of integer
+parameters representing the coordinates of a generic cell of the
+cellular space.
+
+The simulation object determines of the system evolution. It
+essentially allows to define how many steps have to be computed, and
+the update scheme. This latter, in particular, can be implicit or
+explicit. In the first case, OpenCAL applies the elementary processes
+in the same order in which they have been registered to the model
+object and, after the application of each of them, updates all the
+registered substates (even if they were left unchanged). In the other
+case, the model transition function must be overridden, the elemantary
+processes explicitly applied and the substates explicitly updated,
+allowing for improving both flexibility and performace. In fact, the
+elementary processes application order can be changed with respect to
+the one chosen at the registration stage, and unneeded substates
+update can be avoided. Figure \ref{fig:opencal_main_loop} shows the
+OpenCAL main implicit simulation loop. Before entering the loop, if
+defined, the init function is executed once and a substates update
+performed. Afterwards, while the current step is lower or equal to the
+final step of computation (or this latter is set to
+\verb'CAL_RUN_LOOP', which defines an infinite loop), elementary
+processes are executed once at a time, in the order they have been
+registered to the model object, and substates updated after the
+application of each them. Moreover, just before the end of the
+computational step, the steering function (if defined) is applied and
+substates updated again. At the end of the computational step, a stop
+condition is checked, which can stop the simulation even before the
+last step is reached.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=9.5cm]{./images/OpenCAL/opencal_main_loop.pdf}
+  \caption{OpenCAL main loop chart.}
+  \label{fig:opencal_main_loop}
+\end{figure}
+
 
 \section{Statements conventions}\label{sec:Conventions}
 
@@ -57,121 +188,6 @@ applications.
   arguments, where one of the arguments is needed, while the second a
   list of $n$ non-mutually exclusive optional arguments.
 
-
-\section{Basic data types and main loop structure}
-
-Besides the model and simulation main objects, whose data types are
-listed in Table \ref{tab:ca_sim_types}, OpenCAL supports three
-different basic scalar data types and substates, listed in Tables
-\ref{tab:basic_types} and \ref{tab:substate_types}, respectively.
-
-\begin{table}
-  \centering
-  \begin{tabular}{c|c}
-    \hline
-    OpenCAL datatype & Meaning \\
-    \hline
-    \verb'CALModel{2D|3D}' & XCA model data type\\
-    \verb'CALRun2D{2D|3D}' & Simulation data type\\
-    \hline
-  \end{tabular}
-  \caption{OpenCAL types for XCA mdoel and simulation objects.}
-  \label{tab:ca_sim_types}
-\end{table}
-
-\begin{table}
-  \centering
-  \begin{tabular}{c|c|c}
-    \hline
-    OpenCAL basic type & OpenCAL alias & Corresponding C type \\
-    \hline
-    \verb'CALbyte' & \verb'CALParameterb' & \verb'char'  \\
-    \verb'CALint'  & \verb'CALParameteri' & \verb'int'  \\
-    \verb'CALreal' & \verb'CALParameterr' & \verb'double'  \\
-    \hline
-  \end{tabular}
-  \caption{OpenCAL basic types, together with their alias, used for
-    defining CA parameters, and correspondent types in C.}
-  \label{tab:basic_types}
-\end{table}
-
-\begin{table}
-  \centering
-  \begin{tabular}{c|c}
-    \hline
-    OpenCAL substate type & Basic scalar type \\
-    \hline
-    \verb'CALSubstate{2D|3D}b' & \verb'CALbyte'\\
-    \verb'CALSubstate{2D|3D}i' & \verb'CALint' \\
-    \verb'CALSubstate{2D|3D}r' & \verb'CALreal'\\
-    \hline
-  \end{tabular}
-  \caption{OpenCAL substate types, together with their basic scalar
-    types.}
-  \label{tab:substate_types}
-\end{table}
-
-
-The model object essetially allows to define the XCA dimension, the
-neighbourhood (which can be predefined or custom - for maximum
-flexibility), the cellular space boundary behaviour and if the active
-cell optimization has to be employed.
-
-Substates and elementary processes must be registered to the model
-object to be transparently processed. For this purtpose, the
-\verb'calAddSubstate{2D|3D}{b|i|r}()' and
-\verb'calAddElementaryProcess{2D|3D}{b|i|r}()' API functions can be
-adopted. Specifically, substates are composed by two computational
-layes, namely the \emph{current} and \emph{next} ones. Both of them
-are implemented by means of linearised arrays, even if they represent
-2D and 3D domain data. Nevertheless, a transparent multi indices-based
-access to the data is guarantied by specific API functions. If unsafe
-operations are not considered (see below in this Chapter), the current
-layer is used as a read-only memory, while the next one for updating
-the velues for the central cell, by guarantying the implicit
-parallelism. Single-layer substates are also implemented, whcih have
-the current layer only. This latter can be used for internal
-transformation processing and, obviusly, do not need to be
-updated. Instead, elementary processes are defined by means of
-callback functions. Theese latter must return void and take a pointer
-to the model object as first parameter, followed by a list of integer
-parameters representing the coordinates of a generic cell of the
-cellular space.
-
-The simulation object determines of the system evolution. It
-essentially allows to define how many steps have to be computed, and
-the update scheme. This latter, in particular, can be implicit or
-explicit. In the first case, OpenCAL applies the elementary processes
-in the same order in which they have been registered to the model
-object and, after the application of each of them, updates all the
-registered substates (even if they were left unchanged by the
-elementary process). In the other case, the model transition function
-must be overridden, the elemantary processes explicitly applied and
-the substates explicitly updated, allowing for improving both
-flexibility and performace. In fact, the elementary processes
-application order can be changed with respect to the one chosen at the
-registration stage, and unneeded substates update can be
-avoided. Figure \ref{fig:opencal_main_loop} shows the OpenCAL main
-implicit simulation loop. Before entering the loop, if defined, the
-init function is executed once and a substates update
-performed. Afterwards, while the current step is lower or equal to the
-final step of computation (or this latter is set to
-\verb'CAL_RUN_LOOP', which defines an infinite loop), elementary
-processes are executed once at a time, in the order they have been
-registered to the model object, and substates updated after the
-application of each them. Moreover, just before the end of the
-computational step, the steering function (if defined) is applied and
-substates updated again. At the end of the computational step, a stop
-condition is checked, which can stop the simulation even before the
-last step is reached.
-
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=9.5cm]{./images/OpenCAL/opencal_main_loop.pdf}
-  \caption{OpenCAL main loop chart.}
-  \label{fig:opencal_main_loop}
-\end{figure}
 
 
 \section{Conway's Game of Life}\label{sec:cal_life}
