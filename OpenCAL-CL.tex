@@ -78,13 +78,13 @@ number of CA cells are executed in parallel for each computational
 step. Each thread applies the CA elementary processes on a specific
 cell, in the order they have been registered to the device-side CA. In
 other words, OpenCAL-CL adopts the so called one thread-one cell
-execution execution policy. According to OpenCL, threads are grouped
-into workgroups. Threads within a workgroup can share information on a
+execution policy. According to OpenCL, threads are grouped into
+workgroups. Threads within a workgroup can share information on a
 local memory and also synchronize each other. Moreover, global data
 can be shared thanks to the device global memory, which however is
 slower than the local one. Eventually, threads can be globally
-synchronized when kernels execution terminates and the control
-returns to the host application.
+synchronized when kernels execution terminates and the control returns
+to the host application.
 
 In OpenCAL-CL many of the above aspects are completely transparent to
 the user. In particular, the number of threads to be executed is set
@@ -194,8 +194,8 @@ that can be used within OpenCAL-CL kernels are listed in Table
     \verb'calclLocalRow() '               & Get the local cell row coordinate within the OpenCL work group\\
     \verb'calclLocalColumn()'             & Get the local cell column coordinate within the OpenCL work group\\
     \verb'calclLocalSlice()'              & Get the local cell slice coordinate within the OpenCL work group\\
-    \verb'calclGet[2D|3D][b|i|r]()'       & Get the substate value for the central cell\\
-    \verb'calclGetX[2D|3D][b|i|r]()'      & Get the substate value for a neighboring cell\\
+    \verb'calclGet{2D|3D}{b|i|r}()'       & Get the substate value for the central cell\\
+    \verb'calclGetX{2D|3D}{b|i|r}()'      & Get the substate value for a neighboring cell\\
     \verb'calclGetRows()'                 & Get the number of CA rows \\
     \verb'calclGetColumns()'              & Get the number of CA columns \\
     \verb'calclGetSlices()'               & Get the number of CA slices \\
@@ -216,7 +216,7 @@ that can be used within OpenCAL-CL kernels are listed in Table
     \verb'calclGetNeighborhoodSize()'     & Get the neighbourhood size \\
     \verb'calclGetBoundaryCondition()'    & Get the boundary condition (simple or cyclic) \\
     \verb'calclRunStop()'                 & Stops the simulation \\
-    \verb'calclSet[2D|3D][b|i|r]()'       & Set the substate value for the central cell\\
+    \verb'calclSet{2D|3D}{b|i|r}()'       & Set the substate value for the central cell\\
     \verb'calclThreadCheck[2D|3D]()'      & Prevents unnecessary thread execution for 3D CA\\
     \verb'calclActiveThreadCheck[2D|3D]()'& Prevents unnecessary thread execution for 2D CA with active cells\\
     \hline
@@ -312,13 +312,13 @@ host application.
 
 \subsubsection{Selection of the OpenCL compliant device}
 
-OpenCAL-CL provides the \verb'CALOpenCL' structure that, together with
+OpenCAL-CL provides the \verb'CALCLManager' structure that, together with
 other utility functions, considerably simplifies platform, device, and
 context management with respect to the native OpenCL API. Listing
-\ref{lst:CALOpenCL} shows how to select a compliant device in
+\ref{lst:CALCLManager} shows how to select a compliant device in
 OpenCAL-CL.
 
-\begin{lstlisting}[float,floatplacement=H, label=lst:CALOpenCL, caption=Access to platform and devices.]
+\begin{lstlisting}[float,floatplacement=H, label=lst:CALCLManager, caption=Access to platform and devices.]
   #include <OpenCAL-CL/calcl2D.h>
   //...
 
@@ -356,7 +356,7 @@ calls the \verb'calclInitializeDevices()' function, that initializes
 the available devices, while line 20 selects one of them for kernel
 execution. Specifically, an object of type \verb'CALCLdevice' is
 declared and initialized by the function \verb'calclGetDevice()'. This
-latter takes a pointer to a \verb'CALManager' object as first
+latter takes a pointer to a \verb'CALCLManager' object as first
 parameter, while the second and third parameters specify the platform
 and device to be selected, respectively. Since both platforms and
 devices are identified by a 0-based index\footnote{In OpenCAL-CL
@@ -385,11 +385,11 @@ by means of the \verb'calclCreateContext()' function.
 After the compliant device has been selected and elementary processes
 (and possibly other functions) implemented as kernels, these latter
 can automatically be read and compiled through the
-\verb'calclLoadProgram2D()' and \verb'calclLoadProgram3D()' functions
-(cf. Listing \ref{lst:calclLoadProgram}). They take both the context
-and device, and also the paths to directories containing the user
-defined kernels and related headers (if any) as parameters, and
-returns an OpenCL program\footnote{\texttt{CALCLprogram} redefines the
+\verb'calclLoadProgram{2D|3D}()' functions (cf. Listing
+\ref{lst:calclLoadProgram}). They take both the context and device,
+and also the paths to directories containing the user defined kernels
+and related headers (if any) as parameters, and returns an OpenCL
+program\footnote{\texttt{CALCLprogram} redefines the
   \texttt{cl\_program} OpenCL type.}. All the files in the kernel
 source directory are automatically considered, independently from
 their name. Note that, since kernel headers are optional, the last
@@ -408,20 +408,20 @@ parameter can be \verb'NULL'.
 
 OpenCAL-CL allows for having a counterpart of the host-side CA to
 device-side. Such a device-side CA is declared as a
-\verb'CALCLModel2D' object and, beside managing all the CA components
-device-side, also provides simulation execution features. Note
-that, this is a main difference with respect to OpenCAL serial
-version, where the simulation execution is managed by a
-\verb'CALRun2D' complementary object.
+\verb'CALCLModel{2D|3D}' object and, beside managing all the CA
+components device-side, also provides simulation execution
+features. Note that, this is a main difference with respect to OpenCAL
+serial version, where the simulation execution is managed by a
+\verb'CALRun{2D|3D}' complementary object.
 
-To initialize the device-side CA object, the \verb'calclCADef2D'
-function can be used (cf. Listing \ref{lst:calclCADef2D}; cf. also
-Listing \ref{lst:calclCADef3D} for its 3D version). The first
-parameter is a pointer to a \verb'CALModel2D', defined host side as in
-the case of the serial implementation of OpenCAL (cf. Chapter
-\ref{ch:opencal}). The second one is an OpenCL context, as well as the
-third and fourth parameters are an OpenCL program and compliant
-device, respectively.
+To initialize the device-side CA object, the \verb'calclCADef{2D|3D}'
+function can be used (cf. Listings \ref{lst:calclCADef2D} and
+\ref{lst:calclCADef3D} for the 2D and 3D versions, respectively). The
+first parameter is a pointer to a \verb'CALModel{2D|3D}' object,
+defined host side as in the case of the serial implementation of
+OpenCAL (cf. Chapter \ref{ch:opencal}). The second one is an OpenCL
+context, as well as the third and fourth parameters are an OpenCL
+program and compliant device, respectively.
 
 %% The device-side CA object permits to equeue the defined kernels
 
@@ -460,13 +460,13 @@ program and the kernel name (cf. Listing
   )
 \end{lstlisting}
 
-The function \verb'calclAddElementaryProcess2D' adds a new kernel to
-the execution queue (cf. Listing
-\ref{lst:calclAddElementaryProcess2D}; cf. also Listing
-\ref{lst:calclAddElementaryProcess3D} for the 3D version), in a
-transparent manner to the user. The function takes both a pointer to
-host and device CA as parameter and also a pointer to an OpenCL
-kernel.
+The function \verb'calclAddElementaryProcess{2D|3D}' adds a new kernel
+to the execution queue (cf. Listings
+\ref{lst:calclAddElementaryProcess2D} and
+\ref{lst:calclAddElementaryProcess3D} for the 2D and 3D versions,
+respectively), in a transparent manner to the user. The function takes
+both a pointer to host and device CA as parameter and also a pointer
+to an OpenCL kernel.
 
 \begin{lstlisting}[float,floatplacement=TH, label=lst:calclAddElementaryProcess2D, caption=The calclAddElementaryProcess2D() function., numbers=none]
   void calclAddElementaryProcess2D(
@@ -511,7 +511,7 @@ parameters can be passed to a kernel with the above described method.
 At the contrary, if the kernel parameter is not declared as a pointer,
 like in the example in Listing \ref{lst:kernel-private-parameter}, the
 above double step process is no longer necessary, since it is
-sufficient to call the \verb'calclSetKernelArg[2D|3D]()' by specifying
+sufficient to call the \verb'calclSetKernelArg{2D|3D}()' by specifying
 the dimension of the actual type of the variable to be passed to the
 kernel as third parameter .
 
@@ -558,10 +558,10 @@ kernel as third parameter .
     \hline
     Function & Brief description\\
     \hline
-    \verb'calclAddInitFunc[2D|3D]'             & register a global kernel to be executed before simulation loop \\
-    \verb'calclAddElementaryProcess[2D|3D]()'  & register an elementary process \\
-    \verb'calclAddSteeringFunc[2D|3D]'         & register a global kernel to be executed after each step \\
-    \verb'calclAddStopConditionFunc[2D|3D]()'  & register a global stop condition kernel callback \\
+    \verb'calclAddInitFunc{2D|3D}'             & register a global kernel to be executed before simulation loop \\
+    \verb'calclAddElementaryProcess{2D|3D}()'  & register an elementary process \\
+    \verb'calclAddSteeringFunc{2D|3D}'         & register a global kernel to be executed after each step \\
+    \verb'calclAddStopConditionFunc{2D|3D}()'  & register a global stop condition kernel callback \\
     \hline
     \end{tabular}
     \end{footnotesize}
@@ -589,22 +589,23 @@ kernel as third parameter .
 
 \subsubsection{Simulation execution on the compliant device}
 
-The \verb'calclRun2D()' function (cf. Listing \ref{lst:calclRun2D};
-cf. also Listing \ref{lst:calclRun2D} for the 3D version) runs the CA
-simulation by executing all the defined kernels on the selected
-compliant device. The first two parameters are pointers to a device
-and host CA, respectively, while the last two are the initial and
-final step for the simulation execution. If the last parameter is set
-to \verb'CAL_RUN_LOOP', simulation never ends. In this case, to stop
-the simulation, the user must define a stop condition criterion
-through the \verb'calclAddStopConditionFunc2D()' function
-(cf. \ref{lst:calclAddStopConditionFunc2D}, cf. also Listing
-\ref{lst:calclAddStopConditionFunc3D} for the 3D version). Note that,
-since the stop condition must be evaluated host side, it must be
-implemented as a kernel. For this reason, the third parameter is a
-pointer to an OpenCL kernel. Other kernels can be registered to the
-device-side CA. Table \ref{tab:XXX} list the OpenCAL-CL that can be
-used to register kernels to the device-side CA.
+The \verb'calclRun{2D|3D}()' function (cf. Listings
+\ref{lst:calclRun2D} and \ref{lst:calclRun2D} for the 2D and 3D
+versions, respectively) runs the CA simulation by executing all the
+defined kernels on the selected compliant device. The first two
+parameters are pointers to a device and host CA, respectively, while
+the last two are the initial and final step for the simulation
+execution. If the last parameter is set to \verb'CAL_RUN_LOOP',
+simulation never ends. In this case, to stop the simulation, the user
+must define a stop condition criterion through the
+\verb'calclAddStopConditionFunc{2D|3D}()' function (cf. Listings
+\ref{lst:calclAddStopConditionFunc2D} and
+\ref{lst:calclAddStopConditionFunc3D} for the 2D and 3D versions,
+respectively). Note that, since the stop condition must be evaluated
+host side, it must be implemented as a kernel. For this reason, the
+third parameter is a pointer to an OpenCL kernel. Other kernels can be
+registered to the device-side CA. Table \ref{tab:XXX} list the
+OpenCAL-CL that can be used to register kernels to the device-side CA.
 
 
 \begin{lstlisting}[float,floatplacement=H, label=lst:calclAddStopConditionFunc2D, caption=The calclAddStopConditionFunc2D function., numbers=none]
@@ -978,8 +979,8 @@ Figure \ref{fig:calgl_mod2} shows a screenshot of the \emph{mod2} CA.
 \end{figure}
 
 
-\section{Computational performance}
-Currently under evaluation.
+%% \section{Computational performance}
+%% Currently under evaluation.
 
 
 \section{Reduction operations}
@@ -1006,25 +1007,19 @@ respectively.
     \hline
     Host-side reduction functions & Register a reduction to compute the ... \\
     \hline
-    \verb'calclAddReductionMax2Dr()'        & maximum of a substate elements\\
-    \verb'calclAddReductionMin2Dr()'        & minimum of a substate elements\\
-    \verb'calclAddReductionSum2Dr()'        & sum of a substate elements\\
-    \verb'calclAddReductionProd2Dr()'       & product of substate elements\\
-    \verb'calclAddReductionLogicalAnd2Dr()' & logical AND of substate elements\\
-    \verb'calclAddReductionBinaryAnd2Dr()'  & binary AND of substate elements\\
-    \verb'calclAddReductionLogicalOr2Dr()'  & logical OR of substate elements\\
-    \verb'calclAddReductionBinaryOr2Dr()'   & binary OR of substate elements\\
-    \verb'calclAddReductionLogicalXOr2Dr()' & logical AND of substate elements\\
-    \verb'calclAddReductionBinaryXor2Dr()'  & binary AND of substate elements\\
+    \verb'calclAddReductionMax{2D|3D}{b|i|r}()'        & maximum of a substate elements\\
+    \verb'calclAddReductionMin{2D|3D}{b|i|r}()'        & minimum of a substate elements\\
+    \verb'calclAddReductionSum{2D|3D}{b|i|r}()'        & sum of a substate elements\\
+    \verb'calclAddReductionProd{2D|3D}{b|i|r}()'       & product of substate elements\\
+    \verb'calclAddReductionLogicalAnd{2D|3D}{b|i|r}()' & logical AND of substate elements\\
+    \verb'calclAddReductionBinaryAnd{2D|3D}{b|i|r}()'  & binary AND of substate elements\\
+    \verb'calclAddReductionLogicalOr{2D|3D}{b|i|r}()'  & logical OR of substate elements\\
+    \verb'calclAddReductionBinaryOr{2D|3D}{b|i|r}()'   & binary OR of substate elements\\
+    \verb'calclAddReductionLogicalXOr{2D|3D}{b|i|r}()' & logical AND of substate elements\\
+    \verb'calclAddReductionBinaryXor{2D|3D}{b|i|r}()'  & binary AND of substate elements\\
     \hline
   \end{tabular}
-  \caption{OpenCAL-CL host-side reduction registration functions for 2D CA and
-    substates containing floating point values. In order to obtain the
-    corresponding functions for 3D CA, you need to change 2D in 3D
-    into the functions suffix, while to obtain the equivalent
-    versions for the other supported basic data types, change the last
-    suffix character from r to b or i, for CALbyte- or CALint-based
-    substates, respectively.}
+  \caption{OpenCAL-CL host-side reduction registration functions.}
   \label{tab:calcl-host-reductions}
 \end{table}
 
@@ -1036,25 +1031,19 @@ respectively.
     \hline
     Device-side reduction functions & Get the value of a reduction operation for the ... \\
     \hline
-    \verb'calclGetMax2Dr()'        & maximum of a substate elements\\
-    \verb'calclGetMin2Dr()'        & minimum of a substate elements\\
-    \verb'calclGetSum2Dr()'        & sum of a substate elements\\
-    \verb'calclGetProd2Dr()'       & product of substate elements\\
-    \verb'calclGetLogicalAnd2Dr()' & logical AND of substate elements\\
-    \verb'calclGetBinaryAnd2Dr()'  & binary AND of substate elements\\
-    \verb'calclGetLogicalOr2Dr()'  & logical OR of substate elements\\
-    \verb'calclGetBinaryOr2Dr()'   & binary OR of substate elements\\
-    \verb'calclGetLogicalXor2Dr'   & logical AND of substate elements\\
-    \verb'calclGetBinaryXor2Dr()'  & binary AND of substate elements\\
+    \verb'calclGetMax{2D|3D}{b|i|r}()'        & maximum of a substate elements\\
+    \verb'calclGetMin{2D|3D}{b|i|r}()'        & minimum of a substate elements\\
+    \verb'calclGetSum{2D|3D}{b|i|r}()'        & sum of a substate elements\\
+    \verb'calclGetProd{2D|3D}{b|i|r}()'       & product of substate elements\\
+    \verb'calclGetLogicalAnd{2D|3D}{b|i|r}()' & logical AND of substate elements\\
+    \verb'calclGetBinaryAnd{2D|3D}{b|i|r}()'  & binary AND of substate elements\\
+    \verb'calclGetLogicalOr{2D|3D}{b|i|r}()'  & logical OR of substate elements\\
+    \verb'calclGetBinaryOr{2D|3D}{b|i|r}()'   & binary OR of substate elements\\
+    \verb'calclGetLogicalXor{2D|3D}{b|i|r}()'   & logical AND of substate elements\\
+    \verb'calclGetBinaryXor{2D|3D}{b|i|r}()'  & binary AND of substate elements\\
     \hline
   \end{tabular}
-  \caption{OpenCAL-CL device-side reduction retrieving functions for 2D CA and
-    substates containing floating point values. In order to obtain the
-    corresponding functions for 3D CA, you need to change 2D in 3D
-    into the functions suffix, while to obtain the equivalent
-    versions for the other supported basic data types, change the last
-    suffix character from r to b or i, for CALbyte- or CALint-based
-    substates, respectively.}
+  \caption{OpenCAL-CL device-side reduction retrieving functions.}
   \label{tab:calcl-device-reductions}
 \end{table}
 
@@ -1066,9 +1055,7 @@ must be performed. Instead, device-side reduction retrieving functions
 return a CALreal value and only take the 0-based numerical handle
 corresponding to the device-side substate over which the reduction has
 been performed. Listings \ref{lst:calclAddReductionSum2Dr} and
-\ref{lst:calclGetSum2Dr} show the prototypes of the host- and
-device-side reductions for evaluating the sum of a substate elements,
-respectively. Eventually, Listings
+\ref{lst:calclGetSum2Dr} show the prototypes of the reduction function for evaluating the sum of a double-precision 2D and the corresponding retriving function, respectively. Eventually, Listings
 \ref{lst:calcl_reduction_example_host} and
 \ref{lst:calcl_reduction_example_device} show a host- and device-side
 example codes, respectively, in which a reduction operation is
@@ -1077,14 +1064,14 @@ substate.
 
 
 \begin{lstlisting}[float, label=lst:calclAddReductionSum2Dr, caption=The calclAddReductionSum2Dr() host-side reduction registration function., numbers=none]
-  void calclAddReductionSum[2D|3D][b|i|r](
+  void calclAddReductionSum2Dr(
        struct CALCLModel2D * device_CA,
        int devide_side_substate_handle
   );
 \end{lstlisting}
 
 \begin{lstlisting}[float, label=lst:calclGetSum2Dr, caption=The calclGetSum2Dr() device-side reduction retrieving function., numbers=none]
-  CALreal calclGetSum[2D|3D][b|i|r](
+  CALreal calclGetSum2Dr(
       int device_side_substate_handle
   );
 \end{lstlisting}

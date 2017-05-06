@@ -884,7 +884,7 @@ final flow path configuration are shown.
 As regards computational performance, the simulation shown in Figure
 \ref{fig:sciddicaT} was executed on an Intel Core i7-4702HQ CPU @
 2.20GHz by exploiting only a single core. The simulation lasted a
-total of 172 seconds and considered a total of 4000 computational
+total of 240 seconds and considered a total of 4000 computational
 steps.
 
 
@@ -986,8 +986,8 @@ optimization is also known as \emph{quantization}.
 Regarding the computational performance, the same simulation shown in
 Figure \ref{fig:sciddicaT} was executed using the $SciddicaT_{ac}$
 implementation. Still, only a single core of the Intel Core i7-4702HQ
-CPU was used. The simulation lasted a total of 22 seconds, versus 172
-seconds obtained for the naive version, which is about 8 times
+CPU was used. The simulation lasted a total of 23 seconds, versus 240
+seconds obtained for the naive version, which is about 10.5 times
 faster. Indeed, this can be considered a very good result and can be
 easily obtained. In general, simulations which involve only a subset
 of the whole computational domain can take advantage by the active
@@ -1152,9 +1152,9 @@ error.
 Regarding the computational performance, the same simulation shown in
 Figure \ref{fig:sciddicaT} was executed by considering
 $SciddicaT_{ac+dnu}$ on a single core of the same Intel core i7
-processor. The simulation lasted a total of 11 seconds, versus 22
-seconds obtained for $SciddicaT_{ac}$ and 172 seconds for
-$SciddicaT_{naive}$, with speed up of 2 and 16, respectively.
+processor. The simulation lasted a total of 13 seconds, versus 240
+seconds obtained by $SciddicaT_{naive}$, corresposnding to a speed up
+of about 18.5.
 
 \subsection{SciddicaT with explicit simulation loop}
 Even if results obtained so far can be considered more than
@@ -1219,13 +1219,7 @@ current computational step, and the set $A$ is accordingly updated.
 As regards the computational performance, execution time of this
 further optimized version lasted 12 seconds to complete the 4000 steps
 required by the simulation on a single core of the same Intel Core i7
-processor used before. The obtained speedup can seem quite small (less
-than the 10\%) with respect to the previous implementation of
-SciddicaT. However, it must be noted that SciddicaT is a very
-simplified model and higher speedups can certainly be obtained for
-more complex CA made up by more elementary processes, these latter
-involving here only a small set of model substates, or by considering
-larger CA spaces. Table \ref{tab:speedup} resumes computational
+processor used before. Table \ref{tab:speedup} resumes computational
 performance of all the above illustrated SciddicaT implementations.
 
 \begin{table}
@@ -1234,10 +1228,10 @@ performance of all the above illustrated SciddicaT implementations.
     \hline
     CA model & Elapsed time [s] & Speedup \\
     \hline
-    $SciddicaT_{naive}$      & 172 & 1\\
-    $SciddicaT_{ac}$         & 22  & 7.8\\
-    $SciddicaT_{ac+dnu}$     & 11  & 15.6\\
-    $SciddicaT_{ac+dnu+esl}$  & 12  & 14.4\\
+    $SciddicaT_{naive}$      & 240 & 1\\
+    $SciddicaT_{ac}$         & 23  & 10.5\\
+    $SciddicaT_{ac+dnu}$     & 13  & 18.5\\
+    $SciddicaT_{ac+dnu+esl}$  & 12  & 20.0\\
     \hline
   \end{tabular}
   \caption{Computational performance of four different

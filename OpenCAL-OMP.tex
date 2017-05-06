@@ -30,11 +30,10 @@ both 2D and 3D applications based on OpenCAL-OMP.
 \section{Conway's Game of Life in OpenCAL-OMP}
 
 In Section \ref{sec:cal_life}, we shown a possible OpenCAL
-implementation of Conway's Game of Life (cf. Section
-\ref{sec:cal_life}). Here, we present an OpenCAL-OMP implementation of
-the same cellular automaton, by discussing the differences with
-respect its serial implementation. The complete source code can be
-found in Listing \ref{lst:calomp_life}.
+implementation of Conway's Game of Life. Here, we present an
+OpenCAL-OMP implementation of the same cellular automaton, by
+discussing the differences with respect its serial implementation. The
+complete source code can be found in Listing \ref{lst:calomp_life}.
 
 \lstinputlisting[float,floatplacement=H, label=lst:calomp_life, caption=An OpenCAL-OMP implementation of the Conway's game of Life.]{../opencal-examples/OpenCAL-OMP/calomp_life/source/life.c}
 
@@ -79,12 +78,17 @@ Listing \ref{lst:calomp_sciddicaT}, unsafe operations are here
 exploited due to the active cells optimization. Indeed, the
 \verb'calAddActiveCellX2D()' function, called at line 87, adds a cell
 belonging to the neighborhood to the set $A$ of active cells. As
-evident, being it a non-atomic operation, more threads can try to add
-the same cell to the same location of the set $A$ at the same time, by
-giving rise to a race condition. In order to avoid race condition
-issues, OpenCAL-OMP is able to \emph{lock} memory locations involved
-in concurrent non-atomic operations so that each thread can complete
-its own task without the risk other threads interfere. In order to do
+evident, more threads can try to add the same cell to the same
+location of the set $A$ at the same time, by giving rise to a race
+condition\footnote{Actually, a thread-safe implementation could also
+  be considered for $SciddicaT_{ac}$, becouse the active cells
+  add/remove operations update 8 bit-long flag values in a working
+  array transparently managed by OpenCAL-OMP, which are atomic
+  operations. Unsefe operations are anyway here introduced for
+  illustrative purposes.}. In order to avoid race condition issues,
+OpenCAL-OMP is able to \emph{lock} memory locations involved in
+concurrent non-atomic operations so that each thread can complete its
+own task without the risk other threads interfere. In order to do
 this, it is sufficient to place OpenCAL-OMP in \emph{unsafe} state, by
 calling the \verb'calSetUnsafe2D()' function, as done at line
 163. Unsafe functions are provided by the \verb'cal2DUnsafe.h'

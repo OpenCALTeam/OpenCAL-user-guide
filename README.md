@@ -1,6 +1,14 @@
 # OpenCAL-user-guide
 User guide of the OpenCAL library
 
+To build the user guide, please clone the repo in the same directory in which you cloned the OpenCAL-1.0 examples.
+
+\
+ - ...
+ - opencal-examples-1.0
+ - opencal-user-guide
+ - ...
+ - ...
 
 #Generate HTML docs
 - Pandoc is required (http://pandoc.org/)
