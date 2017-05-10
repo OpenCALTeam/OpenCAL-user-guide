@@ -109,7 +109,7 @@ an OpenCAL-CL based kernel, let's consider the example in Listing
 \ref{lst:OpenCAL-CL-kernel}.
 
 First of all, the \verb'calcl2D.h' header file must be included (line
-1). Accordingly to OpenCL, each kernel definition must start with the
+1). According to OpenCL, each kernel definition must start with the
 \verb'__kernel' keyword (line 8). However, differently to OpenCL,
 where a kernel can have no parameters, each OpenCAL-CL kernel must
 have at least the \verb'__CALCL_MODEL_2D' parameter. Actually, it is a
@@ -465,7 +465,7 @@ to the execution queue (cf. Listings
 \ref{lst:calclAddElementaryProcess2D} and
 \ref{lst:calclAddElementaryProcess3D} for the 2D and 3D versions,
 respectively), in a transparent manner to the user. The function takes
-both a pointer to host and device CA as parameter and also a pointer
+both a pointer to host and device-side CA as parameter and also a pointer
 to an OpenCL kernel.
 
 \begin{lstlisting}[float,floatplacement=TH, label=lst:calclAddElementaryProcess2D, caption=The calclAddElementaryProcess2D() function., numbers=none]
@@ -685,7 +685,7 @@ performed: the elementary process, which actually is an OpenCL kernel,
 must be extracted from the previously compiled program. This operation
 is done at line 44 by means of the
 \verb'calclGetKernelFromProgram()'. It returns an OpenCL kernel which
-is subsequently registered to the device CA by means of the
+is subsequently registered to the device-side CA by means of the
 \verb'calclAddElementaryProcess2D()' function at line 47.
 
 Lines 50 an 56 are used to save the CA state (represented by the
@@ -1057,7 +1057,7 @@ corresponding to the device-side substate over which the reduction has
 been performed. Listings \ref{lst:calclAddReductionSum2Dr} and
 \ref{lst:calclGetSum2Dr} show the prototypes of the reduction function for evaluating the sum of a double-precision 2D and the corresponding retriving function, respectively. Eventually, Listings
 \ref{lst:calcl_reduction_example_host} and
-\ref{lst:calcl_reduction_example_device} show a host- and device-side
+\ref{lst:calcl_reduction_example_device} show host- and device-side
 example codes, respectively, in which a reduction operation is
 considered for evaluating the sum of all the elements within a given
 substate.

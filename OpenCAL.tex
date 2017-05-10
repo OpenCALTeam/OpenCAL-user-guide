@@ -87,7 +87,7 @@ flexibility), the cellular space boundary behaviour and if the active
 cell optimization has to be employed.
 
 Substates and elementary processes must be registered to the model
-object to be transparently processed. For this purtpose, the
+object to be transparently processed. For this purpose, the
 \verb'calAddSubstate{2D|3D}{b|i|r}()' and
 \verb'calAddElementaryProcess{2D|3D}{b|i|r}()' API functions can be
 adopted. Specifically, substates are composed by two computational
@@ -972,7 +972,7 @@ an outflow is generated, the cell receiving the flow is added to the
 set A of the active cells (line 87). Note that the
 \verb'calAddActiveCellX2D()' can be considered as an unsafe function,
 as it affects the activation state of a neighboring cell. For this
-reason, is important to maintain the activation and deactivation
+reason, it is important to maintain the activation and deactivation
 phases completely disjoint, in order to avoid possible race conditions
 and thus logical errors. As a matter of fact, the $\sigma_1$
 elementary process only add cells to A, while is the $\sigma_3$ one
